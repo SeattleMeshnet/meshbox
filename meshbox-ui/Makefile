@@ -28,8 +28,8 @@ define Package/meshbox-ui
   SECTION:=projectmeshnet
   CATEGORY:=Project Meshnet
   TITLE:=The files for the meshbox's UI
-  DEPENDS:=+lua +libuci-lua +libubus-lua
-  MAINTAINER:=thefinn93 -- #projectmeshnet on irc.efnet.org
+  #DEPENDS:=+lua +libuci-lua +libubus-lua
+  MAINTAINER:=derpz -- #projectmeshnet on irc.efnet.org
 endef
 
 
@@ -48,7 +48,7 @@ define Build/Compile
 endef
 
 define Package/meshbox-ui/install
-        $(CP) ./meshbox-ui/* $(1)/
+        $(CP) * $(1)/
 endef
 
 $(eval $(call BuildPackage,meshbox-ui))
