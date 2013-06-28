@@ -9,10 +9,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshbox-ui
 PKG_VERSION:=0.5-SNAPSHOT
+
+include $(INCLUDE_DIR)/package.mk
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
@@ -21,19 +24,17 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=master
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
-include $(INCLUDE_DIR)/package.mk
-
 define Package/meshbox-ui
   SECTION:=projectmeshnet
   CATEGORY:=Project Meshnet
-  TITLE:=Experimental self configuring routing protocol.
+  TITLE:=The files for the meshbox's UI
   DEPENDS:=+lua +libuci-lua +libubus-lua
   MAINTAINER:=thefinn93 -- #projectmeshnet on irc.efnet.org
 endef
 
 
 define Package/meshbox-ui/description
-  The user interface for a meshbox
+  The user interface for the meshbox
 endef
 
 define Build/Prepare
@@ -47,7 +48,7 @@ define Build/Compile
 endef
 
 define Package/meshbox-ui/install
-        $(CP) $(PKG_BUILD_DIR)/* $(1)/
+        $(CP) ./meshbox-ui/* $(1)/
 endef
 
 $(eval $(call BuildPackage,meshbox-ui))
