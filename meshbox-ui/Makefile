@@ -24,19 +24,30 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 
 define Package/meshbox-ui
-  SECTION:=net
-  CATEGORY:=Network
-  #SUBMENU:=Routing and Redirection
+  SECTION:=projectmeshnet
+  CATEGORY:=Project Meshnet
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +nacl +libpthread
+  DEPENDS:=+lua +libuci-lua +libubus-lua
   MAINTAINER:=thefinn93 -- #projectmeshnet on irc.efnet.org
 endef
 
 
-define Package/meshbox-ui/install
-	$(INSTALL_DIR) $(1)/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/usr/lib/lua/luci/view/*   $(1)/usr/lib/lua/luci/view/
-
+define Package/meshbox-ui/description
+  The user interface for a meshbox
 endef
 
-$(eval $(call BuildPackage,cjdns))
+define Build/Prepare
+        mkdir -p $(PKG_BUILD_DIR)
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+define Package/meshbox-ui/install
+        $(CP) $(PKG_BUILD_DIR)/* $(1)/
+endef
+
+$(eval $(call BuildPackage,meshbox-ui))
