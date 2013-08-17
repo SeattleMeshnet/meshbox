@@ -28,11 +28,11 @@ define Package/lua-cjdns
   SUBMENU:=Lua
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Experimental self configuring routing protocol.
+  TITLE:=Lua bindings for cjdns
   DEPENDS:=+lua-bencode +dkjson +luasocket +lua-sha2
 endef
 
-define Package/lua-bencode/description
+define Package/lua-cjdns/description
   Lua bindings for cjdns
 endef
 
@@ -42,9 +42,9 @@ endef
 define Build/Compile
 endef
 
-define Package/cjdns/install
+define Package/lua-cjdns/install
   $(INSTALL_DIR) $(1)/usr/lib/lua
   $(INSTALL_DATA) $(PKG_BUILD_DIR)/contrib/lua/cjdns/* $(1)/usr/lib/lua
 endef
 
-$(eval $(call BuildPackage,cjdns))
+$(eval $(call BuildPackage,lua-cjdns))
