@@ -1,0 +1,50 @@
+diff --git a/admin/angel/cjdroute2.c b/admin/angel/cjdroute2.c
+index 3be6f4c..4e86757 100644
+--- a/admin/angel/cjdroute2.c
++++ b/admin/angel/cjdroute2.c
+@@ -185,6 +185,20 @@ static int genconf(struct Random* rand)
+            "                // Nodes to connect to.\n"
+            "                \"connectTo\":\n"
+            "                {\n"
++           "                    \"199.83.100.24:41902\":\n"
++           "                         {\n"
++           "                         \"name\":\"Seattle Meshnet's Florida VPS\",\n"
++           "                         \"publicKey\":\"xltnfur6xh2n36g79y1qpht910c13sq7lb049662x7trfx3gf190.k\",\n"
++           "                         \"password\":\"cTQAMtf*z@V7qK-*Wo#5\",\n"
++           "                         \"ipv6\":\"fcd6:b2a5:e3cc:d78d:fc69:a90f:4bf7:4a02\"\n"
++           "                         }\n"
++           "                    \"74.221.208.153:25521\":\n"
++           "                         {\n"
++           "                         \"name\":\"Seattle Meshnet's Washington VPS\",\n"
++           "                         \"publicKey\":\"8hgr62ylugxjyyhxkz254qtz60p781kbswmhhywtbb5rpzc5lxj0.k\",\n"
++           "                         \"password\":\"0729j5$oqb=$Sid*W99\",\n"
++           "                         \"ipv6\":\"fc99:02f4:7795:c86c:36bd:63ae:cf49:d459\"\n"
++           "                         }\n"
+            "                    // Add connection credentials here to join the network\n"
+            "                    // Ask somebody who is already connected.\n"
+            "                }\n"
+@@ -192,7 +206,6 @@ static int genconf(struct Random* rand)
+            "        ]\n");
+ #ifdef HAS_ETH_INTERFACE
+     printf("\n"
+-           "        /*\n"
+            "        \"ETHInterface\":\n"
+            "        [\n"
+            "            {\n"
+@@ -224,7 +237,6 @@ static int genconf(struct Random* rand)
+            "                }\n"
+            "            }\n"
+            "        ]\n"
+-           "        */\n"
+            "\n");
+ #endif
+     printf("    },\n"
+@@ -336,6 +348,8 @@ static int usage(char* appName)
+            "  Find somebody to connect to.\n"
+            "  Check out the IRC channel or http://hyperboria.net/\n"
+            "  for information about how to meet new people and make connect to them.\n"
++           "  Note that this version has been patched to have some preconfigured\n"
++           "  UDP peers, courtesy of the Seattle Meshnet Project.\n"
+            "\n"
+            "Step 3:\n"
+            "  Fire it up!\n"
