@@ -48,10 +48,8 @@ CMAKE_OPTIONS += -DHAVE_NACL=1
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipkg-install/usr/bin/cjdroute2   $(1)/usr/sbin/cjdroute
-	$(INSTALL_BIN) $(BKG_BUILD_DIR)/cleanconfig $(1)/usr/sbin/cjdns-cleanconfig
-# TODO: Autostart.
-#	$(INSTALL_DIR) $(1)/etc/cjdns
-#	$(INSTALL_DATA) $(PKG_SOURCE_SUBDIR)/scripts/cjdns.sh
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./cjdns.sh $(1)/etc/init.d/cjdns
 endef
 
 $(eval $(call BuildPackage,cjdns))
