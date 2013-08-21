@@ -42,7 +42,7 @@ stop()
         return 1
     else
         kill $PID &> /dev/null
-        while [ -n "$(pgrep -d " " -f "$CJDROUTE")" ]; do
+        while [ -n "$(pgrep -f "$CJDROUTE")" ]; do
             echo "* Waiting for cjdns to shut down..."
             sleep 1;
         done
