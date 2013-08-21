@@ -41,7 +41,7 @@ endef
 
 define Package/lua-bencodeinstall
 	$(INSTALL_DIR) $(1)/usr/lib/lua
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/dkjson.lua $(1)/usr/lib/lua
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/dkjson.lua $(1)/usr/lib/lua/dkson.lua
 endef
 
 $(eval $(call BuildPackage,dkjson))
