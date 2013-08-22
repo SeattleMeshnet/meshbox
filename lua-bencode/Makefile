@@ -43,7 +43,7 @@ endef
 
 define Package/lua-bencodeinstall
 	$(INSTALL_DIR) $(1)/usr/lib/lua
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/bencode.lua $(1)/usr/lib/lua
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/bencode.lua $(1)/usr/lib/lua/
 endef
 
 $(eval $(call BuildPackage,lua-bencode))

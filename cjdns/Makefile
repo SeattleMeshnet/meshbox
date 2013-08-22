@@ -50,6 +50,8 @@ define Package/cjdns/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipkg-install/usr/bin/cjdroute2   $(1)/usr/sbin/cjdroute
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./cjdns.sh $(1)/etc/init.d/cjdns
+	$(INSTALL_DIR) $(1)/usr/share
+	$(INSTALL_BIN) ./cjdroutesetup.lua $(1)/usr/share/cjdroutesetup.lua
 endef
 
 $(eval $(call BuildPackage,cjdns))

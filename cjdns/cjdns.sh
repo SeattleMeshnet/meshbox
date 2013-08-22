@@ -57,6 +57,7 @@ start()
         $CJDROUTE --genconf > /tmp/cjdns.tmp
         $CJDROUTE --cleanconf < /tmp/cjdns.tmp > $CONF
         rm /tmp/cjdns.tmp
+        lua /usr/share/cjdroutesetup.lua
     fi
     if [ -z "$PID" ]; then
         logger -t cjdns "Starting cjdns"

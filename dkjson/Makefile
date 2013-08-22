@@ -23,7 +23,7 @@ define Package/dkjson
   SUBMENU:=Lua
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=DK JSON
+  TITLE:=DKJSON
   URL:=http://dkolf.de/src/dkjson-lua.fsl/home
   DEPENDS:=+lua
 endef
@@ -39,9 +39,9 @@ define Build/Compile
 endef
 
 
-define Package/lua-bencodeinstall
+define Package/dkjson/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/dkjson.lua $(1)/usr/lib/lua/dkson.lua
+	$(INSTALL_DATA) ./dkjson.lua $(1)/usr/lib/lua/
 endef
 
 $(eval $(call BuildPackage,dkjson))
