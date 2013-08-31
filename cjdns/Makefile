@@ -29,7 +29,7 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +nacl +libpthread
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +nacl +libpthread +dkjson
   MAINTAINER:=cjd -- #cjdns on irc.efnet.org
 endef
 
