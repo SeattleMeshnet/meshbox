@@ -55,7 +55,7 @@ function act_status()
 				num   = tonumber(num)
 				other = tonumber(other)
 				cjdstatus[#cjdstatus+1] = {
-								num     = #cjdstatus, 	-- current total #
+								-- num     = #cjdstatus, 	-- current total #
 								nicknm 	= nicknm,		-- name (could be nil)
 								node    = node,			-- ipaddress:port
 								pubkey  = publicKey,	-- publickey.k
