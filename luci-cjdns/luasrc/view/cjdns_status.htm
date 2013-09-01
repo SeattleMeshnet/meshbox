@@ -26,16 +26,17 @@
 					var tr = tb.insertRow(-1);
 						tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
 
-					tr.insertCell(-1).innerHTML = st[i].proto;	// Node
-					tr.insertCell(-1).innerHTML = st[i].extport;	// Cjdns IP
-					tr.insertCell(-1).innerHTML = st[i].intaddr;	// Latency
-					tr.insertCell(-1).innerHTML = st[i].intport;	// Other
+					tr.insertCell(-1).innerHTML = st[i].num;
+					tr.insertCell(-1).innerHTML = st[i].nicknm;
+					tr.insertCell(-1).innerHTML = st[i].node;
+					tr.insertCell(-1).innerHTML = st[i].cjdnsip;
+					tr.insertCell(-1).innerHTML = st[i].latency;
+					tr.insertCell(-1).innerHTML = st[i].other;
 
 					tr.insertCell(-1).innerHTML = String.format(
 						'<input class="cbi-button cbi-button-up" type="button" value="<%:online%>" onclick="cjdns_delete_node(%d)" />',
-						// '<input class="cbi-button cbi-input-remove" type="button" value="<%:status%>" onclick="cjdns_delete_node(%d)" />',
 							st[i].num
-					); 												// Status
+					);
 				}
 
 				if( tb.rows.length == 1 )
@@ -52,11 +53,12 @@
 	);
 //]]></script>
 
-<!-- code...  -->
 <fieldset class="cbi-section">
 	<legend><%:Active Cjdns Nodes%></legend>
 	<table class="cbi-section-table" id="cjdns_status_table">
 		<tr class="cbi-section-table-titles">
+			<th class="cbi-section-table-cell"><%:Num%></th>
+			<th class="cbi-section-table-cell"><%:Name%></th>
 			<th class="cbi-section-table-cell"><%:Node%></th>
 			<th class="cbi-section-table-cell"><%:Cjdns IP%></th>
 			<th class="cbi-section-table-cell"><%:Latency%></th>

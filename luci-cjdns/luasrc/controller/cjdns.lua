@@ -20,9 +20,6 @@ function index()
 	end
 
 	local page
-	
-	-- Q? code... What would happen if above config/cjdns config were missing?
-	-- A! code... the code would need --genconfig() support etc..
 
 	page = entry({"admin", "services", "cjdns"}, cbi("cjdns/cjdns"), _("cjdns"))
 	page.dependent = true
@@ -32,42 +29,47 @@ function index()
 end
 
 function act_status()
-	-- TODO code... Bencode here
-	local ipt = io.popen("cat /home/foo/luci-0.11/luci-cjdns/root/IPTABLES_HOOK")
-	if ipt then
-		local fwd = { }
-		while true do
-			local ln = ipt:read("*l")
-			if not ln then
-				break
 
-			-- TODO code... Make sure we can use CSV delimiters here
-			elseif ln:match("^%d+") then
-				local num, proto, extport, intaddr, intport =
-					ln:match("^(%d+).-([a-z]+).-ipv6:(%d+) to:(%S-):(%d+)")
-				-- TODO code... Make sure we match correctly 
+	dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
+	local conf = io.open("/etc/cjdroute.conf")
+	local obj, pos, err = dkjson.decode(conf:read("*a"), 1, nil)
 
-				if num and proto and extport and intaddr and intport then
-					num     = tonumber(num)
-					extport = tonumber(extport)
-					intport = tonumber(intport)
+	for i = 1,#obj.interfaces.UDPInterface do
+		local cjdstatus = { } 
+		local udpif = obj.interfaces.UDPInterface[i]
+		if (udpif == nil) then
+			break
+		end
+		
+		for w,x in pairs(udpif.connectTo) do
+			num     = i
+			node    = w
+			nicknm  = x.name
+			pubkey  = x.publicKey
+			passwd  = x.password
+			other   = 0
+			latency = "Pinging..."
+			cjdnsip = "Resolving..."
 
-					fwd[#fwd+1] = {
-						num     = num,
-						proto   = proto:upper(),
-						extport = extport,
-						intaddr = intaddr,
-						intport = intport
-					}
-				end
+			if num and nicknm and node and pubkey and passwd and other then
+				num   = tonumber(num)
+				other = tonumber(other)
+				cjdstatus[#cjdstatus+1] = {
+								num     = #cjdstatus, 	-- current total #
+								nicknm 	= nicknm,		-- name (could be nil)
+								node    = node,			-- ipaddress:port
+								pubkey  = publicKey,	-- publickey.k
+								passwd  = passwd,		-- password
+								other   = other,		-- not yet set
+								latency = latency,		-- requires new functions
+								cjdnsip = cjdnsip,		-- requires new functions
+							}
 			end
 		end
-
-		ipt:close()
-
 		luci.http.prepare_content("application/json")
-		luci.http.write_json(fwd)
+		luci.http.write_json(cjdstatus)
 	end
+	conf:close()
 end
 
 function act_delete(num)
@@ -75,10 +77,6 @@ function act_delete(num)
 	local uci = luci.model.uci.cursor()
 
 	if idx and idx > 0 then
-
-
-		-- luci.sys.call("iptables -t filter -D cjdns %d 2>/dev/null" % idx)
-		-- luci.sys.call("iptables -t nat -D cjdns %d 2>/dev/null" % idx)
 
 		local lease_file = uci:get("cjdns", "config", "cjdns_lease_file")
 		if lease_file and nixio.fs.access(lease_file) then
