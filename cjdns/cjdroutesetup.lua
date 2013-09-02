@@ -1,10 +1,11 @@
-dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
+dkjson = require("dkjson") -- http://dkolf.de/src/dkjson-lua.fsl/home
+uci = require("uci").cursor()
 
 local f = io.open("/etc/cjdroute.conf")
 
 local conf, pos, err = dkjson.decode(f:read("*a"), 1, nil)
 
-conf.interfaces.ETHInterface = { { bind = "eth0", beacon = 2, connectTo = {} } }
+conf.interfaces.ETHInterface = { { bind = uci:get("network", "lan", "ifname"), beacon = 2, connectTo = {} } }
 
 local peerfile = io.open("/usr/share/presetpeers")
 if peerfile ~=	nill then
