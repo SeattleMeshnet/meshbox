@@ -21,11 +21,14 @@ function index()
 
 	local page
 
-	page = entry({"admin", "services", "cjdns"}, cbi("cjdns/cjdns"), _("cjdns"))
+	page = entry({"admin", "services", "cjdns"},
+			cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
 	page.dependent = true
-
-	entry({"admin", "services", "cjdns", "status"}, call("act_status")).leaf = true
-	entry({"admin", "services", "cjdns", "delete"}, call("act_delete")).leaf = true
+	
+	-- <%=luci.dispatcher.build_url
+	entry({"admin", "services", "cjdns", "status"},   call("act_status")).leaf = true
+	entry({"admin", "services", "cjdns", "nodemgmt"}, call("act_nodemgmt")).leaf = true
+	entry({"admin", "services", "cjdns", "delete"},   call("act_delete")).leaf = true
 end
 
 function act_status()
@@ -50,6 +53,61 @@ function act_status()
 			other   = 0
 			latency = "Pinging..."
 			cjdnsip = "Resolving..."
+
+
+			x = require("uci").cursor()
+			latency = x:get("network", "lan", "ifname")
+			-- latency = x:get("cjdns", "A")
+
+			if num and nicknm and node and pubkey and passwd and other then
+				num   = tonumber(num)
+				other = tonumber(other)
+				cjdstatus[#cjdstatus+1] = {
+								-- num     = #cjdstatus, 	-- current total #
+								nicknm 	= nicknm,		-- name (could be nil)
+								node    = node,			-- ipaddress:port
+								pubkey  = publicKey,	-- publickey.k
+								passwd  = passwd,		-- password
+								other   = other,		-- not yet set
+								latency = latency,		-- requires new functions
+								cjdnsip = cjdnsip,		-- requires new functions
+							}
+			end
+		end
+		luci.http.prepare_content("application/json")
+		luci.http.write_json(cjdstatus)
+	end
+	conf:close()
+end
+
+
+function act_nodemgmt()
+
+	dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
+	local conf = io.open("/etc/cjdroute.conf")
+	local obj, pos, err = dkjson.decode(conf:read("*a"), 1, nil)
+
+	for i = 1,#obj.interfaces.UDPInterface do
+		local cjdstatus = { } 
+		local udpif = obj.interfaces.UDPInterface[i]
+		if (udpif == nil) then
+			break
+		end
+		
+		for w,x in pairs(udpif.connectTo) do
+			num     = i
+			node    = w
+			nicknm  = x.name
+			pubkey  = x.publicKey
+			passwd  = x.password
+			other   = 0
+			latency = "Pinging..."
+			cjdnsip = "Resolving..."
+
+
+			x = require("uci").cursor()
+			latency = x:get("network", "lan", "ifname")
+			-- latency = x:get("cjdns", "A")
 
 			if num and nicknm and node and pubkey and passwd and other then
 				num   = tonumber(num)
