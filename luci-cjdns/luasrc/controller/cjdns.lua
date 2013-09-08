@@ -20,14 +20,18 @@ function index()
 	end
 
 	local page
-
 	page = entry({"admin", "services", "cjdns"},
-			cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
+                  cbi("cjdns/cjdns"), _("cjdns"))
+                  -- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
 	page.dependent = true
 	
+	nopts = entry({"admin", "services", "cjdns", "Configuration Access"},
+                   cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
+	nopts.leaf = false
+
 	-- <%=luci.dispatcher.build_url
 	entry({"admin", "services", "cjdns", "status"},   call("act_status")).leaf = true
-	entry({"admin", "services", "cjdns", "nodemgmt"}, call("act_nodemgmt")).leaf = true
+	-- entry({"admin", "services", "cjdns", "nodemgmt"}, call("act_nodemgmt")).leaf = true
 	entry({"admin", "services", "cjdns", "delete"},   call("act_delete")).leaf = true
 end
 
