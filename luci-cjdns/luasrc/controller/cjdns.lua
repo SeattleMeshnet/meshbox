@@ -25,129 +25,79 @@ function index()
                   -- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
 	page.dependent = true
 	
+	-----------------------------------------
+	-- Advanced Configuration Access (Tab) --
+	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 	nopts = entry({"admin", "services", "cjdns", "Configuration Access"},
                    cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
 	nopts.leaf = false
+	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-	-- <%=luci.dispatcher.build_url
-	entry({"admin", "services", "cjdns", "status"},   call("act_status")).leaf = true
-	-- entry({"admin", "services", "cjdns", "nodemgmt"}, call("act_nodemgmt")).leaf = true
-	entry({"admin", "services", "cjdns", "delete"},   call("act_delete")).leaf = true
+	-- JavaScript
+	-- See XHR.poll: <%=luci.dispatcher.build_url
+	entry({"admin", "services", "cjdns", "status"}, call("act_status")).leaf = true
+	entry({"admin", "services", "cjdns", "delete"}, call("act_delete")).leaf = true
 end
 
+------------------------
+-- Active cjdns nodes --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 function act_status()
 
-	dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
-	local conf = io.open("/etc/cjdroute.conf")
-	local obj, pos, err = dkjson.decode(conf:read("*a"), 1, nil)
+	local dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
+	local cjdroute = io.open("/etc/cjdroute.conf")
+	local conf, pos, err = dkjson.decode(cjdroute:read("*a"), 1, nil)
 
-	for i = 1,#obj.interfaces.UDPInterface do
-		local cjdstatus = { } 
-		local udpif = obj.interfaces.UDPInterface[i]
+	for i = 1,#conf.interfaces.UDPInterface do
+
+		local cjdstatus = { } -- print via luci.http.write_json
+		local udpif = conf.interfaces.UDPInterface[i]
+
 		if (udpif == nil) then
 			break
 		end
 		
 		for w,x in pairs(udpif.connectTo) do
-			num     = i
-			node    = w
-			nicknm  = x.name
-			pubkey  = x.publicKey
-			passwd  = x.password
-			other   = 0
-			latency = "Pinging..."
-			cjdnsip = "Resolving..."
+			local num     = i -- used for act_delete(num)
+			local node    = w -- cfg035387 (anonymous uci field (.name))
+			local name    = x.name
+			local pubkey  = x.publicKey
+			local passwd  = x.password
+			local port    = x.port
+			local address = x.address
+			local latency = "Pinging..." 	-- TODO
+			local cjdnsip = "Resolving..." 	-- TODO
+			-- local other   = 0 			-- TODO
 
+			if address then -- and num and name and node and pubkey and passwd and other and port then
+				-- Fill in the tables fields and allow XHR.poll to refresh on 5s intervals.
 
-			x = require("uci").cursor()
-			latency = x:get("network", "lan", "ifname")
-			-- latency = x:get("cjdns", "A")
+				-- BUG Need to use udpif.connectTo{} (UCI Is temporary and vaninty fix)
+				-- BUG REPLACE: cfg035387 ("node" column) with host:port
+						-- luci.sys.call("sed -i -e '%dd' %q" %{ i, conf })
 
-			if num and nicknm and node and pubkey and passwd and other then
-				num   = tonumber(num)
-				other = tonumber(other)
+				x 		= require("uci").cursor()
+				node	= address .. ":" .. port
+
 				cjdstatus[#cjdstatus+1] = {
-								-- num     = #cjdstatus, 	-- current total #
-								nicknm 	= nicknm,		-- name (could be nil)
-								node    = node,			-- ipaddress:port
-								pubkey  = publicKey,	-- publickey.k
-								passwd  = passwd,		-- password
-								other   = other,		-- not yet set
-								latency = latency,		-- requires new functions
-								cjdnsip = cjdnsip,		-- requires new functions
-							}
+					name 	= name, 	-- name (could be nil)
+					node    = node,		-- ipaddress:port
+					cjdnsip = cjdnsip, 	-- requires new functions
+					latency = latency, 	-- requires new functions
+				}
 			end
-		end
+		end -- end for pairs
 		luci.http.prepare_content("application/json")
 		luci.http.write_json(cjdstatus)
-	end
-	conf:close()
+	end -- for conf.interfaces.UDPInterface{}
+	cjdroute:close()
 end
 
-
-function act_nodemgmt()
-
-	dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
-	local conf = io.open("/etc/cjdroute.conf")
-	local obj, pos, err = dkjson.decode(conf:read("*a"), 1, nil)
-
-	for i = 1,#obj.interfaces.UDPInterface do
-		local cjdstatus = { } 
-		local udpif = obj.interfaces.UDPInterface[i]
-		if (udpif == nil) then
-			break
-		end
-		
-		for w,x in pairs(udpif.connectTo) do
-			num     = i
-			node    = w
-			nicknm  = x.name
-			pubkey  = x.publicKey
-			passwd  = x.password
-			other   = 0
-			latency = "Pinging..."
-			cjdnsip = "Resolving..."
-
-
-			x = require("uci").cursor()
-			latency = x:get("network", "lan", "ifname")
-			-- latency = x:get("cjdns", "A")
-
-			if num and nicknm and node and pubkey and passwd and other then
-				num   = tonumber(num)
-				other = tonumber(other)
-				cjdstatus[#cjdstatus+1] = {
-								-- num     = #cjdstatus, 	-- current total #
-								nicknm 	= nicknm,		-- name (could be nil)
-								node    = node,			-- ipaddress:port
-								pubkey  = publicKey,	-- publickey.k
-								passwd  = passwd,		-- password
-								other   = other,		-- not yet set
-								latency = latency,		-- requires new functions
-								cjdnsip = cjdnsip,		-- requires new functions
-							}
-			end
-		end
-		luci.http.prepare_content("application/json")
-		luci.http.write_json(cjdstatus)
-	end
-	conf:close()
-end
-
+-----------------------------------------------------------
+-- Remove node from "active" list of nodes (Keep in UCI) --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 function act_delete(num)
-	local idx = tonumber(num)
-	local uci = luci.model.uci.cursor()
-
-	if idx and idx > 0 then
-
-		local lease_file = uci:get("cjdns", "config", "cjdns_lease_file")
-		if lease_file and nixio.fs.access(lease_file) then
-			luci.sys.call("sed -i -e '%dd' %q" %{ idx, lease_file })
-		end
-
-		luci.http.status(200, "OK")
-		return
-	end
-
-	luci.http.status(400, "Bad request")
+	-- NOT DONE
+	luci.http.status(200, "OK")
+	return
 end
