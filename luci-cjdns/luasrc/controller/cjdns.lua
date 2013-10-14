@@ -48,9 +48,22 @@ function act_status()
 	local cjdroute = io.open("/etc/cjdroute.conf")
 	local conf, pos, err = dkjson.decode(cjdroute:read("*a"), 1, nil)
 
+	--[[
+	888     888 8888888b.  8888888b.       8888888          888                     .d888
+	888     888 888  "Y88b 888   Y88b        888            888                    d88P"
+	888     888 888    888 888    888        888            888                    888
+	888     888 888    888 888   d88P        888   88888b.  888888 .d88b.  888d888 888888 8888b.   .d8888b .d88b.
+	888     888 888    888 8888888P"         888   888 "88b 888   d8P  Y8b 888P"   888       "88b d88P"   d8P  Y8b
+	888     888 888    888 888               888   888  888 888   88888888 888     888   .d888888 888     88888888
+	Y88b. .d88P 888  .d88P 888               888   888  888 Y88b. Y8b.     888     888   888  888 Y88b.   Y8b.
+	 "Y88888P"  8888888P"  888             8888888 888  888  "Y888 "Y8888  888     888   "Y888888  "Y8888P "Y8888
+	]]--
+
+
+	-- Hand json off to cjdns_status.htm javascript row fill
 	for i = 1,#conf.interfaces.UDPInterface do
 
-		local cjdstatus = { } -- print via luci.http.write_json
+		cjdstatus = { } -- print via luci.http.write_json
 		local udpif = conf.interfaces.UDPInterface[i]
 
 		if (udpif == nil) then
@@ -67,29 +80,106 @@ function act_status()
 			local address = x.address
 			local latency = "Pinging..." 	-- TODO
 			local cjdnsip = "Resolving..." 	-- TODO
-			-- local other   = 0 			-- TODO
+			local other   = 1			-- TODO
 
 			if address then -- and num and name and node and pubkey and passwd and other and port then
 				-- Fill in the tables fields and allow XHR.poll to refresh on 5s intervals.
-
-				-- BUG Need to use udpif.connectTo{} (UCI Is temporary and vaninty fix)
-				-- BUG REPLACE: cfg035387 ("node" column) with host:port
-						-- luci.sys.call("sed -i -e '%dd' %q" %{ i, conf })
-
-				x 		= require("uci").cursor()
-				node	= address .. ":" .. port
-
 				cjdstatus[#cjdstatus+1] = {
 					name 	= name, 	-- name (could be nil)
 					node    = node,		-- ipaddress:port
 					cjdnsip = cjdnsip, 	-- requires new functions
 					latency = latency, 	-- requires new functions
+					other   = other,
 				}
 			end
 		end -- end for pairs
-		luci.http.prepare_content("application/json")
-		luci.http.write_json(cjdstatus)
 	end -- for conf.interfaces.UDPInterface{}
+
+	--[[
+	8888888888 88888888888 888    888      8888888          888                     .d888
+	888            888     888    888        888            888                    d88P"
+	888            888     888    888        888            888                    888
+	8888888        888     8888888888        888   88888b.  888888 .d88b.  888d888 888888 8888b.   .d8888b .d88b.
+	888            888     888    888        888   888 "88b 888   d8P  Y8b 888P"   888       "88b d88P"   d8P  Y8b
+	888            888     888    888        888   888  888 888   88888888 888     888   .d888888 888     88888888
+	888            888     888    888        888   888  888 Y88b. Y8b.     888     888   888  888 Y88b.   Y8b.
+	8888888888     888     888    888      8888888 888  888  "Y888 "Y8888  888     888   "Y888888  "Y8888P "Y8888
+	]]--
+
+	for i = 1,#conf.interfaces.ETHInterface do
+		-- local cjdstatus = { } -- print via luci.http.write_json
+		local ethif = conf.interfaces.ETHInterface[i]
+		if (ethif == nil) then
+			break
+		end
+
+		for w,x in pairs(ethif.connectTo) do
+			local num     = i
+			local node    = w
+			local name    = x.name
+			local pubkey  = x.publicKey
+			local passwd  = x.password
+			local address = w -- mac address
+			local latency = "Pinging..."
+			local cjdnsip = "Resolving..."
+			local other   = 0
+
+			if address then
+				cjdstatus[#cjdstatus+1] = {
+					name 	= name,
+					node    = address,
+					cjdnsip = cjdnsip,
+					latency = latency,
+					other   = other,
+				}
+			end
+		end -- end for pairs
+
+	end -- for conf.interfaces.ETHInterface{}
+	--[[
+	8888888 8888888b.       88888888888                                  888
+	  888   888   Y88b          888                                      888
+	  888   888    888          888                                      888
+	  888   888   d88P          888  888  888 88888b.  88888b.   .d88b.  888
+	  888   8888888P"           888  888  888 888 "88b 888 "88b d8P  Y8b 888
+	  888   888                 888  888  888 888  888 888  888 88888888 888
+	  888   888                 888  Y88b 888 888  888 888  888 Y8b.     888
+	8888888 888                 888   "Y88888 888  888 888  888  "Y8888  888
+	]]--
+	-- for i = 1,#conf.router.ipTunnel do
+	-- 	-- local cjdstatus = { } -- print via luci.http.write_json
+	-- iptun =  conf.router.ipTunnel
+	-- iptun2 = conf.router.ipTunnel.outgoingConnections 	-- 3
+	-- iptun3 = conf.router.ipTunnel.allowedConnections 	-- 2
+					-- name 	= "Break_name",
+					-- node    = "Break_address" .. #iptun, 	-- 0
+					-- cjdnsip = "Break_cjdnsip" .. #iptun2,  	-- 3
+					-- latency = "Break_latency" .. #iptun3, 	-- 2
+					-- other   = "Break_other",
+
+
+	-- for i = 1,#conf.router.ipTunnel do
+		-- local cjdstatus = { } -- print via luci.http.write_json
+		-- local tunnelout = conf.router.ipTunnel.outgoingConnections[1]
+		-- if (tunnelout == nil) then
+		-- #conf.router.ipTunnel.outgoingConnections,
+		-- if tunnelout then
+		-- 		cjdstatus[#cjdstatus+1] = {
+		-- 			name 	= tunnelout,
+		-- 			node    = tunnelout.ip4address,
+		-- 			cjdnsip = tunnelout.publicKey,
+		-- 			other   = 3,
+		-- 			latency = "Pinging...",
+		-- 			cjdnsip = "Resolving...",
+		-- 		}
+		-- 	-- break
+		-- end
+
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(cjdstatus)
+
+
+	-- close conf
 	cjdroute:close()
 end
 

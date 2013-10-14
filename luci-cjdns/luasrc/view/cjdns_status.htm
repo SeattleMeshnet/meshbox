@@ -6,7 +6,7 @@
 			{
 				var tb = document.getElementById('cjdns_status_table');
 				if (tb && (idx < tb.rows.length))
-					tb.rows[0].parentNode.removeChild(tb.rows[idx]);
+				tb.rows[0].parentNode.removeChild(tb.rows[idx]);
 			}
 		);
 	}
@@ -30,13 +30,22 @@
 				for( var i = 0; i < st.length; i++ )
 				{
 					var tr = tb.insertRow(-1);
-						tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
-					// tr.insertCell(-1).innerHTML = st[i].num;
+					// tr.className = 'cbi-section-table-row cbi-rowstyle-' + st[i].other;
+					tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
 					tr.insertCell(-1).innerHTML = st[i].name;
-					tr.insertCell(-1).innerHTML = st[i].node;
+
+					var t = " (Other)";
+					if (st[i].other == 0)
+						var t = " (Ethernet)";
+					if (st[i].other == 1)
+						var t = " (UDP)";
+					if (st[i].other == 2)
+						var t = " (Allow Tunnel)";
+
+					tr.insertCell(-1).innerHTML = st[i].node + t;
 					tr.insertCell(-1).innerHTML = st[i].cjdnsip;
 					tr.insertCell(-1).innerHTML = st[i].latency;
-					// tr.insertCell(-1).innerHTML = st[i].other;
+
 					tr.insertCell(-1).innerHTML = String.format(
 						'<input class="cbi-button cbi-button-up" type="button" value="<%:online%>" onclick="cjdns_delete_node(%d)" />',
 							st[i].num
@@ -67,7 +76,7 @@
 			<th class="cbi-section-table-cell"><%:Node%></th>
 			<th class="cbi-section-table-cell"><%:Cjdns IP%></th>
 			<th class="cbi-section-table-cell"><%:Latency%></th>
-			<!-- <th class="cbi-section-table-cell"><%:Other%></th> -->
+			<!-- <th class="cbi-section-table-cell"><%:Color%></th> -->
 			<th class="cbi-section-table-cell"><%:Status%></th>
 		</tr>
 		<tr class="cbi-section-table-row">
