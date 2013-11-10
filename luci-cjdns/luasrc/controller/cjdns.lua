@@ -127,7 +127,7 @@ function act_status()
 			if address then
 				cjdstatus[#cjdstatus+1] = {
 					name 	= name,
-					node    = address,
+					node    = w,
 					cjdnsip = cjdnsip,
 					latency = latency,
 					other   = other,

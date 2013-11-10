@@ -14,40 +14,42 @@ You may obtain a copy of the License at
 
 --  Project Meshnet  --
 m = Map("cjdns", luci.util.pcdata(translate("Project Meshnet")),
-	translate("please return the default message"))
+	translate("cjd's ideology that networks should be easy to set up, \
+				protocols should scale up smoothly, \
+					and security should be ubiquitous."))
 
---------------------------------------
--- Active cjdns Nodes (UDPInterface) -
---------------------------------------
+------------------------
+-- Active cjdns nodes --
+------------------------
 m:section(SimpleSection).template  = "cjdns_status"
 
-
+---------------------------------------
+-- Enabled cjdns nodes (UDPInterface) -
+---------------------------------------
 nodemgmt = m:section(TypedSection, "node", translate("Enabled cjdns nodes (UDPInterface)"),
 		     translate("First find the cjdns ip of your upstream node. \
 				(Ask him/her if you can't find out) This is the \
 				node you got connection credentials from."))
--- Add to CJDNS --
-btn = nodemgmt:option(Button, "_btn", translate("Add to CJDNS"))
 
-
---------------------------------------
--- Active cjdns Nodes (ETHInterface) -
---------------------------------------
-
+---------------------------------------
+-- Enabled cjdns nodes (ETHInterface) -
+---------------------------------------
 eth_nodemgmt = m:section(TypedSection, "enode", translate("Enabled cjdns nodes (ETHInterface)"),
 		     translate("Auto-connect to other cjdns nodes on the same network."))
--- Add to CJDNS --
-eth_ = eth_nodemgmt:option(Button, "_btn", translate("Add to CJDNS"))
 
---------------------------------------
--- IP TUNNEL MGMT
---------------------------------------
-iptunnel_mgmt = m:section(TypedSection, "ipt_node", translate("System for tunneling IPv4 and ICANN IPv6 through cjdns."),
-		     translate("This is using the cjdns switch layer as a VPN carrier."))
+------------------------------------------------
+-- Enabled cjdns iptunnels (allowed/outgoing) --
+------------------------------------------------
+iptunnel_mgmt = m:section(TypedSection, "ipt_node", translate("Enabled cjdns iptunnels (allowed/outgoing)"),
+		     translate("This system for tunneling IPv4 and ICANN IPv6 through cjdns \
+				 is using the cjdns switch layer as a VPN carrier."))
 
--- Add to CJDNS --ss
-iptunnel_btn = iptunnel_mgmt:option(Button, "_btn", translate("Add to CJDNS"))
 
+----------------------------------
+-- Node Authorization Managment --
+----------------------------------
+passwd_mgmt = m:section(TypedSection, "node_auth_mgmt", translate("Node Authorization Managment"),
+		     translate("Anyone connecting and offering these passwords on connection will be allowed."))
 --[[
 	8888888888                         888    d8b
 	888                                888    Y8P
@@ -59,37 +61,7 @@ iptunnel_btn = iptunnel_mgmt:option(Button, "_btn", translate("Add to CJDNS"))
 	888      "Y88888 888  888  "Y8888P  "Y888 888  "Y88P"  888  888  88888P'
 ]]--
 
--- TODO: Function for cjdns service stop/start/restart/reload
--- function e.cfgvalue(self, section)
--- 	return luci.sys.init.enabled("cjdns") and self.enabled or self.disabled
--- end
-
--- function e.write(self, section, value)
--- 	if value == "1" then
--- 		luci.sys.call("/etc/init.d/cjdns enable >/dev/null")
--- 		luci.sys.call("/etc/init.d/cjdns start >/dev/null")
--- 	else
--- 		luci.sthunys.call("/etc/init.d/cjdns stop >/dev/null")
--- 		luci.sys.call("/etc/init.d/cjdns disable >/dev/null")
--- 	end
--- end
-
-
-
-
-----------------------------
--- "Add to CJDNS" buttons --
-----------------------------
-
-
-function btn.write(self)
-
-	-- TODO: Define this button
-	-- What it does now: 	* writes out all nodes in uci.cjdns.node to /etc/cjdroute.conf
-	-- What it should do: 	* inserts a specific row into cjdroutes "active" list of nodes
-	-- Location: 		* Currently sits next to each row.. (see: what it should do)
-	-- Location: 		* It could be unique button, represented like a global "add"
-
+m.on_after_commit = function(self)
 
 	local dkjson = require("dkjson") -- http://dkolf.de/src/dkjson-lua.fsl/home
 	local uci    = require("uci")
@@ -109,51 +81,12 @@ function btn.write(self)
 		return ifce
 	end
 
-	-----------------------------
-	-- interfaces.ETHInterface --
-	-----------------------------
-	luci.model.uci.cursor():foreach("cjdns", "cjdns",
-		function(cfg)
-			-- TODO  : cfg.logTo_
-			logTo 	 = cfg.logto_enable 	-- conf.logging NOT DONE
-			enabled  = cfg.enabled 		-- cjdns/nat66 (0, 1)
-			bind 	 = cfg.beacon_interface -- eg; eth5
-			beacon 	 = cfg.beacon_mode 	-- 0, 1, 2
-		end)
-
-	-- Stage the ETHInterface array
-	conf.interfaces.ETHInterface = 
-	{ 
-		{ 
-			beacon = beacon,
-			bind   = bind,
-			connectTo = {}
-		} 
-	}
-	-----------------------------
-	-- interfaces.UDPInterface --
-	-----------------------------
-	--[[
-	-------------------------
-	-- Add peers to config --
-	-------------------------
-	If there are 0 nodes:
-		* create a new valid (but empty) section, or:
-		  fill in the presetpeers eg:
-			if action and (peerfile ~= nil); then
-				local peerfile = io.open("/usr/share/presetpeers")
-			    local peers, peerspos, peerserr = dkjson.decode(peerfile:read("*a"), 1, nill)
-			    peers = conf.interfaces.UDPInterface[1].connectTo
-			end
-	]]--
-
-	-- Right now, Just output getConfType() into connectTo{}
+	-- UDPInterface section
 	local peers = getConfType("cjdns","node")
-
 	-- BUG: FIX bind = cfg.bindip .. cfg.bindport
+	-- local cfg_bugbind = getConfType("cjdns","udpbind")
 	local cfg_bugbind = "0.0.0.0:41343"
 
-	-- Stage the UDPInterface array, presetpeers
 	conf.interfaces.UDPInterface =
 	{
 		{
@@ -162,32 +95,56 @@ function btn.write(self)
 		}
 	}
 
-	-- Stage for /etc/cjdroute.conf
+	-- ETHInterface section
+	local epeers = getConfType("cjdns","enode")
+	luci.model.uci.cursor():foreach("cjdns", "cjdns",
+		function(cfg)
+			logTo 	 = cfg.logto_enable 	-- conf.logging NOT DONE
+			enabled  = cfg.enabled 			-- cjdns/nat66 (0, 1)
+			bind 	 = cfg.beacon_interface -- eg; eth5
+			beacon 	 = cfg.beacon_mode 		-- 0, 1, 2
+		end)
+
+	conf.interfaces.ETHInterface = 
+	{ 
+		{ 
+			beacon    = beacon,
+			bind      = bind,
+			connectTo = epeers,
+		} 
+	}
+
+	-- Router section
+	local ipeers = getConfType("cjdns","ipt_node")
+	conf.router = {
+		interface = { type = "TUNInterface" },
+		ipTunnel  = { {
+						outgoingConnections = ipeers,
+						allowedConnections  = ipeers
+					} }
+	}
+	--[[ ---------------- cjdroute.conf ---------------- ]]--
+
+
 	for i = 1,#conf.interfaces.UDPInterface do
 
 		local cjdstatus = {}
 		local hpux = {}
 		local udpif = conf.interfaces.UDPInterface[i]
-
 		if (udpif == nil) then
 			break
 		end
 
 		for w,x in pairs(udpif.connectTo) do
-			num     	= i 		--
-			node    	= w 		-- cfg 035387
+			num     	= i 			--
+			node    	= w 			-- cfg 035387
 			password 	= x.password 	-- das brute
-			name 		= x.name 	-- das name
+			name 		= x.name 		-- das name
 			publicKey 	= x.publicKey 	-- das key
 			address 	= x.address 	-- das ip
 			thing 		= w
 
 			if node then
-				-- Create subarrays for connectTo.
-
-
-				-- BUG Need to use udpif.connectTo{} (UCI Is temporary and vaninty fix)
-				-- BUG REPLACE: cfg035387 ("node" column) with host:port
 				x 		= require("uci").cursor()
 				address = x:get("cjdns",node,"address")
 				port 	= x:get("cjdns",node,"port")
@@ -210,17 +167,115 @@ function btn.write(self)
 				end
 			end
 		end
-			conf.interfaces.UDPInterface[i].connectTo = cjdstatus[#cjdstatus]
+		conf.interfaces.UDPInterface[i].connectTo = cjdstatus[#cjdstatus]
 	end
 
+	for i = 1,#conf.interfaces.ETHInterface do
+
+		local cjdstatus_enode = {}
+		local hpux = {}
+		local ethif = conf.interfaces.ETHInterface[i]
+		if (ethif == nil) then
+			break
+		end
+
+		for w,x in pairs(ethif.connectTo) do
+			num     	= i 			--
+			node    	= w 			-- cfg 035387
+			password 	= x.password 	-- das brute
+			name 		= x.name 		-- das name
+			publicKey 	= x.publicKey 	-- das key
+			address 	= x.address 	-- das ip
+			thing 		= w
+
+			if node then
+				x 		= require("uci").cursor()
+				address = x:get("cjdns",node,"enode")
+
+				if address then
+					hp = address
+
+					cjdstatus_enode[#cjdstatus_enode+1] = {} -- connectTo{node:port[#]{}}
+
+					-- Stage new node:port[#]{var:val}
+					hpux[hp] = { -- "1.2.3.4:1234:{}"
+						name  	  = name,		-- name (could be nil)
+						address   = address,	--
+						port   	  = port,		--
+						password  = password,	-- password
+						publicKey = publicKey,	-- publickey.k
+					}
+
+					cjdstatus_enode[#cjdstatus_enode] = hpux
+				end
+			end
+		end
+			conf.interfaces.ETHInterface[i].connectTo = cjdstatus_enode[#cjdstatus_enode]
+	end
+
+	for i = 1,#conf.router.ipTunnel do
+
+		local cjdstatus_ipt    = {}
+		local cjdstatus_ipt_ac = {}
+		local cjdstatus_ipt_oc = {}
+		local hpux  = {}
+		local rtipt = conf.router.ipTunnel[i]
+		if (rtipt == nil) then
+			break
+		end
+
+		for w,x in pairs(rtipt.outgoingConnections) do
+			num     	= i 			--
+			publicKey 	= x.publicKey 	-- das key
+			if publicKey then
+				cjdstatus_ipt_oc[#cjdstatus_ipt_oc+1] = publicKey
+			end
+		end
+		conf.router.ipTunnel[i].outgoingConnections = cjdstatus_ipt_oc
+
+		for w,x in pairs(rtipt.allowedConnections) do
+			num     	= i 			--
+			node    	= w 			--
+			name 		= x.name 		-- das name
+			publicKey 	= x.publicKey 	-- das key
+			ip4Address 	= x.address 	-- das ip
+			ip6Address 	= x.address_6 	-- das ip
+			flow 		= x.iptflow
+
+			if publicKey and (ip4Address or ip6Address) then
+				cjdstatus_ipt[#cjdstatus_ipt+1] = {
+					publicKey  = publicKey,
+					name 	   = name,
+					ip4Address = ip4Address,
+					ip6Address = ip6Address,
+				}
+			end
+		end
+		conf.router.ipTunnel[i].allowedConnections = cjdstatus_ipt
+	end
 	cjdroute:close()
 
 	local save = io.open("/etc/cjdroute.conf", "w")
 	save:write( dkjson.encode (conf, { indent = true }))
 	save:close()
 
-end -- btn.write
+end
+--[[  Throwaway code, see: lua-cjdns
 
+	function e.cfgvalue(self, section)
+		return luci.sys.init.enabled("cjdns") and self.enabled or self.disabled
+	end
+
+	function e.write(self, section, value)
+		if value == "1" then
+			luci.sys.call("/etc/init.d/cjdns enable >/dev/null")
+			luci.sys.call("/etc/init.d/cjdns start >/dev/null")
+		else
+			luci.sthunys.call("/etc/init.d/cjdns stop >/dev/null")
+			luci.sys.call("/etc/init.d/cjdns disable >/dev/null")
+		end
+	end
+]]
 
 
 --[[
@@ -272,6 +327,7 @@ ip.placeholder = ""
 eth_nodemgmt.anonymous = true
 eth_nodemgmt.addremove = true
 eth_nodemgmt.template  = "cbi/tblsection"
+-- if luci.theme=openwrt ? (enable) : l.theme=boot ? (disable)
 
 -- Nick Name   --
 Enn = eth_nodemgmt:option(Value, "name", translate("Name"))
@@ -290,8 +346,6 @@ Eip = eth_nodemgmt:option(Value, "publicKey", translate("Public Key"))
 Eip.datatype    = "string"
 Eip.placeholder = ""
 
-
-
 --[[
 	8888888 8888888b.       88888888888                                  888
 	  888   888   Y88b          888                                      888
@@ -301,41 +355,31 @@ Eip.placeholder = ""
 	  888   888                 888  888  888 888  888 888  888 88888888 888
 	  888   888                 888  Y88b 888 888  888 888  888 Y8b.     888
 	8888888 888                 888   "Y88888 888  888 888  888  "Y8888  888
-
-	// System for tunneling IPv4 and ICANN IPv6 through cjdns.
-	// This is using the cjdns switch layer as a VPN carrier.
-]]--
-
---[[
-"router" : {    "ipTunnel":    {
-    "allowedConnections": [
-	//     "publicKey": "f64hfl7c4uxt6krmhPutTheRealAddressOfANodeHere7kfm5m0.k",
-	//     "ip4Address": "192.168.1.24",
-	//     "ip6Address": "2001:123:ab::10"
-	"outgoingConnections": [
-	// "6743gf5tw80ExampleExampleExampleExamplevlyb23zfnuzv0.k",
 ]]--
 
 iptunnel_mgmt.anonymous = true
 iptunnel_mgmt.addremove = true
 iptunnel_mgmt.template  = "cbi/tblsection"
 
---  --
 PFia = iptunnel_mgmt:option(Value, "name", translate("Name"))
-PFia.datatype    = "ip4addr" -- return ip4addr(val) or ip6addr(val)
+PFia.datatype    = "string" -- return ip4addr(val) or ip6addr(val)
 PFia.placeholder = ""
 
 PFdr = iptunnel_mgmt:option(Value, "address", translate("IPv4 Address"))
 PFdr.datatype    = "ip4addr" -- return ip4addr(val) or ip6addr(val)
 PFdr.placeholder = ""
 
-PSda = iptunnel_mgmt:option(Value, "6address", translate("IPv6 Address"))
+PSda = iptunnel_mgmt:option(Value, "address_6", translate("IPv6 Address"))
 PSda.datatype    = "ip6addr" -- return ip4addr(val) or ip6addr(val)
 PSda.placeholder = ""
 
 PKid = iptunnel_mgmt:option(Value, "publicKey", translate("Public Key"))
 PKid.datatype    = "string" -- return ip4addr(val) or ip6addr(val)
 PKid.placeholder = ""
+
+PKbc = iptunnel_mgmt:option(ListValue, "iptflow", translate("Select either Allowed or Outgoing"))
+PKbc:value("allowed", translate("Allowed"))
+PKbc:value("outgoing", translate("Outgoing"))
 
 
 --[[
@@ -349,15 +393,12 @@ PKid.placeholder = ""
 d88P     888  "Y88888  "Y888 888  888  "Y88P"  888     888 88888888 "Y888888  "Y888 888  "Y88P"  888  888
 ]]--
 
-passwd_mgmt = m:section(TypedSection, "anode", translate("Node Authorization Managment"),
-		     translate("Anyone connecting and offering these passwords on connection will be allowed."))
+
 passwd_mgmt.anonymous = true
 passwd_mgmt.addremove = true
+passwd_mgmt.template = "cbi/tblsection"
 
-
--- Add to CJDNS --
-btn = passwd_mgmt:option(Button, "_btn", translate("Add to CJDNS"))
--- Name --
+-- Affiliated Password --
 passwd_mgmt:option(Value, "name", translate("Affiliation Notes"))
 -- Address --
 ia = passwd_mgmt:option(Value, "address", translate("Address"))
@@ -378,11 +419,6 @@ ia.placeholder = ""
 	                                                "Y88P"
 ]]--
 
---[[
-	TODO: Thinking that manual connect for ETHInterface is too big for this page
-	TODO: Node(s) to connect to manually.
-	ETHInterface -> connectTo -> "01:02:03:04:05:06":{"password":"a","publicKey":"b"}
-]]--
 s = m:section(NamedSection, "config", "Settings", translate("Settings"))
 s.addremove = false
 
@@ -455,28 +491,24 @@ Ppw = s:taboption("advanced", Value, "admin_passwd", translate("Administrator pa
 Ppw.datatype = "string"
 
 --[[ Administrator Tab ]]--
--- Node Passwords
--- TODO * Allow multiple passwords here.
--- TODO * Generate multiple password here from --genconf
--- "authorizedPasswords" : [ {"password" : "dnpr72wqkhvk9h1p7762cuzd83lyf12"  }
 
+-- TODO * AutoGen all the passwords, better layout
 
 --[[ Generate Config ]]--
--- Button to auto-generate EzCrypt URL with peering info found in
 -- /etc/cjdroute.conf would be pretty killer.. we
 -- should keep log of peering details distributed
+-- for the next step:
 
 --[[ EZ-Paste Box ]]--
+-- Button to auto-generate EzCrypt URL with peering info found in
 -- Node information should be relayed by community
 -- approved method: EZCrypt https://ezcrypt.it
 
 ez = s:taboption("ezpaste", Value, "ezpaste",
 		     translate("Node information should be relayed by \
-			   an Encrypted Pastebin: EZCrypt https://ezcrypt.it/"))
+							an Encrypted Pastebin: EZCrypt https://ezcrypt.it/"))
 ez.template	= "cbi/tvalue"
 ez.rows 	= 5
 ez.wrap 	= "off"
-
-
 
 return m

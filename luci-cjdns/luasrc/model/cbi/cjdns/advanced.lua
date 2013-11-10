@@ -20,7 +20,7 @@ local f = SimpleForm("advanced",
 local o = f:field(Value, "_advanced")
 
 o.template = "cbi/tvalue"
-o.rows = 17
+o.rows = 25
 
 function o.cfgvalue(self, section)
 	return fs.readfile("/etc/cjdroute.conf")
