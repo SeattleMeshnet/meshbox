@@ -35,12 +35,17 @@
 					tr.insertCell(-1).innerHTML = st[i].name;
 
 					var t = " (Other)";
+
 					if (st[i].other == 0)
-						var t = " (Ethernet)";
+						var t = " (UDP Interface)";
 					if (st[i].other == 1)
-						var t = " (UDP)";
+						var t = " (ETH Interface)";
 					if (st[i].other == 2)
 						var t = " (Allow Tunnel)";
+					if (st[i].other == 3)
+						var t = " (Outgoing Tunnel)";
+					if (st[i].other == 4)
+						var t = " (WLAN Interface)";
 
 					tr.insertCell(-1).innerHTML = st[i].node + t;
 					tr.insertCell(-1).innerHTML = st[i].cjdnsip;
