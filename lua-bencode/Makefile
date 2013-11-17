@@ -41,9 +41,9 @@ define Build/Compile
 endef
 
 
-define Package/lua-bencodeinstall
+define Package/lua-bencode/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/src/bencode.lua $(1)/usr/lib/lua/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/bencode.lua $(1)/usr/lib/lua
 endef
 
 $(eval $(call BuildPackage,lua-bencode))
