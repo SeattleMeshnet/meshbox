@@ -5,10 +5,21 @@ local f = io.open("/etc/cjdroute.conf")
 
 local conf, pos, err = dkjson.decode(f:read("*a"), 1, nil)
 
-conf.interfaces.ETHInterface = { { bind = uci:get("network", "lan", "ifname"), beacon = 2, connectTo = {} } }
+mbifc = uci:get("cjdns", "config", "beacon_interface")
+lnifc = uci:get("network", "lan", "ifname")
+
+if     (mbifc ~= nil) then      -- prefer meshbox interface
+        bcifc = mbifc
+elseif (lnifc ~= nil) then      -- if not set, use "lan" interface
+        bcifc = lnifc
+else                            -- failsafe is lo
+        bcifc = "lo"
+end
+
+conf.interfaces.ETHInterface = { { bind = bcifc, beacon = 2, connectTo = {} } }
 
 local peerfile = io.open("/usr/share/presetpeers")
-if peerfile ~=	nill then
+if (peerfile ~= nil) then
     local peers, peerspos, peerserr = dkjson.decode(peerfile:read("*a"), 1, nill)
     conf.interfaces.UDPInterface[1].connectTo = peers
 end
