@@ -1,4 +1,4 @@
-** Meshbox Theme
+## Meshbox Theme
 
 Installation instructions:
 
