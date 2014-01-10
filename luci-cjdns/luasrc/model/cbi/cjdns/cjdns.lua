@@ -3,6 +3,7 @@ LuCI - Lua Configuration Interface
 
 Copyright 2008 Steven Barth <steven@midlink.org>
 Copyright 2008-2011 Jo-Philipp Wich <xm@subsignal.org>
+Copyright 2013-2014 William Fleurant <igel@hyperboria.ca>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -67,8 +68,8 @@ m.on_after_commit = function(self)
 	local uci    = require("uci")
 
 	local cjdroute = io.open("/etc/cjdroute.conf")
-	local conf, pos, err = dkjson.decode(cjdroute:read("*a"), 1, nil) -- cbid.cjdns.cfg045e2e._btn
-
+	local conf, pos, err = dkjson.decode(cjdroute:read("*a"), 1, nil)
+	
 	-- http://luci.subsignal.org/api/luci/modules/luci.model.uci.html
 	-- iterate with x:foreach to list all the elements of a given type
 	function getConfType(conf,type) -- Sophana
@@ -81,40 +82,91 @@ m.on_after_commit = function(self)
 		return ifce
 	end
 
-	-- UDPInterface section
-	local peers = getConfType("cjdns","node")
-	-- BUG: FIX bind = cfg.bindip .. cfg.bindport
-	-- local cfg_bugbind = getConfType("cjdns","udpbind")
-	local cfg_bugbind = "0.0.0.0:41343"
+	-- uCI cjdns section
 
+	luci.model.uci.cursor():foreach("cjdns", "cjdns",
+		function(cfg)
+			enabled = cfg.enabled 			-- cjdns/nat66 (0, 1)
+			logTo 	= cfg.logto_enable 		-- conf.logging NOT DONE
+			bind_bi	= cfg.beacon_interface 	-- eg; eth5
+			beacon 	= cfg.beacon_mode 		-- 0, 1, 2
+			deadlnk = cfg.deadlink_reset
+			cjd6ip 	= cfg.ipv6
+			cjd6pub = cfg.publicKey
+			cjd6prv = cfg.privateKey
+			bind_pt = cfg.bind_hostport
+			bind_ip = cfg.bind_hostip
+			admpass	= cfg.admin_pass
+			admport = cfg.admin_port
+			admbind = cfg.admin_bind
+			nobg 	= 1
+			angel 	= 1
+
+		end)
+	--[[ ---------------- cjdroute.conf ---------------- ]]--
+
+	-- admin settings
+	conf.admin = {
+					password = admpass,
+					bind     = admbind .. ":" .. admport
+				 }
+
+	-- Authorized Passwords
+	local auth_mgmt = getConfType("cjdns","node_auth_mgmt")
+	conf.authorizedPasswords = { auth_mgmt }
+
+	for i = 1,#conf.authorizedPasswords do
+		hppw = { }
+		local tap = conf.authorizedPasswords[i]
+		if (tap == nil) then break end
+		for w,x in pairs(tap) do
+			password = x.password
+			if password then
+				hppw[#hppw+1] = password
+			end
+		end
+		conf.authorizedPasswords = hppw
+	end
+
+	conf.resetAfterInactivitySeconds = tonumber(deadlnk)
+	conf.logging 	= { logTo = "" }
+	conf.ipv6 		= cjd6ip
+	conf.publicKey 	= cjd6pub
+	conf.privateKey = cjd6prv
+	conf.noBackground = 0
+	-- conf.noBackground = tonumber(nobg) This feature is not yet ready
+
+	conf.security = {
+		"nofiles",
+		{
+			setuser = "nobody",
+			exemptAngel = tonumber(angel)
+		}
+	}
+
+	-- UDPInterface section settings
+	local peers = getConfType("cjdns","node")
+	local bind = bind_ip .. ":" .. bind_pt
 	conf.interfaces.UDPInterface =
 	{
 		{
-			bind 	  = cfg_bugbind,
+			bind 	  = bind,
 			connectTo = peers
 		}
 	}
 
-	-- ETHInterface section
+	-- ETHInterface section settings
 	local epeers = getConfType("cjdns","enode")
-	luci.model.uci.cursor():foreach("cjdns", "cjdns",
-		function(cfg)
-			logTo 	 = cfg.logto_enable 	-- conf.logging NOT DONE
-			enabled  = cfg.enabled 			-- cjdns/nat66 (0, 1)
-			bind 	 = cfg.beacon_interface -- eg; eth5
-			beacon 	 = cfg.beacon_mode 		-- 0, 1, 2
-		end)
-
 	conf.interfaces.ETHInterface = 
 	{ 
 		{ 
-			beacon    = beacon,
-			bind      = bind,
-			connectTo = epeers,
+			bind      = bind_bi,
+			beacon    = tonumber(beacon),
+			connectTo = epeers
 		} 
 	}
 
-	-- Router section
+	-- Router section settings
 	local ipeers = getConfType("cjdns","ipt_node")
 	conf.router = {
 		interface = { type = "TUNInterface" },
@@ -123,8 +175,6 @@ m.on_after_commit = function(self)
 						allowedConnections  = ipeers
 					} }
 	}
-	--[[ ---------------- cjdroute.conf ---------------- ]]--
-
 
 	for i = 1,#conf.interfaces.UDPInterface do
 
@@ -136,13 +186,12 @@ m.on_after_commit = function(self)
 		end
 
 		for w,x in pairs(udpif.connectTo) do
-			num     	= i 			--
-			node    	= w 			-- cfg 035387
-			password 	= x.password 	-- das brute
-			name 		= x.name 		-- das name
-			publicKey 	= x.publicKey 	-- das key
-			address 	= x.address 	-- das ip
-			thing 		= w
+			num     	= i
+			node    	= w
+			password 	= x.password
+			name 		= x.name
+			publicKey 	= x.publicKey
+			address 	= x.address
 
 			if node then
 				x 		= require("uci").cursor()
@@ -156,11 +205,9 @@ m.on_after_commit = function(self)
 
 					-- Stage new node:port[#]{var:val}
 					hpux[hp] = { -- "1.2.3.4:1234:{}"
-						name  	  = name,		-- name (could be nil)
-						address   = address,	--
-						port   	  = port,		--
-						password  = password,	-- password
-						publicKey = publicKey,	-- publickey.k
+						name  	  = name,
+						password  = password,
+						publicKey = publicKey,
 					}
 
 					cjdstatus[#cjdstatus] = hpux
@@ -180,13 +227,12 @@ m.on_after_commit = function(self)
 		end
 
 		for w,x in pairs(ethif.connectTo) do
-			num     	= i 			--
-			node    	= w 			-- cfg 035387
-			password 	= x.password 	-- das brute
-			name 		= x.name 		-- das name
-			publicKey 	= x.publicKey 	-- das key
-			address 	= x.address 	-- das ip
-			thing 		= w
+			num     	= i
+			node    	= w
+			password 	= x.password
+			name 		= x.name
+			publicKey 	= x.publicKey
+			address 	= x.address
 
 			if node then
 				x 		= require("uci").cursor()
@@ -199,11 +245,9 @@ m.on_after_commit = function(self)
 
 					-- Stage new node:port[#]{var:val}
 					hpux[hp] = { -- "1.2.3.4:1234:{}"
-						name  	  = name,		-- name (could be nil)
-						address   = address,	--
-						port   	  = port,		--
-						password  = password,	-- password
-						publicKey = publicKey,	-- publickey.k
+						name  	  = name,
+						password  = password,
+						publicKey = publicKey,
 					}
 
 					cjdstatus_enode[#cjdstatus_enode] = hpux
@@ -225,24 +269,23 @@ m.on_after_commit = function(self)
 		end
 
 		for w,x in pairs(rtipt.outgoingConnections) do
-			num     	= i 			--
-			publicKey 	= x.publicKey 	-- das key
-			if publicKey then
+			num     	= i
+			publicKey 	= x.publicKey
+			flow 		= x.iptflow
+			if (flow == 'outgoing' and publicKey) then
 				cjdstatus_ipt_oc[#cjdstatus_ipt_oc+1] = publicKey
 			end
 		end
 		conf.router.ipTunnel[i].outgoingConnections = cjdstatus_ipt_oc
 
 		for w,x in pairs(rtipt.allowedConnections) do
-			num     	= i 			--
-			node    	= w 			--
-			name 		= x.name 		-- das name
-			publicKey 	= x.publicKey 	-- das key
-			ip4Address 	= x.address 	-- das ip
-			ip6Address 	= x.address_6 	-- das ip
+			num     	= i
+			name    	= x.name
+			ip4Address 	= x.address
+			ip6Address 	= x.address_6
 			flow 		= x.iptflow
 
-			if publicKey and (ip4Address or ip6Address) then
+			if (flow == 'allowed' and publicKey) and (ip4Address or ip6Address) then
 				cjdstatus_ipt[#cjdstatus_ipt+1] = {
 					publicKey  = publicKey,
 					name 	   = name,
@@ -256,27 +299,21 @@ m.on_after_commit = function(self)
 	cjdroute:close()
 
 	local save = io.open("/etc/cjdroute.conf", "w")
+
 	save:write( dkjson.encode (conf, { indent = true }))
 	save:close()
 
+	if (uci.cursor():get("cjdns", "config", "enabled") == '1') then
+		os.execute( "/usr/bin/sudo /usr/bin/killall cjdroute; /usr/bin/sudo /etc/cjdroute < /etc/cjdroute.conf" )
+		-- luci.sys.call("/etc/init.d/cjdns enable >/dev/null")
+		-- luci.sys.call("/etc/init.d/cjdns start >/dev/null")
+	else
+		os.execute( "/usr/bin/sudo /usr/bin/killall cjdroute" )
+		-- luci.sthunys.call("/etc/init.d/cjdns stop >/dev/null")
+		-- luci.sys.call("/etc/init.d/cjdns disable >/dev/null")
+	end
+
 end
---[[  Throwaway code, see: lua-cjdns
-
-	function e.cfgvalue(self, section)
-		return luci.sys.init.enabled("cjdns") and self.enabled or self.disabled
-	end
-
-	function e.write(self, section, value)
-		if value == "1" then
-			luci.sys.call("/etc/init.d/cjdns enable >/dev/null")
-			luci.sys.call("/etc/init.d/cjdns start >/dev/null")
-		else
-			luci.sthunys.call("/etc/init.d/cjdns stop >/dev/null")
-			luci.sys.call("/etc/init.d/cjdns disable >/dev/null")
-		end
-	end
-]]
-
 
 --[[
 	888     888 8888888b.  8888888b.       8888888          888                     .d888
@@ -335,7 +372,7 @@ Enn.datatype    = "string" -- return ip4addr(val) or ip6addr(val)
 Enn.placeholder = ""
 -- MAC Address --
 Eia = eth_nodemgmt:option(Value, "enode", translate("MAC Address"))
-Eia.datatype    = "ipaddr" -- return ip4addr(val) or ip6addr(val)
+Eia.datatype    = "macaddr" -- return ip4addr(val) or ip6addr(val)
 Eia.placeholder = ""
 -- Password --
 Eac = eth_nodemgmt:option(Value, "password", translate("Password"))
@@ -393,17 +430,18 @@ PKbc:value("outgoing", translate("Outgoing"))
 d88P     888  "Y88888  "Y888 888  888  "Y88P"  888     888 88888888 "Y888888  "Y888 888  "Y88P"  888  888
 ]]--
 
+-- TODO Put this into a tabbed section (double check if lists are permitted in tab sections)
 
 passwd_mgmt.anonymous = true
 passwd_mgmt.addremove = true
-passwd_mgmt.template = "cbi/tblsection"
+passwd_mgmt.template  = "cbi/tblsection"
 
 -- Affiliated Password --
 passwd_mgmt:option(Value, "name", translate("Affiliation Notes"))
 -- Address --
-ia = passwd_mgmt:option(Value, "address", translate("Address"))
-ia.datatype    = "ipaddr" -- return ip4addr(val) or ip6addr(val)
-ia.placeholder = ""
+ia = passwd_mgmt:option(Value, "password", translate("Password"))
+ia.datatype    = "string" -- return ip4addr(val) or ip6addr(val)
+ia.placeholder = "very strong password"
 
 --[[
 	 .d8888b.           888    888    d8b
@@ -435,7 +473,14 @@ e = s:taboption("general", Flag, "enabled", translate("Enable cjdns and NAT66 se
 	translate("Toggles the start of both cjdns and NAT66 services upon Boot"))
 e.default  = 1
 e.rmempty  = false
-
+-- Host IP
+hip = s:taboption("general", Value, "bind_hostip", translate("IP Address bound to UDPInterface"),
+	    translate("Default 0.0.0.0 or ::1 for all interfaces"))
+hip = "ipaddr"
+-- Host Port
+hpt = s:taboption("general", Value, "bind_hostport", translate("Port number bound to UDPInterface"),
+	    translate("Choose a valid 0-65535 port number"))
+hpt.datatype = "port"
 -- Beacon operations
 bc = s:taboption("general", ListValue, "beacon_mode", translate("Enable Beacons"),
 		      translate("Select the preferred Beacons mode for ETHInterface"))
@@ -444,19 +489,22 @@ bc:value(1, translate("1 -- Accept Beacons, this will cause cjdns to accept inco
 		      Beacon messages and try connecting to the Sender."))
 bc:value(2, translate("2 -- Accept and Send Beacons to LAN broadcast address which \
 		      contain a One-time Pad secret password."))
+bc.datatype = "integer(range(0,2))"
 -- Beacon Interface
 bi = s:taboption("general", Value, "beacon_interface",
 		     translate("Select the preferred Beacon Ethernet Interface"),
 		     translate("Select the preferred Beacon Ethernet Interface"))
 bi.datatype    = "string"
-bi.placeholder = eth0
--- Logging
-s:taboption("general", Flag, "logto_enable", translate("Enable additional logging to logread"),
-	translate("Puts extra debugging information into logread"))
+bi.placeholder = "eth0"
+
+-- Logging -- Feature not yet ready/tested for serial/vpty relay + socat
+--s:taboption("general", Flag, "logto_enable", translate("Enable additional logging to logread"),
+--	translate("Puts extra debugging information into logread"))
+
 -- Deadlink detection
 apw = s:taboption("general", Value, "deadlink_reset", translate("Reestablish link if inactivite"),
 	    translate("Deadlink detection in seconds"))
-apw.datatype = "string" -- resetAfterInactivitySeconds
+apw.datatype = "integer(range(0,2048))" -- resetAfterInactivitySeconds
 
 --[[ Advanced Tab ]]--
 
@@ -472,23 +520,20 @@ pbkey.datatype = "string"
 prkey = s:taboption("advanced", Value, "privateKey", translate("Private Key"),
 	    translate("Do not redistribute this key"))
 prkey.datatype = "string"
--- Host IP
-hip = s:taboption("advanced", Value, "bind_hostip", translate("Bound IP Address to cjdns"),
-	    translate("Default 0.0.0.0 or ::1 for all interfaces"))
-hip = "ipaddr"
--- Host Port
-hpt = s:taboption("advanced", Value, "bind_hostport", translate("Bound port number for cjdns"),
-	    translate("Choose a valid 0-65535 port number"))
-hpt.datatype = "port"
--- Administrator password for cjdns
-apw = s:taboption("advanced", Value, "admin_passwd", translate("Administrator password for cjdns"),
+-- Administrator password for cjdns Admin
+apw = s:taboption("advanced", Value, "admin_pass", translate("Password for cjdns admin"),
 	    translate("Password for backend access to cjdadmin"))
 apw.datatype = "string"
+-- Administrator IP address for Active cjdns nodes
+aip = s:taboption("advanced", Value, "admin_bind", translate("IP Address bound to cjdns admin"),
+	    translate("Default 127.0.0.1 or ::1 for all interfaces"))
+aip = "ipaddr"
+-- Administrator Host Port for Active cjdns nodes
+apt = s:taboption("advanced", Value, "admin_port", translate("Port number bound to cjdns admin"),
+	    translate("Choose a valid 0-65535 port number"))
+apt.datatype = "port"
 
--- Administrator password for cjdns
-Ppw = s:taboption("advanced", Value, "admin_passwd", translate("Administrator password for cjdns"),
-	    translate("Password for backend access to cjdadmin"))
-Ppw.datatype = "string"
+
 
 --[[ Administrator Tab ]]--
 

@@ -30,11 +30,10 @@
 				for( var i = 0; i < st.length; i++ )
 				{
 					var tr = tb.insertRow(-1);
-					// tr.className = 'cbi-section-table-row cbi-rowstyle-' + st[i].other;
 					tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
 					tr.insertCell(-1).innerHTML = st[i].name;
 
-					var t = " (Other)";
+					var t = st[i].num;
 
 					if (st[i].other == 0)
 						var t = " (UDP Interface)";
@@ -49,12 +48,23 @@
 
 					tr.insertCell(-1).innerHTML = st[i].node + t;
 					tr.insertCell(-1).innerHTML = st[i].cjdnsip;
-					tr.insertCell(-1).innerHTML = st[i].latency;
 
-					tr.insertCell(-1).innerHTML = String.format(
-						'<input class="cbi-button cbi-button-up" type="button" value="<%:online%>" onclick="cjdns_delete_node(%d)" />',
-							st[i].num
-					);
+					if (st[i].status == 'ESTABLISHED') {
+						tr.insertCell(-1).innerHTML = st[i].latency;
+						tr.insertCell(-1).innerHTML = String.format(
+							'<input class="cbi-button cbi-button-up" type="button" value="<%:online%>" />'
+						);
+					} else if (st[i].status == 'UNRESPONSIVE') {
+						tr.insertCell(-1).innerHTML = 'Pinging...';
+						tr.insertCell(-1).innerHTML = String.format(
+							'<input class="cbi-button cbi-input-reset" type="button" value="<%:offline%>" />'
+						);
+					} else {
+						tr.insertCell(-1).innerHTML = 'Pinging...';
+						tr.insertCell(-1).innerHTML = String.format(
+							'<input class="cbi-button cbi-button-reload" type="button" value="<%:hiccup%>" />'
+						);
+					}
 				}
 
 				if( tb.rows.length == 1 )
@@ -79,7 +89,7 @@
 			<!-- <th class="cbi-section-table-cell"><%:Num%></th> -->
 			<th class="cbi-section-table-cell"><%:Name%></th>
 			<th class="cbi-section-table-cell"><%:Node%></th>
-			<th class="cbi-section-table-cell"><%:Cjdns IP%></th>
+			<th class="cbi-section-table-cell"><%:cjdns IP%></th>
 			<th class="cbi-section-table-cell"><%:Latency%></th>
 			<!-- <th class="cbi-section-table-cell"><%:Color%></th> -->
 			<th class="cbi-section-table-cell"><%:Status%></th>

@@ -3,6 +3,7 @@ LuCI - Lua Configuration Interface
 
 Copyright 2008 Steven Barth <steven@midlink.org>
 Copyright 2008 Jo-Philipp Wich <xm@leipzig.freifunk.net>
+Copyright 2013-2014 William Fleurant <igel@hyperboria.ca>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,15 +22,15 @@ function index()
 
 	local page
 	page = entry({"admin", "services", "cjdns"},
-                  cbi("cjdns/cjdns"), _("cjdns"))
-                  -- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
+				  cbi("cjdns/cjdns"), _("cjdns"))
+				  -- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
 	page.dependent = true
 	
 	-----------------------------------------
 	-- Advanced Configuration Access (Tab) --
 	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 	nopts = entry({"admin", "services", "cjdns", "Configuration Access"},
-                   cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
+				   cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
 	nopts.leaf = false
 	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -44,9 +45,74 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 function act_status()
 
-	local dkjson = require "dkjson" -- http://dkolf.de/src/dkjson-lua.fsl/home
-	local cjdroute = io.open("/etc/cjdroute.conf")
+	-- cjdns admin modules for Lua Written by Philip Horger,
+	-- Integration of Lua bindings for LuCI by William Fleurant,
+	-- Bugs? igel@hyperboria.ca [GnuPG 2B451511]
+
+	cjdns 	 = require "cjdns/init"
+	confpath = "/etc/cjdroute.conf"
+	conf 	 = cjdns.ConfigFile.new(confpath)
+	ai   	 = conf:makeInterface()
+
+	local dkjson  		 = require "dkjson"  -- http://dkolf.de/src/dkjson-lua.fsl/home
+	local cjdroute 		 = io.open("/etc/cjdroute.conf")
 	local conf, pos, err = dkjson.decode(cjdroute:read("*a"), 1, nil)
+
+	-- returns peerStats object of matched publicKey
+	function RouterFunctions:peerStats(pubkey,element,page)
+		if not element then
+			local element = 'switchLabel'
+		else
+			local element = element
+		end
+
+		if page then page = page else page = 0 end
+
+		while page do
+
+			local response, err = self.ai:auth({
+				q = "InterfaceController_peerStats",
+				page = page,
+			})
+
+			for keys,switchen in pairs(response.peers) do
+				if (response.peers[keys]['publicKey'] == pubkey) then
+					return (response.peers[keys])
+				end
+			end
+
+			if response.more then
+				page = page + 1
+			else
+				page = nil
+			end
+
+		end
+	end
+
+	function RouterFunctions:switchpinger(path, data, timeout)
+		local response, err = self.ai:auth({
+			q = "SwitchPinger_ping",
+			path = path,
+			data = 0,
+			timeout = ''
+		})
+		if err then
+			return "Error"
+		else
+			return response
+		end
+	end
+
+	function getConfType(conf,type) -- Sophana
+		local curs=uci.cursor()
+		local ifce={}
+		curs:foreach(conf,type,
+					 function(s)
+						ifce[s[".name"]]=s
+					 end)
+		return ifce
+	end
 
 	--[[
 	888     888 8888888b.  8888888b.       8888888          888                     .d888
@@ -59,8 +125,6 @@ function act_status()
 	 "Y88888P"  8888888P"  888             8888888 888  888  "Y888 "Y8888  888     888   "Y888888  "Y8888P "Y8888
 	]]--
 
-
-	-- Hand json off to cjdns_status.htm javascript row fill
 	for i = 1,#conf.interfaces.UDPInterface do
 
 		cjdstatus = { } -- print via luci.http.write_json
@@ -69,25 +133,44 @@ function act_status()
 		if (udpif.connectTo ~= nil) then
 
 		 for w,x in pairs(udpif.connectTo) do
-			local num     = i -- used for act_delete(num)
-			local node    = w -- cfg035387 (anonymous uci field (.name))
+			local num     = i
+			local node    = w
 			local name    = x.name
 			local pubkey  = x.publicKey
 			local passwd  = x.password
 			local port    = x.port
 			local address = x.address
-			local latency = "Pinging..." 	-- TODO
-			local cjdnsip = "Resolving..." 	-- TODO
-			local other   = 0
 
-			if address then -- and num and name and node and pubkey and passwd and other and port then
+			local xpktip6 = os.execute( "/usr/sbin/publictoip6" .. " " .. pubkey .. " > /tmp/.publictoip6" )
+			local f 	  = assert(io.open("/tmp/.publictoip6", "r"))
+			local cjdnsip = f:read()
+			f:close()
+
+			local pstatsobj = ai.router:peerStats(pubkey)
+
+			if pstatsobj ~= nil and pstatsobj.state == 'ESTABLISHED' then
+				latency 	= ai.router:switchpinger(pstatsobj.switchLabel).ms
+				if latency == nil or latency >= 2000 then -- catch hiccup/timeout
+					latency = 'Pinging...'
+				else
+					latency = latency .. "ms"
+				end
+				status 		= pstatsobj.state
+			else
+				latency 	= 'Pinging...'
+				status 		= 'UNRESPONSIVE'
+			end
+
+
+			if name then
 				-- Fill in the tables fields and allow XHR.poll to refresh on 5s intervals.
 				cjdstatus[#cjdstatus+1] = {
-					name 	= name, 	-- name (could be nil)
-					node    = node,		-- ipaddress:port
-					cjdnsip = cjdnsip, 	-- requires new functions
-					latency = latency, 	-- requires new functions
-					other   = other,
+					name 	= name,
+					node    = node,
+					cjdnsip = cjdnsip,
+					latency = latency,
+					other   = 0,
+					status 	= status,
 				}
 			end
 		 end -- end for pairs
@@ -105,6 +188,12 @@ function act_status()
 	8888888888     888     888    888      8888888 888  888  "Y888 "Y8888  888     888   "Y888888  "Y8888P "Y8888
 	]]--
 
+	-- BUG(FIXED) Test if patch works and this code will be removed
+	-- (protects cjdns/admin/angel from nilish table see patches/100* -> /* */ )
+	if conf.interfaces.ETHInterface == nil then
+		conf.interfaces.ETHInterface = { { connectTo = {} } }
+	end
+
 	for i = 1,#conf.interfaces.ETHInterface do
 
 		local ethif = conf.interfaces.ETHInterface[i]
@@ -116,11 +205,27 @@ function act_status()
 			local name    = x.name
 			local pubkey  = x.publicKey
 			local passwd  = x.password
-			local address = w -- mac address
+			local address = w
 			local node    = address
-			local latency = "Pinging..."
-			local cjdnsip = "Resolving..."
-			local other   = 1
+			local xpktip6 = os.execute( "/usr/sbin/publictoip6" .. " " .. pubkey .. " > /tmp/.publictoip6" )
+			local f 	  = assert(io.open("/tmp/.publictoip6", "r"))
+			local cjdnsip = f:read()
+			f:close()
+
+			local pstatsobj = ai.router:peerStats(pubkey)
+
+			if pstatsobj ~= nil and pstatsobj.state == 'ESTABLISHED' then
+				latency 	= ai.router:switchpinger(pstatsobj.switchLabel).ms
+				if latency == nil or latency >= 2000 then -- catch hiccup/timeout
+					latency = 'Pinging...'
+				else
+					latency = latency .. "ms"
+				end
+				status 		= pstatsobj.state
+			else
+				latency 	= 'Pinging...'
+				status 		= 'UNRESPONSIVE'
+			end
 
 			if address then
 				cjdstatus[#cjdstatus+1] = {
@@ -128,7 +233,8 @@ function act_status()
 					node    = w,
 					cjdnsip = cjdnsip,
 					latency = latency,
-					other   = other,
+					other   = 1,
+					status 	= status
 				}
 			end
 		 end -- end for pairs
@@ -149,65 +255,59 @@ function act_status()
 
 		local iptif = conf.router.ipTunnel[i]
 
-		if (iptif.allowedConnections ~= nil) then
+		if (iptif ~= nil) then
 
-		 for w,x in pairs(iptif.allowedConnections) do
+
+		 -- Note: We do some trickery to adhear to the saved uCI settings
+		 -- 		solely for displaying more informative details of tunnel
+		local xipeers = getConfType("cjdns","ipt_node")
+
+		 for w,x in pairs(xipeers) do
 			local name 		 = x.name
-			local publicKey  = x.publicKey
-			local ip4Address = x.ip4Address
-			local ip6Address = x.ip6Address
-			local latency 	 = "Pinging..."
-			local cjdnsip 	 = "Resolving..."
-			local other   	 = 2  -- BUG being duped for all below. how?
-			local y 		 = "|"
+			local pubkey  	 = x.iptflow
+			local pubkey  	 = x.publicKey
+			local iptflow 	 = x.iptflow
 
-			local address 	 = "Resolving..."
-			-- TODO check if not valid ip, ip6,
-			-- 	then check how to resolve domainname, or /etc/hosts
-
-			-- Display address Order by both, v4, v6, unresolved.
-			if ip4Address and ip6Address  then
-				address = ip4Address .. y .. ip6Address
-			elseif
-				(ip4Address ~= nil) then address = ip4Address
+			if iptflow == 'allowed' then
+				other = 2
+			elseif iptflow == 'outgoing' then
+				other = 3
 			else
-				address = ip6Address
+				other = 4
 			end
 
-			if publicKey then -- and (ip4Address or ip6Address) then
+			local xpktip6 	 = os.execute( "/usr/sbin/publictoip6" .. " " .. pubkey .. " > /tmp/.publictoip6" )
+			local f 	  	 = assert(io.open("/tmp/.publictoip6", "r"))
+			local cjdnsip 	 = f:read()
+			f:close()
+
+			local pstatsobj = ai.router:peerStats(pubkey)
+
+			if pstatsobj ~= nil and pstatsobj.state == 'ESTABLISHED' then
+				latency 	= ai.router:switchpinger(pstatsobj.switchLabel).ms
+				if latency == nil or latency >= 2000 then -- catch hiccup/timeout
+					latency = 'Pinging...'
+				else
+					latency = latency .. "ms"
+				end
+				status 		= pstatsobj.state
+			else
+				latency 	= 'Pinging...'
+				status 		= 'UNRESPONSIVE'
+			end
+
+			if pubkey then
 				cjdstatus[#cjdstatus+1] = {
 					name 	= name,
-					node    = address,
+					node    = pubkey,
 					cjdnsip = cjdnsip,
 					latency = latency,
 					other   = other,
+					status 	= status,
 				}
 			end
 		 end -- end for pairs
 		end -- end for sanity
-
-		if (iptif.outgoingConnections ~= nil) then
-
-		 for w,x in pairs(iptif.outgoingConnections) do
-			local name 		 = x.name
-			local publicKey  = x.publicKey
-			local other   	 = 3
-			local latency 	 = "Pinging..."
-			local cjdnsip 	 = "Resolving..."
-			local address 	 = "Resolving..."
-
-			if publicKey then -- and (ip4Address or ip6Address) then
-				cjdstatus[#cjdstatus+1] = {
-					name 	= name,
-					node    = publicKey,
-					cjdnsip = cjdnsip,
-					latency = latency,
-					other   = other,
-				}
-			end
-		 end -- end for pairs
-		end -- end for sanity
-
 	end -- for conf.router.ipTunnel{}
 
 	luci.http.prepare_content("application/json")
@@ -222,7 +322,6 @@ end
 -- Remove node from "active" list of nodes (Keep in UCI) --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 function act_delete(num)
-	-- NOT DONE
 	luci.http.status(200, "OK")
 	return
 end
