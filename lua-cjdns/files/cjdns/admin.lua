@@ -1,5 +1,6 @@
 -- Cjdns admin module for Lua
 -- Written by Philip Horger
+-- hacked up sha256 by William Fleurant
 
 common = require 'cjdns/common'
 
@@ -91,7 +92,12 @@ function AdminInterface:auth(request)
 
     -- Step 2: Calculate hash1 (password + cookie)
     local plaintext1 = self.password .. cookie
-    local hash1 = sha2.sha256hex(plaintext1)
+
+    local sha256sum = "/bin/echo -n \"" .. plaintext1 .. "\" | sha256sum | cut -d\" \" -f1 > /tmp/.hash1 "
+    local hash1 = os.execute(sha256sum)
+    local f = assert(io.open("/tmp/.hash1", "r"))
+    local hash1 = f:read()
+    f:close()
 
     -- Step 3: Calculate hash2 (intermediate stage request)
     local request = {
@@ -105,7 +111,11 @@ function AdminInterface:auth(request)
     if err then
         return nil, err
     end
-    local hash2 = sha2.sha256hex(plaintext2)
+
+    local sha256sum = "/bin/echo -n \"" .. plaintext2 .. "\" | sha256sum | cut -d\" \" -f1 > /tmp/.hash2 "
+    local hash2 = os.execute(sha256sum)
+    local f = assert(io.open("/tmp/.hash2", "r"))
+    local hash2 = f:read()
 
     -- Step 4: Update hash in request, then ship it out
     request.hash = hash2
