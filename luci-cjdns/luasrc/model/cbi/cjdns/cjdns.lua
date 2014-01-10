@@ -122,7 +122,7 @@ m.on_after_commit = function(self)
 		for w,x in pairs(tap) do
 			password = x.password
 			if password then
-				hppw[#hppw+1] = password
+				hppw[#hppw+1] = { password = password }
 			end
 		end
 		conf.authorizedPasswords = hppw
