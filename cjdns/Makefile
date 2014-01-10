@@ -16,7 +16,7 @@ PKG_VERSION:=0.5-SNAPSHOT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=git://github.com/cjdelisle/cjdns.git
+PKG_SOURCE_URL:=http://gitboria.com/cjd/cjdns.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=master
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -29,7 +29,7 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +nacl +libpthread +dkjson
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +nacl +libpthread
   MAINTAINER:=cjd -- #cjdns on irc.efnet.org
 endef
 
@@ -47,7 +47,9 @@ CMAKE_OPTIONS += -DHAVE_NACL=1
 
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipkg-install/usr/bin/cjdroute2   $(1)/usr/sbin/cjdroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipkg-install/usr/bin/cjdroute2 	$(1)/usr/sbin/cjdroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./cjdns.sh $(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
