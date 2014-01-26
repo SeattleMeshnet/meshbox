@@ -188,8 +188,6 @@ function act_status()
 	8888888888     888     888    888      8888888 888  888  "Y888 "Y8888  888     888   "Y888888  "Y8888P "Y8888
 	]]--
 
-	-- BUG(FIXED) Test if patch works and this code will be removed
-	-- (protects cjdns/admin/angel from nilish table see patches/100* -> /* */ )
 	if conf.interfaces.ETHInterface == nil then
 		conf.interfaces.ETHInterface = { { connectTo = {} } }
 	end
