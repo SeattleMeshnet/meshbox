@@ -28,6 +28,14 @@ define Package/lua-cjdns/description
   Lua bindings for cjdns
 endef
 
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+
+
 define Package/lua-cjdns/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/cjdns
 
