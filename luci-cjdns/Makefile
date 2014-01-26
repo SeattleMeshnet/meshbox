@@ -16,7 +16,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=Project Meshnet
   TITLE:=cjdns configuration for luci
-  DEPENDS:=+cjdns +luci
+  DEPENDS:=+cjdns +luci +dkjson +lua-bencode +lua-cjdns
 endef
 
 define Package/$(PKG_NAME)/description
