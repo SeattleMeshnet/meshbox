@@ -32,11 +32,17 @@ define Build/Prepare
 	done
 endef
 
+
 define Build/Configure
 endef
 
 define Build/Compile
 endef
+
+define Package/$(PKG_NAME)/config
+  select BUSYBOX_CONFIG_SHA256SUM if !PACKAGE_coreutils-sha256sum
+endef
+
 
 HTDOCS = /www
 LUA_LIBRARYDIR = /usr/lib/lua
