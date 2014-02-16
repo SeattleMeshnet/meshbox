@@ -12,50 +12,50 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
-PKG_VERSION:=0.5-SNAPSHOT
+PKG_VERSION:=0.6
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 #PKG_SOURCE_URL:=http://gitboria.com/cjd/cjdns.git
-PKG_SOURCE_URL:=git://github.com/cjdelisle/cjdns.git
+#PKG_SOURCE_URL:=git://github.com/cjdelisle/cjdns.git
+PKG_SOURCE_URL:=git://github.com/wfleurant/cjdns.git
 PKG_SOURCE_PROTO:=git
-##PKG_SOURCE_VERSION:=master
-PKG_SOURCE_VERSION:=stable-0.5
+PKG_SOURCE_VERSION:=master
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 
 define Package/cjdns
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread
-  MAINTAINER:=cjd -- #cjdns on irc.efnet.org
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt
+  MAINTAINER:=cjd
 endef
 
-TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
-CMAKE_OPTIONS += -DOPENWRT=1
+define Build/Configure
+endef
 
-# OpenWRT messes around with the code quite a bit and makes the codestyle validator angry.
-CMAKE_OPTIONS += -DNO_CODESTYLE=1
+define Build/Compile
+	CROSS="true" \
+	CFLAGS="$(TARGET_CFLAGS)" \
+	CC="$(TARGET_CC)" \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
+	$(PKG_BUILD_DIR)/do
+endef
 
-# OpenWRT's NACL is not built position independent.
-CMAKE_OPTIONS += -DWITH_PIE=0
-
-# Need to tell cjdns build process that there exists an nacl on the system.
-CMAKE_OPTIONS += -DHAVE_NACL=1
 
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipkg-install/usr/bin/cjdroute2 	$(1)/usr/sbin/cjdroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cjdroute 	$(1)/usr/sbin/cjdroute
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/sbin/dnsserv
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./cjdns.sh $(1)/etc/init.d/cjdns
+	$(INSTALL_BIN) ./cjdns.sh 			$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_BIN) ./cjdroutesetup.lua $(1)/usr/share/cjdroutesetup.lua
+	$(INSTALL_BIN) ./cjdroutesetup.lua 		$(1)/usr/share/cjdroutesetup.lua
 endef
 
 $(eval $(call BuildPackage,cjdns))

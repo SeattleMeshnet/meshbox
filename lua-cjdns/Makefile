@@ -12,7 +12,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lua-cjdns
-PKG_VERSION:=0.5-SNAPSHOT
+PKG_VERSION:=0.6
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -22,6 +22,7 @@ define Package/lua-cjdns
   CATEGORY:=Languages
   TITLE:=Lua bindings for cjdns
   DEPENDS:=+cjdns +lua-bencode +dkjson +luasocket
+  MAINTAINER:=Igel
 endef
 
 define Package/lua-cjdns/description
