@@ -49,7 +49,6 @@ endef
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cjdroute 	$(1)/usr/sbin/cjdroute
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/sbin/dnsserv
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
