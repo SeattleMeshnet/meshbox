@@ -61,6 +61,24 @@ define Package/$(PKG_NAME)/install
 	  $(INSTALL_DIR) $(1)/; \
 	  cp -pR $(PKG_BUILD_DIR)/root/* $(1)/; \
 	else true; fi
+
+	$(INSTALL_DIR)  $(1)/www/luci-static/meshbox
+	$(INSTALL_DATA) ./files/www/luci-static/meshbox/favicon.ico \
+				$(1)/www/luci-static/meshbox
+	$(INSTALL_DATA) ./files/www/luci-static/meshbox/html5.js \
+				$(1)/www/luci-static/meshbox
+	$(INSTALL_DATA) ./files/www/luci-static/meshbox/cascade.css \
+				$(1)/www/luci-static/meshbox
+
+	$(INSTALL_DIR)  $(1)/etc/uci-defaults
+	$(INSTALL_DATA) ./files/etc/uci-defaults/luci-theme-meshbox \
+				$(1)/etc/uci-defaults
+
+	$(INSTALL_DIR)  $(1)/usr/lib/lua/luci/view/themes/meshbox
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/themes/meshbox/header.htm \
+				$(1)/usr/lib/lua/luci/view/themes/meshbox
+	$(INSTALL_DATA) ./files/usr/lib/lua/luci/view/themes/meshbox/footer.htm \
+				$(1)/usr/lib/lua/luci/view/themes/meshbox
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
