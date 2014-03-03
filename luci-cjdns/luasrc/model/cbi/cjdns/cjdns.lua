@@ -303,14 +303,11 @@ m.on_after_commit = function(self)
 	save:write( dkjson.encode (conf, { indent = true }))
 	save:close()
 
-	if (uci.cursor():get("cjdns", "config", "enabled") == '1') then
-		os.execute( "/usr/bin/sudo /usr/bin/killall cjdroute; /usr/bin/sudo /etc/cjdroute < /etc/cjdroute.conf" )
-		-- luci.sys.call("/etc/init.d/cjdns enable >/dev/null")
-		-- luci.sys.call("/etc/init.d/cjdns start >/dev/null")
+	if (uci.cursor():get("cjdns", "cjdns", "enabled") == '1') then
+		luci.sys.call("/etc/init.d/cjdns stop >/dev/null")
+		luci.sys.call("/etc/init.d/cjdns start >/dev/null")
 	else
-		os.execute( "/usr/bin/sudo /usr/bin/killall cjdroute" )
-		-- luci.sthunys.call("/etc/init.d/cjdns stop >/dev/null")
-		-- luci.sys.call("/etc/init.d/cjdns disable >/dev/null")
+		luci.sys.call("/etc/init.d/cjdns stop >/dev/null")
 	end
 
 end
@@ -457,7 +454,7 @@ ia.placeholder = "very strong password"
 	                                                "Y88P"
 ]]--
 
-s = m:section(NamedSection, "config", "Settings", translate("Settings"))
+s = m:section(NamedSection, "cjdns", "Settings", translate("Settings"))
 s.addremove = false
 
 -- Tabs --
