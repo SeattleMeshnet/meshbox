@@ -61,6 +61,10 @@ define Package/$(PKG_NAME)/install
 	  $(INSTALL_DIR) $(1)/; \
 	  cp -pR $(PKG_BUILD_DIR)/root/* $(1)/; \
 	else true; fi
+
+	$(INSTALL_DIR) $(1)/usr/share
+	$(INSTALL_BIN) ./files/uci_to_cjdroute.lua 	$(1)/usr/share/uci_to_cjdroute.lua
+
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
