@@ -53,9 +53,9 @@ define Package/cjdns/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./cjdns.sh 			$(1)/etc/init.d/cjdns
+	$(INSTALL_BIN) ./files/cjdns.sh 		$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_BIN) ./cjdroutesetup.lua 		$(1)/usr/share/cjdroutesetup.lua
+	$(INSTALL_BIN) ./files/cjdroutesetup.lua 	$(1)/usr/share/cjdroutesetup.lua
 endef
 
 $(eval $(call BuildPackage,cjdns))
