@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-START=50
+START=90
 STOP=85
 
 CJDROUTE="/usr/sbin/cjdroute"
@@ -52,6 +52,7 @@ start()
         $CJDROUTE --cleanconf < /tmp/cjdns.tmp > $CONF
 	rm /tmp/cjdns.tmp
         lua /usr/share/cjdroutesetup.lua
+	/usr/share/cjdns_jsonpath.sh
 	sync
     fi
 

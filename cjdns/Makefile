@@ -37,6 +37,8 @@ endef
 define Build/Configure
 endef
 
+# 	NO_PIE="TRUE" \
+
 define Build/Compile
 	CROSS="true" \
 	CFLAGS="$(TARGET_CFLAGS)" \
@@ -57,6 +59,7 @@ define Package/cjdns/install
 	$(INSTALL_BIN) ./files/cjdns.sh 		$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
 	$(INSTALL_BIN) ./files/cjdroutesetup.lua 	$(1)/usr/share/cjdroutesetup.lua
+	$(INSTALL_BIN) ./files/cjdns_jsonpath.sh	$(1)/usr/share/cjdns_jsonpath.sh
 endef
 
 $(eval $(call BuildPackage,cjdns))
