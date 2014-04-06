@@ -1,1 +1,1 @@
-uci set luci.themes.Meshbox=/luci-static/meshbox; uci commit luci
+# uci set luci.themes.Meshbox=/luci-static/meshbox; uci commit luci
