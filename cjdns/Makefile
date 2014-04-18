@@ -30,7 +30,7 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath
   MAINTAINER:=cjd
 endef
 
