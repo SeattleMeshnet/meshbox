@@ -391,6 +391,7 @@ CONFIG_PACKAGE_base-files=y
 # CONFIG_PACKAGE_block-mount is not set
 # CONFIG_PACKAGE_bridge is not set
 CONFIG_PACKAGE_busybox=y
+CONFIG_BUSYBOX_CUSTOM=y
 # CONFIG_BUSYBOX_CONFIG_FEATURE_MOUNT_NFS is not set
 # CONFIG_PACKAGE_dash is not set
 CONFIG_PACKAGE_dnsmasq=y
