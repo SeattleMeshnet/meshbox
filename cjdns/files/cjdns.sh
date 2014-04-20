@@ -47,12 +47,13 @@ stop()
 start()
 {
 	if [ ! -f $CONF ]; then
-		logger -t cjdns "No file found at $CONF creating new one"
+		logger -t cjdns "No file found at $CONF -- generating new config then applying /etc/config/cjdns"
 		$CJDROUTE --genconf > /tmp/cjdns.tmp
 		$CJDROUTE --cleanconf < /tmp/cjdns.tmp > $CONF
 		rm /tmp/cjdns.tmp
-		lua /usr/share/cjdroutesetup.lua
-		/usr/share/cjdns_jsonpath.sh
+		lua /usr/share/uci_to_cjdroute.lua
+		# Preset Peers and Beacon Interface -- Anticipating duplicate entries, check required.
+		# lua /usr/share/cjdroutesetup.lua
 		sync
 	fi
 
