@@ -240,8 +240,7 @@ save:write( dkjson.encode (conf, { indent = true }))
 save:close()
 
 if (uci.cursor():get("cjdns", "cjdns", "enabled") == '1') then
-	os.execute("/etc/init.d/cjdns stop")
-	os.execute("/etc/init.d/cjdns start")
+	os.execute("/etc/init.d/cjdns restart")
 else
 	os.execute("/etc/init.d/cjdns stop")
 end

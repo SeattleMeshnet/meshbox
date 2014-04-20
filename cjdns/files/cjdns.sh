@@ -37,7 +37,7 @@ stop()
 		return 1
 	else
 		for k in $PID
-			do echo "cjdns (pid ${k}) terminated"
+			do logger "cjdns (pid ${k}) terminated"
 			kill -9 ${k}
 		done
 		nat6 off
@@ -66,8 +66,13 @@ start()
 			return 1
 		fi
 	else
-		echo "cjdns is already running"
+		logger "cjdns is already running"
 		return 1
 	fi
 }
 
+restart()
+{
+	/etc/init.d/cjdns stop
+	/etc/init.d/cjdns start
+}
