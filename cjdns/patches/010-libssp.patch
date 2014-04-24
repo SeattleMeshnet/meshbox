@@ -21,7 +21,7 @@ index 56c8ee5..8a096eb 100644
      }
 
 +    uclibc = /uclibc/i.test(GCC);
-+    libssp = process.env['SSP_SUPPORT'] != 'n'
++    libssp = process.env['SSP_SUPPORT'] == 'y'
 +    if (!uclibc || libssp) {
 +        builder.config.cflags.push(
 +            // Broken GCC patch makes -fstack-protector-all not work
