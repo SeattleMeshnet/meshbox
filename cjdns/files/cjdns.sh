@@ -18,6 +18,11 @@ STOP=85
 CJDROUTE="/usr/sbin/cjdroute"
 CONF="/etc/cjdroute.conf"
 PID="$(pgrep -f $CJDROUTE)"
+CJDNS_ENABLED="$(uci get cjdns.cjdns.enabled)"
+if [ x${CJDNS_ENABLED} == x"1" ]
+	then CJDNS_SERVICE="ENABLED"
+	else CJDNS_SERVICE="DISABLED"
+fi
 
 nat6()
 {
@@ -33,12 +38,12 @@ nat6()
 stop()
 {
 	if [ -z "$PID" ]; then
-		echo "cjdns is not running"
-		return 1
+		logger "cjdns is not running"
+		return 0
 	else
 		for k in $PID
 			do logger "cjdns (pid ${k}) terminated"
-			kill -9 ${k}
+			kill -9 ${k} 2>/dev/null
 		done
 		nat6 off
 	fi
@@ -62,7 +67,7 @@ start()
 		$CJDROUTE < $CONF
 		nat6 on
 		if [ $? -gt 0 ]; then
-			echo "Failed to start cjdns"
+			logger "Failed to start cjdns"
 			nat6 off
 			return 1
 		fi
@@ -72,8 +77,33 @@ start()
 	fi
 }
 
+reconfigure()
+{
+	mv /etc/cjdroute.conf /tmp/cjdroute.conf.old
+
+	logger -t cjdns "Generating new cjdns configuration"
+	cjdroute --genconf > /tmp/cjdroute.conf.new
+	cjdroute --cleanconf < /tmp/cjdroute.conf.new \
+		> /etc/cjdroute.conf
+
+	logger -t cjdns "Installing to UCI"
+	sh -x /usr/share/cjdns_jsonpath.sh 2>&1 | grep uci \
+	    | sed "s/+ uci set cjdns.cjdns.//"  | sort     \
+	    | logger -t cjdns \
+		&& logger -t cjdns "cjduci Installation: OK" \
+		|| logger -y cjdns "cjduci Installation: Please Check /etc/config/cjdns"
+
+	logger -t cjdns "Restarting cjdns"
+	lua /usr/share/uci_to_cjdroute.lua
+}
 restart()
 {
 	/etc/init.d/cjdns stop
 	/etc/init.d/cjdns start
 }
+
+
+## main
+
+[ x"$1" == x"reconfigure" ] && reconfigure \
+	&& logger "Reconfigure Complete"
