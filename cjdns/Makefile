@@ -40,6 +40,7 @@ define Build/Compile
 	CFLAGS="$(TARGET_CFLAGS)" \
 	CC="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
+	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
 	$(PKG_BUILD_DIR)/do
 endef
 
