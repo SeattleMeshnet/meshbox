@@ -28,7 +28,7 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath +CONFIG_SSP_SUPPORT:libssp
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath +SSP_SUPPORT:libssp
   MAINTAINER:=cjd
 endef
 
@@ -40,6 +40,7 @@ define Build/Compile
 	CFLAGS="$(TARGET_CFLAGS)" \
 	CC="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
+	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
 	$(PKG_BUILD_DIR)/do
 endef
 
