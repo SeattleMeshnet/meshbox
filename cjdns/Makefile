@@ -12,7 +12,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
-PKG_VERSION:=0.6
+PKG_VERSION:=0.7
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
@@ -28,7 +28,7 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath +SSP_SUPPORT:libssp
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath +CONFIG_SSP_SUPPORT:libssp
   MAINTAINER:=cjd
 endef
 
@@ -40,7 +40,6 @@ define Build/Compile
 	CFLAGS="$(TARGET_CFLAGS)" \
 	CC="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
-	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
 	$(PKG_BUILD_DIR)/do
 endef
 
@@ -48,7 +47,6 @@ endef
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cjdroute 	$(1)/usr/sbin/cjdroute
-	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/sbin/dnsserv
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/config
@@ -58,6 +56,8 @@ define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/share
 	$(INSTALL_BIN) ./files/cjdroutesetup.lua 	$(1)/usr/share/cjdroutesetup.lua
 	$(INSTALL_BIN) ./files/cjdns_jsonpath.sh	$(1)/usr/share/cjdns_jsonpath.sh
+	$(INSTALL_DIR) $(1)/usr/share/cjdns
+	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/share/cjdns/rainfly_dns
 endef
 
 $(eval $(call BuildPackage,cjdns))
