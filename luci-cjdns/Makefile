@@ -71,7 +71,8 @@ define Package/$(PKG_NAME)/install
 				$(1)/www/luci-static/meshbox
 
 	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_BIN) ./files/uci_to_cjdroute.lua 	$(1)/usr/share/uci_to_cjdroute.lua
+	$(INSTALL_BIN) ./files/usr/share/uci_to_cjdroute.lua	\
+				$(1)/usr/share/uci_to_cjdroute.lua
 
 	$(INSTALL_DIR)  $(1)/etc/uci-defaults
 	$(INSTALL_DATA) ./files/etc/uci-defaults/luci-theme-meshbox \
