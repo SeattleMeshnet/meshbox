@@ -74,6 +74,10 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/usr/share/uci_to_cjdroute.lua	\
 				$(1)/usr/share/uci_to_cjdroute.lua
 
+	$(INSTALL_DIR) $(1)/usr/share/cjdns
+	$(INSTALL_BIN) ./files/usr/share/cjdns/randomString \
+				$(1)/usr/share/cjdns/randomString
+
 	$(INSTALL_DIR)  $(1)/etc/uci-defaults
 	$(INSTALL_DATA) ./files/etc/uci-defaults/luci-theme-meshbox \
 				$(1)/etc/uci-defaults
