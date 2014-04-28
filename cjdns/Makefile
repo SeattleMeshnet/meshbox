@@ -53,9 +53,9 @@ define Package/cjdns/install
 	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/build_linux/testcjdroute $(1)/usr/sbin/
 	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/sbin/dnsserv
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/etc/config/cjdns.config $(1)/etc/config/cjdns
+	$(INSTALL_CONF) ./files/etc/config/cjdns 	$(1)/etc/config/cjdns
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/etc/init.d/cjdns.sh 	$(1)/etc/init.d/cjdns
+	$(INSTALL_BIN) ./files/etc/init.d/cjdns 	$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
 	$(INSTALL_BIN) ./files/usr/share/cjdroutesetup.lua 	$(1)/usr/share/cjdroutesetup.lua
 	$(INSTALL_BIN) ./files/usr/share/cjdns_jsonpath.sh	$(1)/usr/share/cjdns_jsonpath.sh
