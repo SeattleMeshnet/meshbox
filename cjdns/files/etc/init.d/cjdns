@@ -17,62 +17,109 @@ STOP=85
 
 CJDROUTE="/usr/sbin/cjdroute"
 CONF="/etc/cjdroute.conf"
-PID="$(pgrep -f $CJDROUTE)"
 CJDNS_ENABLED="$(uci get cjdns.cjdns.enabled)"
-if [ x${CJDNS_ENABLED} == x"1" ]
+if [ x${CJDNS_ENABLED} == x1 ]
 	then CJDNS_SERVICE="ENABLED"
 	else CJDNS_SERVICE="DISABLED"
 fi
+
+
+# Kill hoard of cjdns + cprocs w/o suicide..such hack
+PID_HOARD="$( pgrep -f $CJDROUTE)                     \
+	    $(pgrep -f S${START}cjdns)                \
+	    $(pgrep -f '/etc/init.d/cjdns start')     \
+	    $(pgrep -f '/etc/init.d/cjdns boot')"
+
+for PID in $PID_HOARD; do
+	# Prevent suicide
+	[ "$PID" == "$$" ] && continue
+	# Prevent infanticide
+	[ "$PID" == $(($$ - 1)) ] && continue
+	# New variable holds all pids to kill
+	[ ! "$PID2KILL" ]  && PID2KILL="$PID"         \
+			   || PID2KILL="$PID2KILL $PID"
+
+done
 
 nat6()
 {
 	[ "$1" == "on" ] \
 		&& H="A" \
 		|| H="D"
-
+	# [ ] Todo Check if we are using tun0 not cjdns0, and remove hard-code nonsense. 
 	ip6tables -t nat    -${H} POSTROUTING -o tun0 -j MASQUERADE
 	ip6tables -t filter -${H} FORWARD -i tun0 -o br-lan -m state --state RELATED,ESTABLISHED -j ACCEPT
 	ip6tables -t filter -${H} FORWARD -i eth1 -o br-lan -j ACCEPT
 
 }
+
 stop()
 {
-	if [ -z "$PID" ]; then
+
+	if [ -z "$PID2KILL" ]; then
 		logger "cjdns is not running"
 		return 0
 	else
-		for k in $PID
-			do logger "cjdns (pid ${k}) terminated"
-			kill -9 ${k} 2>/dev/null
-		done
+		logger -t cjdns -p1 "Killing all related cjdns/cjdroute2 pids: $PID2KILL"
+		kill -9 ${PID2KILL} 2>/dev/null
+
+		# [ ] Todo Check if NAT6 is on/off
 		nat6 off
 	fi
 }
 
+cjdhammer()
+{
+
+
+
+
+	(
+	while : ; do
+		logger -t cjdns "Starting cjdns in child process cjdhammer()"
+		# TODO: socat exec:"$CJDROUTE < $CONF" UDP4-DATAGRAM:192.168.100.100:1073
+		$CJDROUTE < $CONF
+		sleep 2
+
+	done
+	)
+
+
+}
+
+
 start()
 {
+	# Sanity
 	if [ ! -f $CONF ]; then
-		logger -t cjdns "No file found at $CONF -- generating new config then applying /etc/config/cjdns"
+		logger -t cjdns -p1 "No file found at $CONF -- \
+			Staging NEW cjdroute.conf & applying /etc/config/cjdns"
+		
+		# Generate new configuration
 		$CJDROUTE --genconf > /tmp/cjdns.tmp
+		# Clean config for strict JSON
 		$CJDROUTE --cleanconf < /tmp/cjdns.tmp > $CONF
+
 		rm /tmp/cjdns.tmp
-		lua /usr/share/uci_to_cjdroute.lua
-		# Preset Peers and Beacon Interface -- Anticipating duplicate entries, check required.
+		
+		# Import our "default" cjdns settings to new /etc/cjdroute.conf
+		lua /usr/share/uci_to_cjdroute.lua uci2conf
+
+		# Optionally add Preset Peers, Beacon Interface
 		# lua /usr/share/cjdroutesetup.lua
 		sync
 	fi
+	# Starts a 'Crashey' process for infinity. 
+	if [ -z "$PID2KILL" ]; then
+		
+		cjdhammer &
 
-	if [ -z "$PID" ]; then
-		logger -t cjdns "Starting cjdns"
-		$CJDROUTE < $CONF
+		# [ ] Todo Check if NAT6 is on/off
 		nat6 on
-		if [ $? -gt 0 ]; then
-			logger "Failed to start cjdns"
-			nat6 off
-			return 1
-		fi
+		
 	else
-		logger "cjdns is already running"
+		logger -t cjdns -p2 "cjdns is detected as running at proccess: $PID2KILL"
+		for x in $PID2KILL; do ps | grep ^.$x | logger ; done
 		return 1
 	fi
 }
@@ -81,21 +128,26 @@ reconfigure()
 {
 	mv /etc/cjdroute.conf /tmp/cjdroute.conf.old
 
-	logger -t cjdns "Generating new cjdns configuration"
+	logger -t cjdns -p1 "Generating new cjdns configuration"
 	cjdroute --genconf > /tmp/cjdroute.conf.new
 	cjdroute --cleanconf < /tmp/cjdroute.conf.new \
 		> /etc/cjdroute.conf
 
-	logger -t cjdns "Installing to UCI"
+	logger -t cjdns -p1 "Installing cjdroute.conf to uci"
+	# Use jsonpath (jow)
 	sh -x /usr/share/cjdns_jsonpath.sh 2>&1 | grep uci \
 	    | sed "s/+ uci set cjdns.cjdns.//"  | sort     \
 	    | logger -t cjdns \
-		&& logger -t cjdns "cjduci Installation: OK" \
-		|| logger -y cjdns "cjduci Installation: Please Check /etc/config/cjdns"
+		&& logger -t cjdns -p1 "cjduci Installation: OK" \
+		|| logger -y cjdns -p2 "cjduci Installation: Please Check /etc/config/cjdns"
 
-	logger -t cjdns "Restarting cjdns"
-	lua /usr/share/uci_to_cjdroute.lua
+	logger -t cjdns -p1 "Restarting cjdns with new uci cjdns configuration"	
+	lua /usr/share/uci_to_cjdroute.lua restart
+
+	
 }
+
+# Keep this to prevent ~2sec race condition
 restart()
 {
 	/etc/init.d/cjdns stop
