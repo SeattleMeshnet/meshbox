@@ -142,7 +142,7 @@ function act_status()
 			local address = x.address
 
 			local xpktip6 = os.execute( "/usr/sbin/publictoip6" .. " " .. pubkey .. " > /tmp/.publictoip6" )
-			local f 	  = assert(io.open("/tmp/.publictoip6", "r"))
+			local f       = assert(io.open("/tmp/.publictoip6", "r"))
 			local cjdnsip = f:read()
 			f:close()
 
