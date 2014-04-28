@@ -26,9 +26,9 @@ function o.cfgvalue(self, section)
 	return fs.readfile("/etc/cjdroute.conf")
 end
 
-function o.write(self, section, value)
+--[[function o.write(self, section, value)
 	value = value:gsub("\r\n?", "\n")
 	fs.writefile("/etc/cjdroute.conf", value)
-end
+end]]--
 
 return f

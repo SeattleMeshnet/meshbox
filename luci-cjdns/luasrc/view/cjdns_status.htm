@@ -52,12 +52,12 @@
 					if (st[i].status == 'ESTABLISHED') {
 						tr.insertCell(-1).innerHTML = st[i].latency;
 						tr.insertCell(-1).innerHTML = String.format(
-							'<input class="cbi-button cbi-button-up" type="button" value="<%:online%>" />'
+							'<input class="cbi-button cbi-button-up" type="button" " />'
 						);
 					} else if (st[i].status == 'UNRESPONSIVE') {
 						tr.insertCell(-1).innerHTML = 'Pinging...';
 						tr.insertCell(-1).innerHTML = String.format(
-							'<input class="cbi-button cbi-input-reset" type="button" value="<%:offline%>" />'
+							'<input class="cbi-button cbi-input-reset" type="button" " />'
 						);
 					} else {
 						tr.insertCell(-1).innerHTML = 'Pinging...';
