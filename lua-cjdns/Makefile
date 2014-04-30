@@ -12,7 +12,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lua-cjdns
-PKG_VERSION:=0.6
+PKG_VERSION:=0.7
+
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_URL:=git://github.com/cjdelisle/cjdns.git
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=crashey
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -21,41 +27,16 @@ define Package/lua-cjdns
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Lua bindings for cjdns
-  DEPENDS:=+cjdns +lua-bencode +dkjson +luasocket
+  DEPENDS:=+cjdns +lua-bencode +dkjson +luasocket +lua-sha2
   MAINTAINER:=Igel
-endef
-
-define Package/lua-cjdns/description
-  Lua bindings for cjdns
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile
 endef
 
-
-
 define Package/lua-cjdns/install
-	$(INSTALL_DIR) $(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/common.lua 	$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/admin.lua 	$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/config.lua 	$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/perm.lua 		$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/router.lua 	$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/udp.lua 		$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/util.lua 		$(1)/usr/lib/lua/cjdns
-
-	$(INSTALL_DATA) ./files/cjdns/init.lua 		$(1)/usr/lib/lua/cjdns
-
+	$(INSTALL_DIR)	$(1)/usr/lib/lua/cjdns
+	$(INSTALL_DATA)	$(PKG_BUILD_DIR)/contrib/lua/cjdns/*.lua 	$(1)/usr/lib/lua/cjdns
 endef
 
 $(eval $(call BuildPackage,lua-cjdns))
