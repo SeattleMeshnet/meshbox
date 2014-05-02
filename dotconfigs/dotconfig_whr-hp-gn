@@ -1075,7 +1075,7 @@ CONFIG_PACKAGE_lua=y
 CONFIG_PACKAGE_lua-bencode=y
 CONFIG_PACKAGE_lua-cjdns=y
 # CONFIG_PACKAGE_lua-examples is not set
-# CONFIG_PACKAGE_lua-sha2 is not set
+CONFIG_PACKAGE_lua-sha2=y
 # CONFIG_PACKAGE_luac is not set
 # CONFIG_PACKAGE_luaexpat is not set
 # CONFIG_PACKAGE_luafilesystem is not set
