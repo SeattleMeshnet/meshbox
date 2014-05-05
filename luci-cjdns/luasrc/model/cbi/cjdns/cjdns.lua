@@ -63,7 +63,7 @@ passwd_mgmt = m:section(TypedSection, "node_auth_mgmt", translate("Node Authoriz
 ]]--
 
 m.on_after_commit = function(self)
-	os.execute("/usr/share/uci_to_cjdroute.lua uci2conf")
+	os.execute("/usr/share/cjdns/cli.lua uci2conf")
 	os.execute("/etc/init.d/cjdns restart")
 end
 

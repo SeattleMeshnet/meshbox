@@ -57,9 +57,8 @@ define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/cjdns 	$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_BIN) ./files/usr/share/cjdroutesetup.lua 	$(1)/usr/share/cjdroutesetup.lua
-	$(INSTALL_BIN) ./files/usr/share/cjdns_jsonpath.sh	$(1)/usr/share/cjdns_jsonpath.sh
 	$(INSTALL_DIR) $(1)/usr/share/cjdns
+	$(INSTALL_BIN) ./files/usr/share/cjdns/* $(1)/usr/share/cjdns/
 endef
 
 $(eval $(call BuildPackage,cjdns))

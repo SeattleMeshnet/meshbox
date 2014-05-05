@@ -55,7 +55,7 @@ define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./cjdns.sh $(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_BIN) ./cjdroutesetup.lua $(1)/usr/share/cjdroutesetup.lua
+	$(INSTALL_BIN) ./cjdns/setup_peering.lua $(1)/usr/share/cjdns/setup_peering.lua
 endef
 
 $(eval $(call BuildPackage,cjdns))

@@ -46,7 +46,7 @@ nat6()
 	[ "$1" == "on" ] \
 		&& H="A" \
 		|| H="D"
-	# [ ] Todo Check if we are using tun0 not cjdns0, and remove hard-code nonsense. 
+	# [ ] Todo Check if we are using tun0 not cjdns0, and remove hard-code nonsense.
 	ip6tables -t nat    -${H} POSTROUTING -o tun0 -j MASQUERADE
 	ip6tables -t filter -${H} FORWARD -i tun0 -o br-lan -m state --state RELATED,ESTABLISHED -j ACCEPT
 	ip6tables -t filter -${H} FORWARD -i eth1 -o br-lan -j ACCEPT
@@ -94,29 +94,29 @@ start()
 	if [ ! -f $CONF ]; then
 		logger -t cjdns -p1 "No file found at $CONF -- \
 			Staging NEW cjdroute.conf & applying /etc/config/cjdns"
-		
+
 		# Generate new configuration
 		$CJDROUTE --genconf > /tmp/cjdns.tmp
 		# Clean config for strict JSON
 		$CJDROUTE --cleanconf < /tmp/cjdns.tmp > $CONF
 
 		rm /tmp/cjdns.tmp
-		
+
 		# Import our "default" cjdns settings to new /etc/cjdroute.conf
-		lua /usr/share/uci_to_cjdroute.lua uci2conf
+		lua /usr/share/cjdns/cli.lua uci2conf
 
 		# Optionally add Preset Peers, Beacon Interface
-		# lua /usr/share/cjdroutesetup.lua
+		# lua /usr/share/cjdns/setup_peering.lua
 		sync
 	fi
-	# Starts a 'Crashey' process for infinity. 
+	# Starts a 'Crashey' process for infinity.
 	if [ -z "$PID2KILL" ]; then
-		
+
 		cjdhammer &
 
 		# [ ] Todo Check if NAT6 is on/off
 		nat6 on
-		
+
 	else
 		logger -t cjdns -p2 "cjdns is detected as running at proccess: $PID2KILL"
 		for x in $PID2KILL; do ps | grep ^.$x | logger ; done
@@ -135,16 +135,16 @@ reconfigure()
 
 	logger -t cjdns -p1 "Installing cjdroute.conf to uci"
 	# Use jsonpath (jow)
-	sh -x /usr/share/cjdns_jsonpath.sh 2>&1 | grep uci \
+	sh -x /usr/share/cjdns/update_uci.sh 2>&1 | grep uci \
 	    | sed "s/+ uci set cjdns.cjdns.//"  | sort     \
 	    | logger -t cjdns \
 		&& logger -t cjdns -p1 "cjduci Installation: OK" \
 		|| logger -y cjdns -p2 "cjduci Installation: Please Check /etc/config/cjdns"
 
-	logger -t cjdns -p1 "Restarting cjdns with new uci cjdns configuration"	
-	lua /usr/share/uci_to_cjdroute.lua restart
+	logger -t cjdns -p1 "Restarting cjdns with new uci cjdns configuration"
+	lua /usr/share/cjdns/cli.lua restart
 
-	
+
 }
 
 # Keep this to prevent ~2sec race condition

@@ -15,18 +15,18 @@ local meshLua_cmd = {}
 	status = { info = { "[XXX] command info for XXX" },
 		exec = { function(x)
 				--code...
-			end 
+			end
 			}
 	},
 
 
 ]]--
 
-meshLua_cmd = { 
+meshLua_cmd = {
 	v = { info = { "\n\t--[[ Project Meshnet ]]--\n" ..  randomQuote .. "\n\n" } },
 
 	l = { info = { "[l]ist all connected nodes" },
-		exec = { function(x) 
+		exec = { function(x)
 
 
 
@@ -83,20 +83,20 @@ meshLua_cmd = {
 
 
 
-			end 
+			end
 			}
 	},
 
 
 	h = { info = { "[h]yperboria - hype or not." },
-		exec = { function(x) 
-				print(math.random()) 
-			end 
+		exec = { function(x)
+				print(math.random())
+			end
 			}
 	},
-	
+
 	b = { info = { "[b]roadcast meshbox-cjdns Wi-Fi" },
-		exec = { function (x) 
+		exec = { function (x)
 				print(1)
 			end
 		}
@@ -104,52 +104,52 @@ meshLua_cmd = {
 
 	p = { info = { "[p]reselected peers" },
 		exec = { function (x)
-				print("\t" .. "Timestamp: " .. os.time()) 
-				
+				print("\t" .. "Timestamp: " .. os.time())
+
 			end
 			}
 	},
-	
+
 	start = { info = { "[start] start cjdroute service" },
-			exec = { function(x) 
+			exec = { function(x)
 				-- print("\t" .. " sh /etc/init.d/cjdns start")
 				os.execute("/etc/init.d/cjdns start")
-			end 
+			end
 			}
 	},
 
 	stop = { info = { "[stop] stop cjdroute service" },
-		exec = { function(x) 
+		exec = { function(x)
 				print("\t" .. " sh /etc/init.d/cjdns stop")
 				os.execute("/etc/init.d/cjdns stop")
-			end 
+			end
 			}
 	},
-	
+
 	restart = { info = { "[restart] restart cjdroute service" },
-		exec = { function(x) 
+		exec = { function(x)
 				print("\t" .. " sh /etc/init.d/cjdns restart")
 				os.execute("/etc/init.d/cjdns stop")
 				os.execute("/etc/init.d/cjdns start")
-			end 
+			end
 			}
 	},
 
 	reconfigure = { info = { "[reconfigure] reconfigure cjdroute service" },
-		exec = { function(x) 
+		exec = { function(x)
 				print("\t" .. " sh /etc/init.d/cjdns reconfigure")
 				os.execute("/etc/init.d/cjdns reconfigure")
-			end 
+			end
 			}
 	},
 
 	status = { info = { "[status] status cjdroute service" },
-		exec = { function(x) 
+		exec = { function(x)
 				print("\t" .. " sh /etc/init.d/cjdns status")
-				-- local rS = 
-				require('randomString')
+				-- local rS =
+				require('random_string')
 				print(generate(14,14))
-			end 
+			end
 			}
 	},
 
@@ -158,12 +158,12 @@ meshLua_cmd = {
 				print("\t" .. "Timestamp: " .. os.time() )
 				if arg[1] then
 					local commander = arg[1]
-					
+
 					print("\t" .. "Commander: " .. arg[1])
-					
+
 					if x then
 						local arguments = x
-						
+
 						print("\t" .. "Arguments: " .. x)
 					end
 				end
@@ -171,16 +171,16 @@ meshLua_cmd = {
 		}
 	},
 	conf2uci = { info = { "[conf2uci] command info for XXX" },
-		exec = { function(x) 
-				print("\t" .. " sh -x /usr/share/cjdns_jsonpath.sh")
-				os.execute("/usr/share/cjdns_jsonpath.sh")
+		exec = { function(x)
+				print("\t" .. " sh -x /usr/share/cjdns/update_uci.sh")
+				os.execute("/usr/share/cjdns/update_uci.sh")
 
-			end 
+			end
 			}
 	},
 
 	uci2conf = { info = { "[uci2conf] Save /etc/config/cjdns to /etc/cjdroute.conf" },
-		exec = { function(x) 
+		exec = { function(x)
 
 				local dkjson = require("dkjson") -- http://dkolf.de/src/dkjson-lua.fsl/home
 				local uci    = require("uci")
@@ -422,13 +422,13 @@ meshLua_cmd = {
 				save:write( dkjson.encode (conf, { indent = true }))
 				save:close()
 
-			end 
+			end
 			}
 	},
 
 
 }
- 
+
 function available_functions ()
 	-- banner
 	print(meshLua_cmd.v['info'][1])
@@ -450,7 +450,7 @@ if #arg == 0 then
 	until keypunch:len() ~= 0
 end
 
-if arg[1] then 
+if arg[1] then
 	keypunch = arg[1]
 	params = table.concat(arg, " ", 2, end_index)
 end
