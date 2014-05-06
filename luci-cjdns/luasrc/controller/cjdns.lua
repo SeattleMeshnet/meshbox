@@ -89,7 +89,7 @@ function act_ping()
 	local response, err = admin:auth({
     q = "SwitchPinger_ping",
     path = luci.http.formvalue("label"),
-    timeout = 2000
+    timeout = tonumber(luci.http.formvalue("timeout"))
   })
 
 	if err or response.error then

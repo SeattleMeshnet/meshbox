@@ -1,5 +1,5 @@
 <script type="text/javascript">//<![CDATA[
-	
+
 	function cjdns_delete_node(idx) {
 		XHR.get('<%=luci.dispatcher.build_url("admin", "services", "cjdns", "delete")%>/' + idx, null,
 			function(x)
@@ -13,8 +13,8 @@
 
 	/*----------------------------------------------------------------*/
 	/* Active Cjdns Nodes
-	 *	entry({"admin", "services", "cjdns", "status"}, 
-	 *			call("act_status")).leaf = true 
+	 *	entry({"admin", "services", "cjdns", "status"},
+	 *			call("act_status")).leaf = true
 	/*----------------------------------------------------------------*/
 	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "status")%>', null,
 		function(x, st)
@@ -79,7 +79,66 @@
 			}
 		}
 	);
+
+	var peersURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "peers")%>';
+	var updatePeers = function(x, peers) {
+		var table = document.getElementById('cjdns-peerings');
+		while (table.rows.length > 1) {
+			table.deleteRow(1);
+		}
+
+		peers.forEach(function(peer, i) {
+			var name = peer.ipv6.split(':').pop();
+			var interface = (peer.isIncoming === 1) ? 'incoming' : 'outgoing';
+
+			var row = table.insertRow(-1);
+			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
+			row.insertCell(-1).innerHTML = name;
+			row.insertCell(-1).innerHTML = interface;
+			row.insertCell(-1).innerHTML = peer.ipv6;
+			var latencyCell = row.insertCell(-1);
+			row.insertCell(-1).innerHTML = peer.state.toLowerCase();
+
+			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
+			var timeout = 30;
+			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
+				if (pong.result == 'timeout') {
+					latencyCell.innerHTML = '> ' + timeout + ' ms';
+				} else {
+					latencyCell.innerHTML = pong.ms + ' ms';
+				};
+			})
+		});
+
+		if (peers.length == 0) {
+			var row = table.insertRow(-1);
+			row.className = 'cbi-section-table-row';
+			var cell = row.insertCell(-1);
+			cell.colSpan = 5;
+			cell.innerHTML = 'No active peerings';
+		}
+	};
+
+	XHR.get(peersURI, null, updatePeers);
+	XHR.poll(5, peersURI, null, updatePeers);
 //]]></script>
+
+
+<fieldset class="cbi-section">
+	<legend><%:InterfaceController_peerStats%></legend>
+	<table class="cbi-section-table" id="cjdns-peerings">
+		<tr class="cbi-section-table-titles">
+			<th class="cbi-section-table-cell"><%:Name%></th>
+			<th class="cbi-section-table-cell"><%:Interface%></th>
+			<th class="cbi-section-table-cell"><%:IPv6%></th>
+			<th class="cbi-section-table-cell"><%:Latency%></th>
+			<th class="cbi-section-table-cell"><%:Status%></th>
+		</tr>
+		<tr class="cbi-section-table-row">
+			<td colspan="5"><em><br /><%:Querying cjdns admin interface%></em></td>
+		</tr>
+	</table>
+</fieldset>
 
 
 <fieldset class="cbi-section">
