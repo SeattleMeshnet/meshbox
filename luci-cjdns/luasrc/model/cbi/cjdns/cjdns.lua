@@ -22,7 +22,7 @@ m = Map("cjdns", luci.util.pcdata(translate("Project Meshnet")),
 ------------------------
 -- Active cjdns nodes --
 ------------------------
-m:section(SimpleSection).template  = "cjdns_status"
+m:section(SimpleSection).template  = "cjdns/status"
 
 ---------------------------------------
 -- Enabled cjdns nodes (UDPInterface) -
