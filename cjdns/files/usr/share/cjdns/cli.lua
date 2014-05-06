@@ -205,7 +205,6 @@ meshLua_cmd = {
 				-- luci.model.uci.cursor():foreach("cjdns", "cjdns",
 				uci.cursor():foreach("cjdns", "cjdns",
 					function(cfg)
-						enabled = cfg.enabled 		-- cjdns/nat66 (0, 1)
 						logTo 	= cfg.logto_enable 	-- conf.logging NOT DONE
 						bind_bi	= cfg.beacon_interface 	-- eg; eth5
 						beacon 	= cfg.beacon_mode 	-- 0, 1, 2

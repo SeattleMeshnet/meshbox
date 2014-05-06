@@ -219,11 +219,6 @@ s:tab("ezpaste",  translate("EZ-Paste Box"))
 
 --[[ General Tab ]]--
 
--- Enable/Disable cjdns & nat66
-e = s:taboption("general", Flag, "enabled", translate("Enable cjdns and NAT66 service"),
-	translate("Toggles the start of both cjdns and NAT66 services upon Boot"))
-e.default  = 1
-e.rmempty  = false
 -- Host IP
 hip = s:taboption("general", Value, "bind_hostip", translate("IP Address bound to UDPInterface"),
 	    translate("Default 0.0.0.0 or ::1 for all interfaces"))

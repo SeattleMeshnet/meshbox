@@ -17,12 +17,6 @@ STOP=85
 
 CJDROUTE="/usr/sbin/cjdroute"
 CONF="/etc/cjdroute.conf"
-CJDNS_ENABLED="$(uci get cjdns.cjdns.enabled)"
-if [ x${CJDNS_ENABLED} == x1 ]
-	then CJDNS_SERVICE="ENABLED"
-	else CJDNS_SERVICE="DISABLED"
-fi
-
 
 # Kill hoard of cjdns + cprocs w/o suicide..such hack
 PID_HOARD="$( pgrep -f $CJDROUTE)                     \

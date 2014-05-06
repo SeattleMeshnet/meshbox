@@ -1,5 +1,4 @@
 config cjdns 'cjdns'
-	option enabled '0'
 	option logto_enable ''
 	option beacon_interface ''
 	option beacon_mode ''
