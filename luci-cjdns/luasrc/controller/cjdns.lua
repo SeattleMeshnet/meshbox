@@ -15,6 +15,9 @@ You may obtain a copy of the License at
 
 module("luci.controller.cjdns", package.seeall)
 
+cjdns  = require "cjdns/init"
+dkjson = require "dkjson"
+
 function index()
 	if not nixio.fs.access("/etc/config/cjdns") then
 		return
@@ -22,15 +25,15 @@ function index()
 
 	local page
 	page = entry({"admin", "services", "cjdns"},
-				  cbi("cjdns/cjdns"), _("cjdns"))
-				  -- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
+					cbi("cjdns/cjdns"), _("cjdns"))
+					-- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
 	page.dependent = true
-	
+
 	-----------------------------------------
 	-- Advanced Configuration Access (Tab) --
 	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 	nopts = entry({"admin", "services", "cjdns", "Configuration Access"},
-				   cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
+					 cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
 	nopts.leaf = false
 	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -38,6 +41,74 @@ function index()
 	-- See XHR.poll: <%=luci.dispatcher.build_url
 	entry({"admin", "services", "cjdns", "status"}, call("act_status")).leaf = true
 	entry({"admin", "services", "cjdns", "delete"}, call("act_delete")).leaf = true
+	entry({"admin", "services", "cjdns", "peers"}, call("act_peers")).leaf = true
+	entry({"admin", "services", "cjdns", "ping"}, call("act_ping")).leaf = true
+end
+
+function act_peers()
+	config = cjdns.ConfigFile.new("/etc/cjdroute.conf")
+	admin  = config:makeInterface()
+
+	local page = 0
+	local peers = {}
+
+	while page do
+		local response, err = admin:auth({
+			q = "InterfaceController_peerStats",
+			page = page
+		})
+
+		if err or response.error then
+			luci.http.status(502, "Bad Gateway")
+			luci.http.prepare_content("application/json")
+			luci.http.write_json(response)
+			return
+		end
+
+		for i,peer in pairs(response.peers) do
+			peer.ipv6 = publictoip6(peer.publicKey)
+			peers[#peers + 1] = peer
+		end
+
+		if response.more then
+			page = page + 1
+		else
+			page = nil
+		end
+	end
+
+	luci.http.status(200, "OK")
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(peers)
+end
+
+function act_ping()
+	config = cjdns.ConfigFile.new("/etc/cjdroute.conf")
+	admin  = config:makeInterface()
+
+	local response, err = admin:auth({
+    q = "SwitchPinger_ping",
+    path = luci.http.formvalue("label"),
+    timeout = 2000
+  })
+
+	if err or response.error then
+		luci.http.status(502, "Bad Gateway")
+		luci.http.prepare_content("application/json")
+		luci.http.write_json(response)
+		return
+	end
+
+	luci.http.status(200, "OK")
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(response)
+end
+
+function publictoip6(publicKey)
+	local process = io.popen("/usr/sbin/publictoip6 " .. publicKey, "r")
+	local ipv6    = process:read()
+	process:close()
+	return ipv6
 end
 
 ------------------------
@@ -240,12 +311,12 @@ function act_status()
 	end -- for conf.interfaces.ETHInterface{}
 	--[[
 	8888888 8888888b.       88888888888                                  888
-	  888   888   Y88b          888                                      888
-	  888   888    888          888                                      888
-	  888   888   d88P          888  888  888 88888b.  88888b.   .d88b.  888
-	  888   8888888P"           888  888  888 888 "88b 888 "88b d8P  Y8b 888
-	  888   888                 888  888  888 888  888 888  888 88888888 888
-	  888   888                 888  Y88b 888 888  888 888  888 Y8b.     888
+		888   888   Y88b          888                                      888
+		888   888    888          888                                      888
+		888   888   d88P          888  888  888 88888b.  88888b.   .d88b.  888
+		888   8888888P"           888  888  888 888 "88b 888 "88b d8P  Y8b 888
+		888   888                 888  888  888 888  888 888  888 88888888 888
+		888   888                 888  Y88b 888 888  888 888  888 Y8b.     888
 	8888888 888                 888   "Y88888 888  888 888  888  "Y8888  888
 	]]--
 
