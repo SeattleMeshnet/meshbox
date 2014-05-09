@@ -16,7 +16,6 @@ START=90
 STOP=85
 
 CJDROUTE="/usr/sbin/cjdroute"
-CONF="/etc/cjdroute.conf"
 
 # Kill hoard of cjdns + cprocs w/o suicide..such hack
 PID_HOARD="$( pgrep -f $CJDROUTE)                     \
@@ -65,8 +64,7 @@ cjdhammer()
 	(
 	while : ; do
 		logger -t cjdns "Starting cjdns in child process cjdhammer()"
-		# TODO: socat exec:"$CJDROUTE < $CONF" UDP4-DATAGRAM:192.168.100.100:1073
-		cjdrouteconf get | cjdroute
+		cjdrouteconf get | $CJDROUTE
 		sleep 2
 
 	done
@@ -75,14 +73,7 @@ cjdhammer()
 
 start()
 {
-	touch /etc/config/cjdns
-	uci show cjdns | grep ipv6 > /dev/null
-	if [ $? -ne 0 ]; then
-		logger -t cjdns "cjdns.cjdns.ipv6 not set, generating new config"
-		cjdroute --genconf | cjdroute --cleanconf | cjdrouteconf set
-		lua /usr/share/cjdns/setup_peering.lua
-		uci commit
-	fi
+	[ -f /etc/uci-defaults/cjdns ] && ( . /etc/uci-defaults/cjdns )
 
 	# Starts a 'Crashey' process for infinity.
 	if [ -z "$PID2KILL" ]; then
@@ -104,4 +95,8 @@ restart()
 {
 	/etc/init.d/cjdns stop
 	/etc/init.d/cjdns start
+}
+
+reload() {
+	/etc/init.d/cjdns restart
 }

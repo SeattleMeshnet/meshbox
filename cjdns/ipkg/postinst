@@ -1,0 +1,6 @@
+#!/bin/sh
+[ -n "${IPKG_INSTROOT}" ] || {
+  ( . /etc/uci-defaults/cjdns ) && rm -f /etc/uci-defaults/cjdns
+  /etc/init.d/cjdns enabled || /etc/init.d/cjdns enable
+  exit 0
+}
