@@ -21,7 +21,7 @@
 			row.insertCell(-1).innerHTML = peer.state.toLowerCase();
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
-			var timeout = 50;
+			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
 				if (pong.result == 'timeout') {
 					latencyCell.innerHTML = '> ' + timeout + ' ms';
