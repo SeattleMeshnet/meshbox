@@ -24,7 +24,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	for d in luasrc htdocs root; do \
+	for d in lua luasrc htdocs root; do \
 	  if [ -d ./$$$$d ]; then \
 	    mkdir -p $(PKG_BUILD_DIR)/$$$$d; \
 		$(CP) ./$$$$d/* $(PKG_BUILD_DIR)/$$$$d/; \
@@ -46,6 +46,10 @@ define Package/$(PKG_NAME)/install
 	if [ -d $(PKG_BUILD_DIR)/luasrc ]; then \
 	  $(INSTALL_DIR) $(1)$(LUCI_LIBRARYDIR); \
 	  cp -pR $(PKG_BUILD_DIR)/luasrc/* $(1)$(LUCI_LIBRARYDIR)/; \
+	else true; fi
+	if [ -d $(PKG_BUILD_DIR)/lua ]; then \
+	  $(INSTALL_DIR) $(1)$(LUA_LIBRARYDIR); \
+	  cp -pR $(PKG_BUILD_DIR)/lua/* $(1)$(LUA_LIBRARYDIR)/; \
 	else true; fi
 endef
 

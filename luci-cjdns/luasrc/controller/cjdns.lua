@@ -23,31 +23,30 @@ function index()
 		return
 	end
 
-	local page
-	page = entry({"admin", "services", "cjdns"},
-					cbi("cjdns/cjdns"), _("cjdns"))
-					-- cbi("cjdns/cjdns", {autoapply=true}), _("cjdns"))
-	page.dependent = true
+	entry({"admin", "services", "cjdns"},
+    cbi("cjdns/overview"), _("cjdns")).dependent = true
 
-	-----------------------------------------
-	-- Advanced Configuration Access (Tab) --
-	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-	nopts = entry({"admin", "services", "cjdns", "Configuration Access"},
-					 cbi("cjdns/advanced"), "Advanced Configuration Access", 1)
-	nopts.leaf = false
-	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	entry({"admin", "services", "cjdns", "overview"},
+    cbi("cjdns/overview"), _("Overview"), 1).leaf = false
 
-	-- JavaScript
-	-- See XHR.poll: <%=luci.dispatcher.build_url
-	entry({"admin", "services", "cjdns", "status"}, call("act_status")).leaf = true
+	entry({"admin", "services", "cjdns", "peering"},
+    cbi("cjdns/peering"), _("Peers"), 2).leaf = false
+
+	entry({"admin", "services", "cjdns", "settings"},
+    cbi("cjdns/settings"), _("Settings"), 3).leaf = false
+
+	entry({"admin", "services", "cjdns", "cjdrouteconf"},
+		cbi("cjdns/cjdrouteconf"), _("cjdroute.conf"), 4).leaf = false
+
+	-- entry({"admin", "services", "cjdns", "status"}, call("act_status")).leaf = true
 	entry({"admin", "services", "cjdns", "delete"}, call("act_delete")).leaf = true
 	entry({"admin", "services", "cjdns", "peers"}, call("act_peers")).leaf = true
 	entry({"admin", "services", "cjdns", "ping"}, call("act_ping")).leaf = true
 end
 
 function act_peers()
-	config = cjdns.ConfigFile.new("/etc/cjdroute.conf")
-	admin  = config:makeInterface()
+	require("cjdns/uci")
+	admin = cjdns.uci.makeInterface()
 
 	local page = 0
 	local peers = {}
@@ -83,8 +82,8 @@ function act_peers()
 end
 
 function act_ping()
-	config = cjdns.ConfigFile.new("/etc/cjdroute.conf")
-	admin  = config:makeInterface()
+	require("cjdns/uci")
+	admin = cjdns.uci.makeInterface()
 
 	local response, err = admin:auth({
     q = "SwitchPinger_ping",

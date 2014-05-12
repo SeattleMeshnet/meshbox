@@ -46,19 +46,24 @@ endef
 
 
 define Package/cjdns/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) ./files/usr/bin/cjdrouteconf $(1)/usr/bin/cjdrouteconf
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cjdroute 	$(1)/usr/sbin/cjdroute
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/privatetopublic $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/publictoip6 	$(1)/usr/sbin/
 	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/build_linux/testcjdroute $(1)/usr/sbin/
 	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/dnsserv 	$(1)/usr/sbin/dnsserv
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/etc/config/cjdns 	$(1)/etc/config/cjdns
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/cjdns 	$(1)/etc/init.d/cjdns
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/etc/uci-defaults/cjdns $(1)/etc/uci-defaults/cjdns
 	$(INSTALL_DIR) $(1)/usr/share
 	$(INSTALL_DIR) $(1)/usr/share/cjdns
 	$(INSTALL_BIN) ./files/usr/share/cjdns/* $(1)/usr/share/cjdns/
+
+	$(INSTALL_DIR) $(1)/CONTROL
+	$(INSTALL_DATA) ./ipkg/* $(1)/CONTROL/
 endef
 
 $(eval $(call BuildPackage,cjdns))

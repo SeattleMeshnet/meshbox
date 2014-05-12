@@ -1,85 +1,5 @@
 <script type="text/javascript">//<![CDATA[
 
-	function cjdns_delete_node(idx) {
-		XHR.get('<%=luci.dispatcher.build_url("admin", "services", "cjdns", "delete")%>/' + idx, null,
-			function(x)
-			{
-				var tb = document.getElementById('cjdns_status_table');
-				if (tb && (idx < tb.rows.length))
-				tb.rows[0].parentNode.removeChild(tb.rows[idx]);
-			}
-		);
-	}
-
-	/*----------------------------------------------------------------*/
-	/* Active Cjdns Nodes
-	 *	entry({"admin", "services", "cjdns", "status"},
-	 *			call("act_status")).leaf = true
-	/*----------------------------------------------------------------*/
-	XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "status")%>', null,
-		function(x, st)
-		{
-			var tb = document.getElementById('cjdns_status_table');
-			if (st && tb)
-			{
-				/* clear all rows */
-				while( tb.rows.length > 1 )
-					tb.deleteRow(1);
-
-				/* Fill in the rows  */
-				for( var i = 0; i < st.length; i++ )
-				{
-					var tr = tb.insertRow(-1);
-					tr.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
-					tr.insertCell(-1).innerHTML = st[i].name;
-
-					var t = st[i].num;
-
-					if (st[i].other == 0)
-						var t = " (UDP Interface)";
-					if (st[i].other == 1)
-						var t = " (ETH Interface)";
-					if (st[i].other == 2)
-						var t = " (Allow Tunnel)";
-					if (st[i].other == 3)
-						var t = " (Outgoing Tunnel)";
-					if (st[i].other == 4)
-						var t = " (WLAN Interface)";
-
-					tr.insertCell(-1).innerHTML = st[i].node + t;
-					tr.insertCell(-1).innerHTML = st[i].cjdnsip;
-
-					if (st[i].status == 'ESTABLISHED') {
-						tr.insertCell(-1).innerHTML = st[i].latency;
-						tr.insertCell(-1).innerHTML = String.format(
-							'<input class="cbi-button cbi-button-up" type="button" " />'
-						);
-					} else if (st[i].status == 'UNRESPONSIVE') {
-						tr.insertCell(-1).innerHTML = 'Pinging...';
-						tr.insertCell(-1).innerHTML = String.format(
-							'<input class="cbi-button cbi-input-reset" type="button" " />'
-						);
-					} else {
-						tr.insertCell(-1).innerHTML = 'Pinging...';
-						tr.insertCell(-1).innerHTML = String.format(
-							'<input class="cbi-button cbi-button-reload" type="button" value="<%:hiccup%>" />'
-						);
-					}
-				}
-
-				if( tb.rows.length == 1 )
-				{
-					var tr = tb.insertRow(-1);
-						tr.className = 'cbi-section-table-row';
-
-					var td = tr.insertCell(-1);
-						td.colSpan = 5;
-						td.innerHTML = '<em><br /><%:There are no enabled cjdns nodes.%></em>';
-				}
-			}
-		}
-	);
-
 	var peersURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "peers")%>';
 	var updatePeers = function(x, peers) {
 		var table = document.getElementById('cjdns-peerings');
@@ -97,10 +17,11 @@
 			row.insertCell(-1).innerHTML = interface;
 			row.insertCell(-1).innerHTML = peer.ipv6;
 			var latencyCell = row.insertCell(-1);
+			latencyCell.innerHTML = 'Pinging'
 			row.insertCell(-1).innerHTML = peer.state.toLowerCase();
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
-			var timeout = 30;
+			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
 				if (pong.result == 'timeout') {
 					latencyCell.innerHTML = '> ' + timeout + ' ms';
@@ -115,7 +36,7 @@
 			row.className = 'cbi-section-table-row';
 			var cell = row.insertCell(-1);
 			cell.colSpan = 5;
-			cell.innerHTML = 'No active peerings';
+			cell.innerHTML = 'No active peers';
 		}
 	};
 
@@ -125,7 +46,7 @@
 
 
 <fieldset class="cbi-section">
-	<legend><%:InterfaceController_peerStats%></legend>
+	<legend><%:Active cjdns peers%></legend>
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
 			<th class="cbi-section-table-cell"><%:Name%></th>
@@ -136,25 +57,6 @@
 		</tr>
 		<tr class="cbi-section-table-row">
 			<td colspan="5"><em><br /><%:Querying cjdns admin interface%></em></td>
-		</tr>
-	</table>
-</fieldset>
-
-
-<fieldset class="cbi-section">
-	<legend><%:Active cjdns nodes%></legend>
-	<table class="cbi-section-table" id="cjdns_status_table">
-		<tr class="cbi-section-table-titles">
-			<!-- <th class="cbi-section-table-cell"><%:Num%></th> -->
-			<th class="cbi-section-table-cell"><%:Name%></th>
-			<th class="cbi-section-table-cell"><%:Node%></th>
-			<th class="cbi-section-table-cell"><%:cjdns IP%></th>
-			<th class="cbi-section-table-cell"><%:Latency%></th>
-			<!-- <th class="cbi-section-table-cell"><%:Color%></th> -->
-			<th class="cbi-section-table-cell"><%:Status%></th>
-		</tr>
-		<tr class="cbi-section-table-row">
-			<td colspan="5"><em><br /><%:Querying cjdadmin...%></em></td>
 		</tr>
 	</table>
 </fieldset>
