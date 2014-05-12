@@ -14,7 +14,6 @@ EOF
   # generate configuration
   touch /etc/config/cjdns
   cjdroute --genconf | cjdroute --cleanconf | cjdrouteconf set
-  lua /usr/share/cjdns/setup_peering.lua
   uci commit cjdns
 
 fi
