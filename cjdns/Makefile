@@ -41,6 +41,7 @@ define Build/Compile
 	CC="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
+	Seccomp_NO=1 \
 	$(PKG_BUILD_DIR)/do
 endef
 
