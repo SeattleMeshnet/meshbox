@@ -36,3 +36,18 @@ If you have a multicore processor, you can build faster using `-j`, however the 
 To update:
 
     $ ./scripts/feeds update
+
+
+TODO
+----
+
+* Improve UI wording
+* Clean up the dependency mess - there are cross-dependencies between
+  the luci-cjdns, lua-cjdns, and cjdns packages
+* Introduce proper package versions
+* cjdns/uci.lua should work with vanilla `uci`, and not require `luci.model.uci`
+* Extend list of active peers. should show the used interface, and the password name
+* Visualize traffic
+* Fill in useful default values for new UDP/ETHInterfaces
+* Autogenerate passwords
+* Generate addpass.py-like password JSON
