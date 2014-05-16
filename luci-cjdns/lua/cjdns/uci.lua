@@ -1,6 +1,5 @@
 common = require("cjdns/common")
-
-uci    = require("luci.model.uci")
+uci    = require("uci")
 
 UCI = {}
 common.uci = UCI
@@ -102,7 +101,7 @@ function UCI.set(obj)
   end
 
   local admin_address, admin_port = string.match(obj.admin.bind, "^(.*):(.*)$")
-  cursor:section("cjdns", "cjdns", "cjdns", {
+  cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
     ipv6 = obj.ipv6,
     public_key = obj.publicKey,
     private_key = obj.privateKey,
@@ -114,14 +113,14 @@ function UCI.set(obj)
 
   if obj.interfaces.ETHInterface then
     for i,interface in pairs(obj.interfaces.ETHInterface) do
-      cursor:section("cjdns", "eth_interface", nil, {
+      cursor_section(cursor, "cjdns", "eth_interface", nil, {
         bind = interface.bind,
         beacon = tostring(interface.beacon)
       })
 
       if interface.connectTo then
         for peer_address,peer in pairs(interface.connectTo) do
-          cursor:section("cjdns", "eth_peer", nil, {
+          cursor_section(cursor, "cjdns", "eth_peer", nil, {
             interface = i,
             address = peer_address,
             public_key = peer.publicKey,
@@ -135,7 +134,7 @@ function UCI.set(obj)
   if obj.interfaces.UDPInterface then
     for i,interface in pairs(obj.interfaces.UDPInterface) do
       local address, port = string.match(interface.bind, "^(.*):(.*)$")
-      cursor:section("cjdns", "udp_interface", nil, {
+      cursor_section(cursor, "cjdns", "udp_interface", nil, {
         address = address,
         port = port
       })
@@ -143,7 +142,7 @@ function UCI.set(obj)
       if interface.connectTo then
         for peer_bind,peer in pairs(interface.connectTo) do
           local peer_address, peer_port = string.match(peer_bind, "^(.*):(.*)$")
-          cursor:section("cjdns", "udp_peer", nil, {
+          cursor_section(cursor, "cjdns", "udp_peer", nil, {
             interface = i,
             address = peer_address,
             port = peer_port,
@@ -157,7 +156,7 @@ function UCI.set(obj)
 
   if obj.authorizedPasswords then
     for i,password in pairs(obj.authorizedPasswords) do
-      cursor:section("cjdns", "password", nil, {
+      cursor_section(cursor, "cjdns", "password", nil, {
         password = password.password,
         user = password.user,
         contact = password.contact
@@ -166,6 +165,26 @@ function UCI.set(obj)
   end
 
   return cursor:save("cjdns")
+end
+
+--- Simple backport of Cursor:section from luci.model.uci
+--
+-- Backport reason: we don't wanna depend on LuCI.
+-- @param Cursor the UCI cursor to operate on
+-- @param string name of the config
+-- @param string type of the section
+-- @param string name of the section (optional)
+-- @param table config values
+function cursor_section(cursor, config, type, section, values)
+  if section then
+    cursor:set(config, section, type)
+  else
+    section = cursor:add("cjdns", type)
+  end
+
+  for k,v in pairs(values) do
+    cursor:set(config, section, k, v)
+  end
 end
 
 function UCI.makeInterface()
