@@ -11,46 +11,27 @@ PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/$(PKG_NAME)
+define Package/luci-cjdns
   SECTION:=luci
   CATEGORY:=LuCI
   SUBMENU:=Project Meshnet
   TITLE:=cjdns configuration for luci
-  DEPENDS:=+cjdns +luci +dkjson +lua-bencode +lua-cjdns
+  DEPENDS:=+cjdns +luci
 endef
 
-define Package/$(PKG_NAME)/description
+define Package/luci-cjdns/description
   This package allows you to configure cjdns with luci
-endef
-
-define Build/Prepare
-	for d in lua luasrc htdocs root; do \
-	  if [ -d ./$$$$d ]; then \
-	    mkdir -p $(PKG_BUILD_DIR)/$$$$d; \
-		$(CP) ./$$$$d/* $(PKG_BUILD_DIR)/$$$$d/; \
-	  fi; \
-	done
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile
 endef
 
-HTDOCS = /www
 LUA_LIBRARYDIR = /usr/lib/lua
 LUCI_LIBRARYDIR = $(LUA_LIBRARYDIR)/luci
 
-define Package/$(PKG_NAME)/install
-	if [ -d $(PKG_BUILD_DIR)/luasrc ]; then \
-	  $(INSTALL_DIR) $(1)$(LUCI_LIBRARYDIR); \
-	  cp -pR $(PKG_BUILD_DIR)/luasrc/* $(1)$(LUCI_LIBRARYDIR)/; \
-	else true; fi
-	if [ -d $(PKG_BUILD_DIR)/lua ]; then \
-	  $(INSTALL_DIR) $(1)$(LUA_LIBRARYDIR); \
-	  cp -pR $(PKG_BUILD_DIR)/lua/* $(1)$(LUA_LIBRARYDIR)/; \
-	else true; fi
+define Package/luci-cjdns/install
+  $(INSTALL_DIR) $(1)$(LUCI_LIBRARYDIR); \
+  cp -pR ./luasrc/* $(1)$(LUCI_LIBRARYDIR)
 endef
 
-$(eval $(call BuildPackage,$(PKG_NAME)))
+$(eval $(call BuildPackage,luci-cjdns))

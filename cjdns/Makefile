@@ -28,7 +28,8 @@ define Package/cjdns
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
   TITLE:=Experimental self configuring routing protocol.
-  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +jsonpath +SSP_SUPPORT:libssp
+  DEPENDS:=+kmod-tun +kmod-ipv6 +libnl +libpthread +librt +SSP_SUPPORT:libssp \
+		+lua-bencode +dkjson +luasocket +lua-sha2
   MAINTAINER:=cjd
 endef
 
@@ -44,7 +45,6 @@ define Build/Compile
 	Seccomp_NO=1 \
 	$(PKG_BUILD_DIR)/do
 endef
-
 
 define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -62,6 +62,9 @@ define Package/cjdns/install
 	$(INSTALL_DIR) $(1)/usr/share
 	$(INSTALL_DIR) $(1)/usr/share/cjdns
 	$(INSTALL_BIN) ./files/usr/share/cjdns/* $(1)/usr/share/cjdns/
+	$(INSTALL_DIR)	$(1)/usr/lib/lua/cjdns
+	$(INSTALL_DATA)	$(PKG_BUILD_DIR)/contrib/lua/cjdns/*.lua $(1)/usr/lib/lua/cjdns/
+	$(INSTALL_DATA) ./lua/cjdns/*.lua $(1)/usr/lib/lua/cjdns/
 
 	$(INSTALL_DIR) $(1)/CONTROL
 	$(INSTALL_DATA) ./ipkg/* $(1)/CONTROL/
