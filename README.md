@@ -41,8 +41,10 @@ To update:
 TODO
 ----
 
+* Strip down the binary size
+  * Try libnl-tiny instead of libnl
+* Make router.ipTunnel configurable
 * Improve UI wording
-  the luci-cjdns, lua-cjdns, and cjdns packages
 * Introduce proper package versions
 * Extend list of active peers. should show the used interface, and the password name
 * Visualize traffic
