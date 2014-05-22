@@ -42,7 +42,8 @@ TODO
 ----
 
 * Strip down the binary size
-  * Try libnl-tiny instead of libnl
+* Switch back to procd-style init script
+  * We don't need cjdhammer, there's `procd_set_param respawn`
 * Make router.ipTunnel configurable
 * Improve UI wording
 * Introduce proper package versions
