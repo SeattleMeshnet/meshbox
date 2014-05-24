@@ -1,7 +1,7 @@
 meshbox
 =======
 
-This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides UCI and LuCI integration for [cjdns][cjdns].
+This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides UCI and LuCI integration for [cjdns][cjdns]. Tested with OpenWRT Barrier Breaker (trunk).
 
 [meshbox]: http://fund.meshwith.me
 [cjdns]: https://github.com/cjdelisle/cjdns
@@ -42,12 +42,13 @@ TODO
 ----
 
 * Strip down the binary size
-* Switch back to procd-style init script
-  * We don't need cjdhammer, there's `procd_set_param respawn`
 * Make router.ipTunnel configurable
+* Figure out NAT6 configuration
 * Improve UI wording
 * Introduce proper package versions
-* Extend list of active peers. should show the used interface, and the password name
+* Fix licensing
+* Extend list of active peers
+  * should show the used interface, and the password name
 * Visualize traffic
 * Fill in useful default values for new UDP/ETHInterfaces
 * Autogenerate passwords in the Peers UI
