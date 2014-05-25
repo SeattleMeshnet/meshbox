@@ -41,6 +41,10 @@ function UCI.get()
 
   obj.resetAfterInactivitySeconds = config.inactivity_seconds
 
+  if string.len(config.tun_device) > 0 then
+    obj.router.interface.tunDevice = config.tun_device
+  end
+
   cursor:foreach("cjdns", "eth_interface", function(eth_interface)
     table.insert(obj.interfaces.ETHInterface, {
       bind = eth_interface.bind,
@@ -108,7 +112,8 @@ function UCI.set(obj)
     admin_password = obj.admin.password,
     admin_address = admin_address,
     admin_port = admin_port,
-    inactivity_seconds = obj.resetAfterInactivitySeconds
+    inactivity_seconds = obj.resetAfterInactivitySeconds,
+    tun_device = tostring(obj.router.interface.tunDevice)
   })
 
   if obj.interfaces.ETHInterface then
