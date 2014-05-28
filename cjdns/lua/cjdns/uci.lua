@@ -41,7 +41,7 @@ function UCI.get()
 
   obj.resetAfterInactivitySeconds = config.inactivity_seconds
 
-  if string.len(config.tun_device) > 0 then
+  if config.tun_device and string.len(config.tun_device) > 0 then
     obj.router.interface.tunDevice = config.tun_device
   end
 
@@ -113,8 +113,13 @@ function UCI.set(obj)
     admin_address = admin_address,
     admin_port = admin_port,
     inactivity_seconds = obj.resetAfterInactivitySeconds,
-    tun_device = tostring(obj.router.interface.tunDevice)
   })
+
+  if obj.router.interface.tunDevice then
+    cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
+      tun_device = tostring(obj.router.interface.tunDevice)
+    })
+  end
 
   if obj.interfaces.ETHInterface then
     for i,interface in pairs(obj.interfaces.ETHInterface) do
