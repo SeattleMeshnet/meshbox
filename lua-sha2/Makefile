@@ -1,10 +1,3 @@
-#
-# Copyright (C) 2013 Seattle Meshnet
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lua-sha2
@@ -35,7 +28,7 @@ define Package/lua-sha2/description
 endef
 
 define Build/Configure
-  
+
 endef
 
 define Build/Compile
