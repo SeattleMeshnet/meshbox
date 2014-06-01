@@ -42,11 +42,9 @@ TODO
 ----
 
 * Strip down the binary size
-* Make router.ipTunnel configurable
 * Figure out NAT6 configuration
 * Improve UI wording
 * Introduce proper package versions
-* Fix licensing
 * Extend list of active peers
   * should show the used interface, and the password name
 * Visualize traffic
