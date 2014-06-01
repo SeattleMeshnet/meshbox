@@ -17,11 +17,14 @@ function index()
 	entry({"admin", "services", "cjdns", "peering"},
     cbi("cjdns/peering"), _("Peers"), 2).leaf = false
 
+	entry({"admin", "services", "cjdns", "iptunnel"},
+    cbi("cjdns/iptunnel"), _("IP Tunnel"), 3).leaf = false
+
 	entry({"admin", "services", "cjdns", "settings"},
-    cbi("cjdns/settings"), _("Settings"), 3).leaf = false
+    cbi("cjdns/settings"), _("Settings"), 4).leaf = false
 
 	entry({"admin", "services", "cjdns", "cjdrouteconf"},
-		cbi("cjdns/cjdrouteconf"), _("cjdroute.conf"), 4).leaf = false
+		cbi("cjdns/cjdrouteconf"), _("cjdroute.conf"), 5).leaf = false
 
 	entry({"admin", "services", "cjdns", "peers"}, call("act_peers")).leaf = true
 	entry({"admin", "services", "cjdns", "ping"}, call("act_ping")).leaf = true

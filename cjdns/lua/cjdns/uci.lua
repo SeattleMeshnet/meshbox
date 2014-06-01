@@ -13,7 +13,10 @@ function UCI.defaults()
   return {
     noBackground = 1,
     security = { exemptAngel = 1, setuser = "nobody" },
-    router = { ipTunnel = {}, interface = { type = "TUNInterface" } },
+    router = {
+        ipTunnel = { outgoingConnections = {}, allowedConnections = {} },
+        interface = { type = "TUNInterface" }
+    },
     interfaces = { UDPInterface = {}, ETHInterface = {} },
     authorizedPasswords = {}
   }
@@ -44,6 +47,21 @@ function UCI.get()
   if config.tun_device and string.len(config.tun_device) > 0 then
     obj.router.interface.tunDevice = config.tun_device
   end
+
+  cursor:foreach("cjdns", "iptunnel_outgoing", function(outgoing)
+    table.insert(obj.router.ipTunnel.outgoingConnections, outgoing.public_key)
+  end)
+
+  cursor:foreach("cjdns", "iptunnel_allowed", function(allowed)
+    entry = { publicKey = allowed.public_key }
+    if allowed.ipv4 then
+      entry["ip4Address"] = allowed.ipv4
+    end
+    if allowed.ipv6 then
+      entry["ip6Address"] = allowed.ipv6
+    end
+    table.insert(obj.router.ipTunnel.allowedConnections, entry)
+  end)
 
   cursor:foreach("cjdns", "eth_interface", function(eth_interface)
     table.insert(obj.interfaces.ETHInterface, {
@@ -119,6 +137,28 @@ function UCI.set(obj)
     cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
       tun_device = tostring(obj.router.interface.tunDevice)
     })
+  end
+
+  if obj.router.ipTunnel.outgoingConnections then
+    for i,public_key in pairs(obj.router.ipTunnel.outgoingConnections) do
+      cursor_section(cursor, "cjdns", "iptunnel_outgoing", nil, {
+        public_key = public_key
+      })
+    end
+  end
+
+  if obj.router.ipTunnel.allowedConnections then
+    for i,allowed in pairs(obj.router.ipTunnel.allowedConnections) do
+      entry = { public_key = allowed.publicKey }
+      if allowed.ip4Address then
+        entry["ipv4"] = allowed.ip4Address
+      end
+      if allowed.ip6Address then
+        entry["ipv6"] = allowed.ip6Address
+      end
+
+      cursor_section(cursor, "cjdns", "iptunnel_allowed", nil, entry)
+    end
   end
 
   if obj.interfaces.ETHInterface then
