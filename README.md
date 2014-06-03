@@ -41,13 +41,15 @@ To update:
 TODO
 ----
 
-* Strip down the binary size
-* Figure out NAT6 configuration
-* Improve UI wording
-* Introduce proper package versions
-* Extend list of active peers
-  * should show the used interface, and the password name
-* Visualize traffic
-* Fill in useful default values for new UDP/ETHInterfaces
-* Autogenerate passwords in the Peers UI
-* Generate addpass.py-like password JSON
+- [ ] Strip down the binary size and keep everything under 4MB
+- [ ] Figure out NAT6 configuration
+- [ ] Improve UI wording
+- [ ] Introduce proper package versions
+- [ ] Extend list of active peers
+  - [ ] should show the used interface, and the password name
+  - [ ] show data rx/tx since connected, other peerinfo data
+- [ ] Visualize traffic in graphs
+- [ ] Fill in useful default values for new UDP/ETHInterfaces
+- [ ] Autogenerate passwords in the Peers UI
+- [ ] Generate addpass.py-like password JSON
+- [ ] Make paste-friendly textbox containing "yourip:port":{pass,key,name,info}
