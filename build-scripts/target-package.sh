@@ -144,17 +144,30 @@ function update_feeds ()
 function feeds ()
 {
 
+    # OpenWrt feeds
+    local luci="git://nbd.name/luci.git"
+    local packages="git://git.openwrt.org/packages.git"
+    local routing="git://github.com/openwrt-routing/packages.git"
+    local telephony="http://feeds.openwrt.nanl.de/openwrt/telephony.git"
+    local xwrt="http://x-wrt.googlecode.com/svn/trunk/package"
+
+    # Meshbox feeds
+
+    local meshbox="git@gitboria.com:finn/meshbox-openwrt.git"
+    local enigmabox="https://github.com/enigmagroup/enigmabox-openwrt.git"
+    local cjdns="git://github.com/wfleurant/cjdns-openwrt.git"
+
     # Default Feeds
-    echo "src-git luci 		git://nbd.name/luci.git"				>  feeds.conf
-    echo "src-git packages 	git://git.openwrt.org/packages.git" 			>> feeds.conf
-    echo "src-git routing 	git://github.com/openwrt-routing/packages.git" 		>> feeds.conf
-    echo "src-git telephony	http://feeds.openwrt.nanl.de/openwrt/telephony.git" 	>> feeds.conf
-    echo "src-svn xwrt 		http://x-wrt.googlecode.com/svn/trunk/package" 		>> feeds.conf
+    echo "src-git luci          $luci"      >   feeds.conf
+    echo "src-git packages      $packages"  >>  feeds.conf
+    echo "src-git routing       $routing"   >>  feeds.conf
+    echo "src-git telephony     $telephony" >>  feeds.conf
+    echo "src-svn xwrt          $xwrt"      >>  feeds.conf
 
     # Custom Feeds
     case $1 in
-    	luci_cjdns | meshbox )
-    		echo "src-git meshbox 		git@gitboria.com:finn/meshbox-openwrt.git" 		>> feeds.conf
+        luci_cjdns | meshbox )
+		echo "src-git meshbox $meshbox" >> feeds.conf
     		local i="\
     			cjdns \
     			dkjson \
@@ -170,7 +183,7 @@ function feeds ()
     		done
     		;;	
     	enigmabox )
-    		echo "src-git enigmabox 	https://github.com/enigmagroup/enigmabox-openwrt.git" 	>> feeds.conf
+		echo "src-git enigmabox $enigmabox" >> feeds.conf
 		local i="\
 			beanstalkd \
 			cfengine \
@@ -200,7 +213,7 @@ function feeds ()
     		done
     		;;	
     	cjdns )
-    		echo "src-git cjdns 		git://github.com/wfleurant/cjdns-openwrt.git" 		>> feeds.conf
+		echo "src-git cjdns $cjdns" >> feeds.conf
     		local i="cjdns"
 
     		update_feeds
