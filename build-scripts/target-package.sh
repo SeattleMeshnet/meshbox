@@ -95,7 +95,15 @@ function config_all_yes ()
 function luci_cjdns ()
 {
 	ssp_support
+	echo "CONFIG_DEFAULT_ppp-mod-pppoe=n" 	>> .config
+	echo "CONFIG_DEFAULT_ppp=n" 		>> .config
+	echo "CONFIG_PACKAGE_kmod-ppp=n" 	>> .config
+	echo "CONFIG_PACKAGE_kmod-pppoe=n" 	>> .config
+	echo "CONFIG_PACKAGE_kmod-pppox=n" 	>> .config
 	echo "CONFIG_PACKAGE_luci-cjdns=y" 	>> .config
+	echo "CONFIG_PACKAGE_luci-proto-ppp=n" 	>> .config
+	echo "CONFIG_PACKAGE_ppp-mod-pppoe=n" 	>> .config
+	echo "CONFIG_PACKAGE_ppp=n" 		>> .config
 
 }
 
@@ -153,7 +161,7 @@ function feeds ()
 
     # Meshbox feeds
 
-    local meshbox="git@gitboria.com:finn/meshbox-openwrt.git"
+    local meshbox="git://github.com/seattlemeshnet/meshbox.git"
     local enigmabox="https://github.com/enigmagroup/enigmabox-openwrt.git"
     local cjdns="git://github.com/wfleurant/cjdns-openwrt.git"
 
@@ -172,7 +180,6 @@ function feeds ()
     			cjdns \
     			dkjson \
     			lua-bencode \
-    			lua-cjdns \
     			lua-sha2 \
     			luci-cjdns"
 
@@ -251,6 +258,7 @@ case $F in
 	luci_cjdns | meshbox )
 		luci_cjdns
 		feeds meshbox
+
 		;;
 	enigmabox )
 		enigmabox
