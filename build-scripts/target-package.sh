@@ -13,6 +13,7 @@ set -x
 # 	------------------- 	------ 	--------- 	---------
 # 	./target-package.sh 	ar71xx 	whr_hp_gn 	cjdns
 # 	./target-package.sh 	x86 	alix2 		enigmabox
+# 	./target-package.sh 	x86 	alix64 		enigmabox
 # 	./target-package.sh 	ar71xx 	whr_hp_gn 	meshbox
 # 	------------------- 	------ 	--------- 	---------
 function exit_noBuild ()
@@ -46,6 +47,7 @@ function exit_noBuild ()
 [ $PROFILE == "whr_hp_gn" ] 	&& P="CONFIG_TARGET_ar71xx_generic_WHRHPGN=y"
 [ $PROFILE == "wnr2000v3" ] 	&& P="CONFIG_TARGET_ar71xx_generic_WNR2000V3=y"
 [ $PROFILE == "alix2" ] 	&& P="CONFIG_TARGET_x86_alix2=y"
+[ $PROFILE == "alix64" ] 	&& P="CONFIG_TARGET_x86_64=y"
 
 [ $FEED == "meshbox" ] 		&& F="luci_cjdns"
 [ $FEED == "enigmabox" ] 	&& F="enigmabox"
@@ -104,6 +106,7 @@ function luci_cjdns ()
 	echo "CONFIG_PACKAGE_luci-proto-ppp=n" 	>> .config
 	echo "CONFIG_PACKAGE_ppp-mod-pppoe=n" 	>> .config
 	echo "CONFIG_PACKAGE_ppp=n" 		>> .config
+	echo "CONFIG_PACKAGE_kmod-ipt-nat6=y" 	>> .config
 
 }
 
