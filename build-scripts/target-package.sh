@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -x
 
-# Purpose: Deployed by buildbot 
+# Purpose: Deployed by buildbot
 #  		and executed in in ./openwrt/ by buildbots
 # Notes: key & legend to builder master.cfg is server side.
-# 		see: generate_builder.sh 
+# 		see: generate_builder.sh
 # 		(returns values for this script (see below))
-# 	
+#
 # Syntax below:
 # 	------------------- 	------ 	--------- 	---------
 # 	$(basename $0) 		target 	profile 	feed
@@ -25,7 +25,7 @@ function exit_noBuild ()
 	exit 1
 }
 
-################################################################## 
+##################################################################
 # Sanity Sanity Sanity Sanity Sanity Sanity Sanity Sanity Sanity #
 ##################################################################
 [ $1 ] &&  TARGET=$1 || exit_noBuild "TARGET"
@@ -68,7 +68,7 @@ then
 	# echo "**********"
 
 fi
-################################################################## 
+##################################################################
 # Sanity Sanity Sanity Sanity Sanity Sanity Sanity Sanity Sanity #
 ##################################################################
 [ $T ] || exit_noBuild "T"
@@ -192,8 +192,8 @@ function feeds ()
     		for opkg in $i
     		do
     			./scripts/feeds install $opkg
-    		done
-    		;;	
+		done
+		;;
     	enigmabox )
 		echo "src-git enigmabox $enigmabox" >> feeds.conf
 		local i="\
@@ -222,8 +222,8 @@ function feeds ()
 		for opkg in $i
     		do
     			./scripts/feeds install $opkg
-    		done
-    		;;	
+		done
+		;;
     	cjdns )
 		echo "src-git cjdns $cjdns" >> feeds.conf
     		local i="cjdns"
@@ -232,12 +232,12 @@ function feeds ()
 		for opkg in $i
     		do
     			./scripts/feeds install $opkg
-    		done
-    		;;	# above is aligned correctly in feeds.conf
+		done
+		;;
     	* )
     		;;
     esac
-	
+
 }
 #/feeds
 ##################################################################
