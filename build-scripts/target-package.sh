@@ -116,6 +116,7 @@ function enigmabox ()
 	echo "CONFIG_PACKAGE_cjdns-dumbclient=y" 	>> .config # cjdns
 	echo "CONFIG_PACKAGE_cjdns-master=y" 		>> .config # cjdns
 	echo "CONFIG_PACKAGE_enigmasuite=y" 		>> .config # Enigmabox
+	echo "CONFIG_NETWORK_PROFILE_ALIX=y" 		>> .config
 	echo "CONFIG_PACKAGE_beanstalkd=y" 		>> .config
 	echo "CONFIG_PACKAGE_cfengine=y" 		>> .config
 	echo "CONFIG_PACKAGE_cfengine-policies=y" 	>> .config
