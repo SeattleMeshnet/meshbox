@@ -135,6 +135,10 @@ function enigmabox ()
 	echo "CONFIG_PACKAGE_roundcube=y" 		>> .config
 	echo "CONFIG_PACKAGE_teletext=y" 		>> .config
 	echo "CONFIG_PACKAGE_webinterface=y" 		>> .config
+	echo "CONFIG_PACKAGE_kmod-ipt-nat6=y" 		>> .config
+	echo "CONFIG_PACKAGE_r8169-firmware=y" 		>> .config
+	echo "CONFIG_PACKAGE_kmod-r8169=y" 		>> .config
+	echo "CONFIG_PACKAGE_luci-cjdns=y" 		>> .config
 }
 
 function cjdns ()
