@@ -132,6 +132,10 @@ function enigmabox ()
 	echo "CONFIG_PACKAGE_python-setuptools=y" 	>> .config
 	echo "CONFIG_PACKAGE_python-six=y" 		>> .config
 	echo "CONFIG_PACKAGE_python-unidecode=y" 	>> .config
+	echo "CONFIG_PACKAGE_libsqlite2=y" 		>> .config
+	echo "CONFIG_PACKAGE_sqlite2-cli=y" 		>> .config
+	echo "CONFIG_PACKAGE_libsqlite3=y" 		>> .config
+	echo "CONFIG_PACKAGE_sqlite3-cli=y" 		>> .config
 	echo "CONFIG_PACKAGE_roundcube=y" 		>> .config
 	echo "CONFIG_PACKAGE_teletext=y" 		>> .config
 	echo "CONFIG_PACKAGE_webinterface=y" 		>> .config # /Enigmabox
@@ -220,7 +224,9 @@ function feeds ()
 			python-unidecode \
 			roundcube \
 			teletext \
-			webinterface"
+			webinterface \
+			sqlite2-cli \
+			sqlite3-cli"
 
     		update_feeds
 		for opkg in $i
