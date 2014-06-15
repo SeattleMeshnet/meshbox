@@ -166,8 +166,8 @@ function feeds ()
     local routing="git://github.com/openwrt-routing/packages.git"
     local telephony="http://feeds.openwrt.nanl.de/openwrt/telephony.git"
     local xwrt="http://x-wrt.googlecode.com/svn/trunk/package"
-
-    # Meshbox feeds
+    local management="https://github.com/openwrt-management/packages.git"
+    # Project Meshnet feeds
 
     local meshbox="git://github.com/seattlemeshnet/meshbox.git"
     local enigmabox="https://github.com/enigmagroup/enigmabox-openwrt.git"
