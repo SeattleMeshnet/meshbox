@@ -113,13 +113,12 @@ function luci_cjdns ()
 function enigmabox ()
 {
 	ssp_support
-	echo "CONFIG_GRUB_BAUDRATE=115200" 		>> .config
-	echo "CONFIG_PACKAGE_enigmasuite=y" 		>> .config
+	echo "CONFIG_PACKAGE_cjdns-dumbclient=y" 	>> .config # cjdns
+	echo "CONFIG_PACKAGE_cjdns-master=y" 		>> .config # cjdns
+	echo "CONFIG_PACKAGE_enigmasuite=y" 		>> .config # Enigmabox
 	echo "CONFIG_PACKAGE_beanstalkd=y" 		>> .config
 	echo "CONFIG_PACKAGE_cfengine=y" 		>> .config
 	echo "CONFIG_PACKAGE_cfengine-policies=y" 	>> .config
-	echo "CONFIG_PACKAGE_cjdns-dumbclient=y" 	>> .config
-	echo "CONFIG_PACKAGE_cjdns-master=y" 		>> .config
 	echo "CONFIG_PACKAGE_django-south=y" 		>> .config
 	echo "CONFIG_PACKAGE_exim4=y" 			>> .config
 	echo "CONFIG_PACKAGE_python-beanstalkc=y" 	>> .config
@@ -134,11 +133,11 @@ function enigmabox ()
 	echo "CONFIG_PACKAGE_python-unidecode=y" 	>> .config
 	echo "CONFIG_PACKAGE_roundcube=y" 		>> .config
 	echo "CONFIG_PACKAGE_teletext=y" 		>> .config
-	echo "CONFIG_PACKAGE_webinterface=y" 		>> .config
-	echo "CONFIG_PACKAGE_kmod-ipt-nat6=y" 		>> .config
-	echo "CONFIG_PACKAGE_r8169-firmware=y" 		>> .config
-	echo "CONFIG_PACKAGE_kmod-r8169=y" 		>> .config
-	echo "CONFIG_PACKAGE_luci-cjdns=y" 		>> .config
+	echo "CONFIG_PACKAGE_webinterface=y" 		>> .config # /Enigmabox
+	echo "CONFIG_PACKAGE_kmod-ipt-nat6=y" 		>> .config # NAT66 Support
+	echo "CONFIG_PACKAGE_r8169-firmware=y" 		>> .config # APU Network Support
+	echo "CONFIG_PACKAGE_kmod-r8169=y" 		>> .config # APU Network Support
+	echo "CONFIG_PACKAGE_luci-cjdns=y" 		>> .config # Meshbox
 }
 
 function cjdns ()
