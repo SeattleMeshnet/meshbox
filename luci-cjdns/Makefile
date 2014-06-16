@@ -10,7 +10,7 @@ define Package/luci-cjdns
   CATEGORY:=LuCI
   SUBMENU:=Project Meshnet
   TITLE:=cjdns configuration for luci
-  DEPENDS:=+cjdns +luci
+  DEPENDS:=+cjdns +luci-base
 endef
 
 define Package/luci-cjdns/description
