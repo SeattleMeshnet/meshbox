@@ -30,7 +30,9 @@ define Build/Compile
 	CFLAGS="$(TARGET_CFLAGS)" \
 	CC="$(TARGET_CC)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
+	TARGET_ARCH="$(CONFIG_ARCH)" \
 	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
+	UCLIBC=1 \
 	Seccomp_NO=1 \
 	$(PKG_BUILD_DIR)/do
 endef
