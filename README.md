@@ -38,6 +38,28 @@ To update:
     $ ./scripts/feeds update
 
 
+Development
+-----------
+
+You can point the OpenWRT buildroot to a local meshbox clone by editing `feeds.conf`:
+
+    src-link meshbox /home/user/meshbox
+
+If you want to use a local clone of cjdns itself as well, edit `/home/user/meshbox/cjdns/Makefile`:
+
+    PKG_SOURCE_URL:=file:///home/user/cjdns
+    PKG_SOURCE_PROTO:=git
+    PKG_SOURCE_VERSION:=master
+
+You can then build a fresh package, that you can copy to the device, and then install.
+
+    make package/cjdns/{clean,compile} V=s
+    scp bin/<target>/packages/cjdns-*.ipkg root@192.168.1.1:/tmp/cjdns.ipkg
+    ssh root@192.168.1.1 'opkg install /tmp/cjdns.ipkg'
+
+Make sure to commit your changes to cjdns before building the package, since the OpenWRT buildroot will clone the local cjdns clone into its own build directory, and uncommitted changes won't be transferred.
+
+
 TODO
 ----
 
