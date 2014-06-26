@@ -45,7 +45,7 @@ You can point the OpenWRT buildroot to a local meshbox clone by editing `<openwr
 
     src-link meshbox /path/to/meshbox
 
-Afterwards, run `./scripts/feeds update meshbox`.
+Afterwards, trigger a new clone: `rm dl/cjdns-*`
 
 If you want to use a local clone of cjdns itself as well, edit `<meshbox>/cjdns/Makefile`:
 
