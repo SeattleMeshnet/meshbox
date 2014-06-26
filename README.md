@@ -45,16 +45,15 @@ You can point the OpenWRT buildroot to a local meshbox clone by editing `<openwr
 
     src-link meshbox /path/to/meshbox
 
-Afterwards, trigger a new clone: `rm dl/cjdns-*`
-
 If you want to use a local clone of cjdns itself as well, edit `<meshbox>/cjdns/Makefile`:
 
     PKG_SOURCE_URL:=file:///path/to/cjdns
     PKG_SOURCE_PROTO:=git
     PKG_SOURCE_VERSION:=master
 
-You can then build a fresh package, that you can copy to the device, and then install.
+You can then build a fresh package, that you can copy to the device, and then install. You need to delete the last clone everytime.
 
+    rm dl/cjdns-*
     make package/cjdns/{clean,compile} V=s
     scp bin/<target>/packages/cjdns-*.ipkg root@<ip>:/tmp/cjdns.ipkg
     ssh root@<ip> 'opkg install /tmp/cjdns.ipkg'
