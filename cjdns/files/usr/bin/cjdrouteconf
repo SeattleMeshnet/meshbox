@@ -14,7 +14,10 @@ function help()
 end
 
 if arg[1] == "get" then
-  local json = dkjson.encode(cjdns.uci.get(), { indent = true })
+  local indent = true
+  if arg[2] == "noindent" then indent = false end
+
+  local json = dkjson.encode(cjdns.uci.get(), { indent = indent })
   print(json)
 elseif arg[1] == "set" then
   local json = io.stdin:read("*a")

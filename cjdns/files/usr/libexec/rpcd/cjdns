@@ -1,0 +1,220 @@
+#!/usr/bin/env lua
+
+
+assert(arg[1],"{\"error\":\"Procedure not found\"}")
+-------------------------------------------------------------------------
+-- Printing/Debugging Functions
+
+function deprint(f,v)
+
+	if not f then print(' -> ')
+		elseif (v and type(v) == 'string') then
+			print(f .. ' -> ' .. v)
+	elseif (v and type(v) == 'table') then
+		print(f .. ' -> table \n{')
+		for k,v in pairs(v) do
+			print('',k,v)
+		end; print('}')
+	else print(f .. ' -> ')
+	end
+end
+
+
+function tprint (tbl, indent)
+	if not indent then indent = 0 end
+	for k, v in pairs(tbl) do
+		formatting = string.rep(" ", indent) .. k .. ": "
+		if type(v) == "table" then
+			print(formatting)
+			tprint(v, indent+1)
+		else
+			print(formatting .. v)
+		end
+	end
+end
+
+function line() print('--------------------------------------------\n') end
+
+
+function mktmp_cjdrouteconf(confpath)
+	local confpath = '/tmp/.cjdrouteconf'
+	if confpath then confpath = confpath end
+	local confopen = io.popen("/usr/bin/cjdrouteconf get noindent > " .. confpath, "r")
+	confopen:close()
+end
+
+
+-------------------------------------------------------------------------
+-- Dependencies
+require "ubus"
+local dkjson = require "dkjson"
+local cjdns = require "cjdns/init"
+local confpath = "/tmp/.cjdrouteconf"
+-- temp function to make conf, may want to pass in json to rainflys code
+mktmp_cjdrouteconf(confpath)
+local conf  = cjdns.ConfigFile.new(confpath)
+local admin = conf:makeInterface()
+
+-------------------------------------------------------------------------
+-- Sanity
+local conn = ubus.connect()
+if not conn then error("Failed to connect to ubusd") end
+
+----------------------------------------------------------------
+-- Some Constant Tables
+local call_props = { retprint = true, retjson = true }
+local available_rpc = { list = "list", call = "call", listen = "listen", send = "send" , wait_for = "wait_for" }
+local procedure = assert(available_rpc[arg[1]], arg[1] .. " Invalid command")
+
+-------------------------------------------------------------------------
+-- Namespace Functions
+
+function call_a_procedure ()
+	local namespace = "network.device"
+	local call      = "status"
+	local name      = { name = "eth0" }
+
+
+	--[[ Edited for readability/example..
+		{ "network.device", "status", { 'name' = "eth0" } }
+		{ "network.device", "status", { 'name' = "eth1" } }
+		{ "network.device", "status", { 'name' = "tun0" } }
+	]]--
+
+	local status = conn:call(namespace, call, name)
+	for k, v in pairs(status) do
+		print("key=" .. k .. " value=" .. tostring(v))
+	end
+	--[[ Edited (from above print) for some readability
+		type 		{ Network device }
+		present 	{ true }
+		up 		{ true }
+		external 	{ false }
+		txqueuelen 	{ 1000 }
+		link- 		{ table: 0x71e8c0 }
+		statistics 	{ table: 0x71e9a0 }
+		ipv6 		{ false }
+		link- 		{ = table: 0x71e790 }
+		mtu 		{ 1500 }
+		carrier 	{ true }
+		macaddr 	{ 00:0d:b9:33:88:14 }
+		speed 		{ 100F }
+	]]--
+end
+
+-------------------------------------------------------------------------
+-- Main Table
+
+
+cjd_mgmt = {
+
+	listen   = { exec = { function(x) deprint('x from listen', x) end }},
+	send     = { exec = { function(x) deprint('x from send', x) end }},
+	wait_for = { exec = { function(x) deprint('x from wait_for', x) end }},
+
+	call = {
+		exec =
+		{ function(x,props)
+			-------------------------------------------------------------------------
+			-- Attempt to connect to cjdns_admin
+			local cjdns_function = "InterfaceController_peerStats"
+			local cjdns_function = "Admin_availableFunctions"
+			if x[2] then cjdns_function = x[2] end
+			--
+			local retprint = false
+			local retjson = false
+			if props['retprint'] then retprint = props['retprint'] end
+			if props['retjson']  then retjson = props['retjson'] end
+			--
+
+			-- Table time.. Not yet sure how we want to return..
+			-- Currently we can return tables per page= w/ an incremental index.
+
+			-- We should try to index it for 'ubus list' and rpcd
+			local index = false -- the index returend eg; peers {}
+			local rt = {} -- our return table
+			local page = 0; while page do
+
+				local response, err = admin:auth({
+					q = cjdns_function,
+					page = page,
+					})
+
+				for k,v in pairs(response) do
+
+					if not (tostring(k) == 'more') then
+
+						-- if index then
+							-- rt[index] = v
+						-- end
+
+						if not index then
+							index = tostring(k)
+							rt[index] = {}
+
+						end
+
+						table.insert(rt[index], v)
+					end
+
+				end
+
+				if response.more then
+					page = page + 1
+				else
+					page = nil
+				end
+
+			end
+			if retprint then tprint(rt) end
+			if retjson  then print(dkjson.encode(rt,  {indent = false})) end
+
+		end }
+	},
+
+	list = {
+		exec = {
+
+			function(x)
+				-- local call_props = { retprint = false, retjson = true }
+				-- cjd_mgmt['call']['exec'][1]('',call_props)
+				-- local rpcd_list =
+				-- print(dkjson.encode(available_rpc))
+				-- ,"wait_for":"wait_for","list":"list","send":"send","listen":"listen"}
+				-- local rpcd_list = '{ "call": { "arg1": true, "arg2": 32, "arg3": "str" }, "toto": { } }'
+				-- local rpcd_list = '{ "call": { "arg1": "str" } }'
+				-- local rpcd_list = '{ "call": { "Admin_availableFunctions": true } }'
+				local rpcd_list = '{ "bar": { "arg1": true, "arg2": 32, "arg3": "str" }, "toto": { } }'
+				print(rpcd_list)
+				-- deprint('x',x)
+			end
+		}
+	}
+}
+-- /Main Table
+-------------------------------------------------------------------------
+
+-------------------------------------------------------------------------
+-- Main
+-- Example to call: ubus call -S cjdns bar '{"arg1": true }'
+
+-- Not yet finished, call it directly to /usr/localexec/rpcd/cjdns call Admin_availableFunctions
+cjd_mgmt[procedure]['exec'][1](arg,call_props)
+
+conn:close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
