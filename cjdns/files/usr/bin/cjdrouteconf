@@ -3,6 +3,7 @@
 dkjson = require("dkjson")
 cjdns = require("cjdns")
 require("cjdns/uci")
+require("cjdns/mgmt")
 
 function help()
   print("JSON interface to /etc/config/cjdns\n\nExamples: \
@@ -25,6 +26,8 @@ elseif arg[1] == "set" then
     print("dkjson: " .. err .. " (try cjdroute --cleanconf)")
     os.exit(1)
   end
+elseif arg[1] == "listen" then
+  cjdns.mgmt.listen()
 else
   help()
 end
