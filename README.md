@@ -19,6 +19,7 @@ Integration into the OpenWRT buildroot is simple.
 Then configure your firmware image: enable the luci-cjdns module, in addition to your usual settings, such as target system and profile. As usual, you'll need to hit space twice to make it `[*]` rather than `[M]`.
 
     $ make menuconfig
+    LuCI -> Collections -> [*] luci
     LuCI -> Project Meshnet -> [*] luci-cjdns
 
 Then save and close the configuration menu, and allow OpenWRT to resolve dependencies:
