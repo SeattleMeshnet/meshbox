@@ -16,8 +16,18 @@ function Mgmt.listen()
   conn:listen({
     ["network.interface"] = function(msg)
       for k, v in pairs(msg) do print(k, v) end
-    end
+    end,
+    -- ["config.change"] = function(msg)
+    --   for k, v in pairs(msg) do print(k, v) end
+    -- end
   })
 
   uloop.run()
+end
+
+function Mgmt.reload()
+  local admin = cjdns.uci.makeInterface()
+  local config = cjdns.uci.get()
+
+  admin:applyConfig(config)
 end

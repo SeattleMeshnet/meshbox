@@ -31,6 +31,8 @@ elseif arg[1] == "set" then
   end
 elseif arg[1] == "listen" then
   cjdns.mgmt.listen()
+elseif arg[1] == "reload" then
+  cjdns.mgmt.reload()
 else
   help()
 end

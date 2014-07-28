@@ -13,14 +13,27 @@ start_service()
 	procd_set_param respawn
 	procd_set_param command /bin/ash -c "cjdrouteconf get | cjdroute"
 	procd_close_instance
+
+	procd_open_instance
+	procd_set_param respawn
+	procd_set_param command cjdrouteconf listen
+	procd_close_instance
 }
 
 stop_service()
 {
-	killall cjdroute
+	procd_kill cjdns
+	# FIXME: procd_kill only kills the shell, and cjdroute itself stays open :/
+	killall cjdroute || true
 }
 
+reload_service()
+{
+	ubus send cjdns.reload '{"msg":"for debugging service_triggers"}'
+}
+
+# FIXME: this is broken, i.e. it doesn't call reload_service
 service_triggers()
 {
-	procd_add_reload_trigger "cjdns"
+	procd_add_reload_trigger cjdns
 }
