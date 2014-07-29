@@ -12,6 +12,7 @@ common.uci = UCI
 function UCI.defaults()
   return {
     noBackground = 1,
+    logging = { logTo = "stdout" },
     security = { exemptAngel = 1, setuser = "nobody" },
     router = {
         ipTunnel = { outgoingConnections = {}, allowedConnections = {} },
@@ -98,6 +99,10 @@ function UCI.get()
   end)
 
   cursor:foreach("cjdns", "password", function(password)
+    if not password.user or string.len(password.user) == 0 then
+      local hash = sha2.sha256hex(password.password)
+      password.user = "anon-" .. string.sub(hash, 1, 6)
+    end
     table.insert(obj.authorizedPasswords, {
       password = password.password,
       user = password.user,

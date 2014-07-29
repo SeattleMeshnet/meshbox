@@ -1,4 +1,6 @@
 common = require("cjdns/common")
+require("cjdns/reload")
+
 ubus   = require("ubus")
 uloop  = require("uloop")
 
@@ -13,13 +15,19 @@ function Mgmt.listen()
     error("Failed to connect to ubus")
   end
 
+  local interfaces = cjdns.uci.get().ETHInterface
+
   conn:listen({
     ["network.interface"] = function(msg)
-      for k, v in pairs(msg) do print(k, v) end
+      for i, ethinterface in ipairs(interfaces) do
+        if ethinterface.bind == msg.ifname then
+          -- self.reload()
+        end
+      end
     end,
-    -- ["config.change"] = function(msg)
-    --   for k, v in pairs(msg) do print(k, v) end
-    -- end
+    ["cjdns.reload"] = function(msg)
+      interfaces = cjdns.uci.get().ETHInterface
+    end
   })
 
   uloop.run()
@@ -29,5 +37,8 @@ function Mgmt.reload()
   local admin = cjdns.uci.makeInterface()
   local config = cjdns.uci.get()
 
-  admin:applyConfig(config)
+  local res, err = cjdns.reload(admin, config)
+  if err then print(err) end
+
+  os.execute("ubus send cjdns.reload '{}'")
 end
