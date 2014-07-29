@@ -29,11 +29,13 @@ stop_service()
 
 reload_service()
 {
-	ubus send cjdns.reload '{"msg":"for debugging service_triggers"}'
+	date >> /tmp/reload_service
+	ubus send cjdns.reload '{}'
 }
 
 # FIXME: this is broken, i.e. it doesn't call reload_service
 service_triggers()
 {
+	date >> /tmp/service_triggers
 	procd_add_reload_trigger cjdns
 }
