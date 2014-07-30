@@ -1,5 +1,20 @@
 common = require("cjdns/common")
 
+-- we can reload for
+--   password added/removed
+--   iptunnel_outgoing added/removed
+--   iptunnel_allowed added/removed
+-- we could reload (find out how to get interfaceNumber)
+--   udp_peer added/removed
+--   eth_peer added/removed
+--   eth_interface beacon changed
+--   udp_interface added
+--   eth_interface added
+-- we can't reload for
+--   udp_interface removed
+--   eth_interface removed
+--   tun_device changed
+--   inactivity_seconds changed
 function common.reload(admin, config)
     local response = { added = {}, removed = {} }
 

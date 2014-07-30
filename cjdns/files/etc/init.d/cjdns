@@ -9,22 +9,23 @@ start_service()
 {
 	[ -f /etc/uci-defaults/cjdns ] && ( . /etc/uci-defaults/cjdns )
 
-	procd_open_instance
+	procd_open_instance cjdroute
 	procd_set_param respawn
 	procd_set_param command /bin/ash -c "cjdrouteconf get | cjdroute"
 	procd_close_instance
 
-	procd_open_instance
+	procd_open_instance manage
 	procd_set_param respawn
-	procd_set_param command cjdrouteconf manage
+	procd_set_param command lua /usr/bin/cjdrouteconf manage
 	procd_close_instance
 }
 
 stop_service()
 {
-	procd_kill cjdns
+	procd_kill cjdns cjdroute
+	procd_kill cjdns manage
 	# FIXME: procd_kill only kills the shell, and cjdroute itself stays open :/
-	killall cjdroute || true
+	killall cjdroute 2> /dev/null || true
 }
 
 reload_service()
