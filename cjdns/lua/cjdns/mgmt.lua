@@ -4,10 +4,10 @@ require("cjdns/reload")
 ubus   = require("ubus")
 uloop  = require("uloop")
 
-Mgmt = {}
-common.mgmt = Mgmt
+mgmt = {}
+common.mgmt = mgmt
 
-function Mgmt.listen()
+function mgmt.manage()
   uloop.init()
 
   local conn = ubus.connect()
@@ -15,30 +15,42 @@ function Mgmt.listen()
     error("Failed to connect to ubus")
   end
 
-  local interfaces = cjdns.uci.get().ETHInterface
+  conn:add({
+    cjdns2 = {
+      -- reloads the configuration, called by init script
+      -- $ ubus call cjdns2 reload
+      reload = {
+        function(req, msg)
+          print("cjdns2 reload")
+          for k, v in pairs(msg) do print("cjdns2 reload", k, v) end
 
+          local res, err = mgmt.reload()
+          conn:send("cjdns.reloaded", {})
+          conn:reply(req, { error = err })
+        end, {}
+      }
+    }
+  })
+
+  -- FIXME: not getting the events yet, somehow
   conn:listen({
+    -- netifd event for interface state changes (up, down), reloads config
     ["network.interface"] = function(msg)
-      for i, ethinterface in ipairs(interfaces) do
-        if ethinterface.bind == msg.ifname then
-          -- self.reload()
-        end
-      end
+      print("network.interface")
+      for k, v in pairs(msg) do print("network.interface", k, v) end
     end,
-    ["cjdns.reload"] = function(msg)
-      interfaces = cjdns.uci.get().ETHInterface
+    -- after config has been reloaded, we might want to do more stuff
+    ["cjdns.reloaded"] = function(msg)
+      print("cjdns.reloaded")
+      for k, v in pairs(msg) do print("cjdns.reloaded", k, v) end
     end
   })
 
   uloop.run()
 end
 
-function Mgmt.reload()
+function mgmt.reload()
   local admin = cjdns.uci.makeInterface()
-  local config = cjdns.uci.get()
 
-  local res, err = cjdns.reload(admin, config)
-  if err then print(err) end
-
-  os.execute("ubus send cjdns.reload '{}'")
+  return cjdns.reload(admin, admin.config)
 end

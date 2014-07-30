@@ -29,10 +29,8 @@ elseif arg[1] == "set" then
     print("dkjson: " .. err .. " (try cjdroute --cleanconf)")
     os.exit(1)
   end
-elseif arg[1] == "listen" then
-  cjdns.mgmt.listen()
-elseif arg[1] == "reload" then
-  cjdns.mgmt.reload()
+elseif arg[1] == "manage" then
+  cjdns.mgmt.manage()
 else
   help()
 end

@@ -16,7 +16,7 @@ start_service()
 
 	procd_open_instance
 	procd_set_param respawn
-	procd_set_param command cjdrouteconf listen
+	procd_set_param command cjdrouteconf manage
 	procd_close_instance
 }
 
@@ -29,13 +29,10 @@ stop_service()
 
 reload_service()
 {
-	date >> /tmp/reload_service
-	ubus send cjdns.reload '{}'
+	ubus call cjdns2 reload
 }
 
-# FIXME: this is broken, i.e. it doesn't call reload_service
 service_triggers()
 {
-	date >> /tmp/service_triggers
 	procd_add_reload_trigger cjdns
 }
