@@ -21,12 +21,10 @@ function mgmt.manage()
       -- $ ubus call cjdns2 reload
       reload = {
         function(req, msg)
-          print("cjdns2 reload")
-          for k, v in pairs(msg) do print("cjdns2 reload", k, v) end
-
           local res, err = mgmt.reload()
-          conn:send("cjdns.reloaded", {})
-          conn:reply(req, { error = err })
+          response = { added = res.added, removed = res.removed, error = err }
+          conn:send("cjdns.reloaded", response)
+          conn:reply(req, response)
         end, {}
       }
     }

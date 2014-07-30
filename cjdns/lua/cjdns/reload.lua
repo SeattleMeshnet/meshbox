@@ -1,16 +1,18 @@
 common = require("cjdns/common")
 
 function common.reload(admin, config)
+    local response = { added = {}, removed = {} }
+
     local expected = config.authorizedPasswords
 
-    local response, err = admin:auth({ q = "AuthorizedPasswords_list" })
-    if err then return nil, err end
-    local actual = response.users
+    local res, err = admin:auth({ q = "AuthorizedPasswords_list" })
+    if err then return response, err end
+    local actual = res.users
 
-    for i, v in ipairs(expected) do
-        for j, p in pairs(v) do print("expected", i, j, p) end
-    end
-    for i, v in ipairs(actual) do print("actual", i, v) end
+    -- for i, v in ipairs(expected) do
+    --     for j, p in pairs(v) do print("expected", i, j, p) end
+    -- end
+    -- for i, v in ipairs(actual) do print("actual", i, v) end
 
     -- make sure expected passwords are present
     for _, password in ipairs(expected) do
@@ -23,14 +25,13 @@ function common.reload(admin, config)
         end
 
         if not found then
-            print("Adding " .. user)
-            local response, err = admin:auth({
+            local res, err = admin:auth({
                 q = "AuthorizedPasswords_add",
                 password = password.password,
                 user = password.user
             })
-            if err then return nil, err end
-            print("error", response.error)
+            if err then return response, err end
+            table.insert(response.added, user)
         end
     end
 
@@ -49,16 +50,15 @@ function common.reload(admin, config)
         end
 
         if not found then
-            print("Removing " .. user)
-            local response, err = admin:auth({
+            local res, err = admin:auth({
                 q = "AuthorizedPasswords_remove",
                 user = user
             })
-            if err then return nil, err end
-            print("error", response.error)
-            -- InterfaceController_disconnectPeer(publicKey)
+            if err then return response, err end
+            -- TODO: InterfaceController_disconnectPeer(publicKey)
+            table.insert(response.removed, user)
         end
     end
 
-    return nil, nil
+    return response, nil
 end
