@@ -5,10 +5,6 @@ m = Map("cjdns", translate("cjdns"),
     many of the security and scalability issues that plague existing \
     networks."))
 
-m.on_after_commit = function(self)
-  os.execute("/etc/init.d/cjdns restart")
-end
-
 s = m:section(NamedSection, "cjdns")
 s.addremove = false
 

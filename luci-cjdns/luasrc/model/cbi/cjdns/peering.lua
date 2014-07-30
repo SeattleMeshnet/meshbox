@@ -8,10 +8,6 @@ m = Map("cjdns", translate("cjdns"),
     many of the security and scalability issues that plague existing \
     networks."))
 
-m.on_after_commit = function(self)
-  os.execute("/etc/init.d/cjdns restart")
-end
-
 -- UDP Peers
 udp_peers = m:section(TypedSection, "udp_peer", translate("Outgoing UDP Peers"),
   translate("First find the cjdns ip of your upstream node. \

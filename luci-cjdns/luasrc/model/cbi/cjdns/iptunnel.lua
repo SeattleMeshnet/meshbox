@@ -8,10 +8,6 @@ m = Map("cjdns", translate("cjdns"),
     many of the security and scalability issues that plague existing \
     networks."))
 
-m.on_after_commit = function(self)
-  os.execute("/etc/init.d/cjdns restart")
-end
-
 -- Outgoing
 outgoing = m:section(TypedSection, "iptunnel_outgoing", translate("Outgoing IP Tunnel Connections"),
   translate("Enter the public keys of the nodes that will provide Internet access."))
