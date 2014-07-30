@@ -31,11 +31,12 @@ function common.reload(admin, config)
                 user = password.user
             })
             if err then return response, err end
-            table.insert(response.added, user)
+            table.insert(response.added, password.user)
         end
     end
 
     -- make sure outdated passwords are not present
+    -- TODO: password.password changes are not detected
     for _, user in ipairs(actual) do
         local found = nil
         if user == "Local Peers" then
