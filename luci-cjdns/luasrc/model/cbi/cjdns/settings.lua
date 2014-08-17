@@ -37,7 +37,7 @@ apw = s:taboption("admin", Value, "admin_password", translate("Password for cjdn
       translate("Password for backend access to cjdadmin"))
 apw.datatype = "string"
 aip = s:taboption("admin", Value, "admin_address", translate("IP Address bound to cjdns admin"),
-      translate("Default 127.0.0.1 or ::1 for all interfaces"))
+      translate("Default 127.0.0.1 or [::] for all interfaces"))
 aip.datatype = "ipaddr"
 apt = s:taboption("admin", Value, "admin_port", translate("Port number bound to cjdns admin"),
       translate("Choose a valid 0-65535 port number"))
