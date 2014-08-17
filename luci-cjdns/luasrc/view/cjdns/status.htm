@@ -8,15 +8,15 @@
 		}
 
 		if ((peers == null) || (typeof peers.length === 'undefined')) {
-			var errpeer = (! peers) ? '<em><br> Socket Error: '
+			var errpeer = (! peers) ? 'Socket Error: '
 						   + 'Unable to connect to cjdns admin '
-						   + 'interface</em>'
-						: '<em><br> No active peers</em>';
+						   + 'interface'
+						: 'No active peers';
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row';
 			var cell = row.insertCell(-1);
-			cell.colSpan = 5;
-			cell.innerHTML = errpeer;
+			cell.colSpan = 7;
+			cell.textContent = errpeer;
 			return;
 		};
 
@@ -26,25 +26,25 @@
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
-			row.insertCell(-1).innerHTML = name;
-			row.insertCell(-1).innerHTML = interface;
-			row.insertCell(-1).innerHTML = peer.ipv6;
+			row.insertCell(-1).textContent = name;
+			row.insertCell(-1).textContent = interface;
+			row.insertCell(-1).textContent = peer.ipv6;
 			var latencyCell = row.insertCell(-1);
-			latencyCell.innerHTML = 'Pinging';
+			latencyCell.textContent = 'Pinging';
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
 				if (pong.result == 'timeout') {
-					latencyCell.innerHTML = '> ' + timeout + ' ms';
+					latencyCell.textContent = '> ' + timeout + ' ms';
 				} else {
-					latencyCell.innerHTML = pong.ms + ' ms';
+					latencyCell.textContent = pong.ms + ' ms';
 				};
 			})
 
-			row.insertCell(-1).innerHTML = lbbytes(peer.bytesIn);
-			row.insertCell(-1).innerHTML = lbbytes(peer.bytesOut);
-			row.insertCell(-1).innerHTML = peer.state.toLowerCase();
+			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn);
+			row.insertCell(-1).textContent  = lbbytes(peer.bytesOut);
+			row.insertCell(-1).textContent  = peer.state.toLowerCase();
 		});
 
 	};
@@ -80,19 +80,19 @@ function lbbytes (bytes){
 
 
 <fieldset class="cbi-section">
-	<legend><%:Active cjdns peers%></legend>
+	<legend>Active cjdns peers</legend>
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
-			<th class="cbi-section-table-cell"><%:Name%></th>
-			<th class="cbi-section-table-cell"><%:Interface%></th>
-			<th class="cbi-section-table-cell"><%:IPv6%></th>
-			<th class="cbi-section-table-cell"><%:Latency%></th>
-			<th class="cbi-section-table-cell"><%:Bytes In%></th>
-			<th class="cbi-section-table-cell"><%:Bytes Out%></th>
-			<th class="cbi-section-table-cell"><%:Status%></th>
+			<th class="cbi-section-table-cell">Name</th>
+			<th class="cbi-section-table-cell">Interface</th>
+			<th class="cbi-section-table-cell">IPv6</th>
+			<th class="cbi-section-table-cell">Latency</th>
+			<th class="cbi-section-table-cell">Bytes In</th>
+			<th class="cbi-section-table-cell">Bytes Out</th>
+			<th class="cbi-section-table-cell">Status</th>
 		</tr>
 		<tr class="cbi-section-table-row">
-			<td colspan="5"><em><br /><%:Querying cjdns admin interface%></em></td>
+			<td colspan="7">Querying cjdns admin interface</td>
 		</tr>
 	</table>
 </fieldset>
