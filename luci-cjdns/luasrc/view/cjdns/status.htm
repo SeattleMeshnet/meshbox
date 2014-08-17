@@ -35,11 +35,8 @@
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
-				if (pong.result == 'timeout') {
-					latencyCell.textContent = '> ' + timeout + ' ms';
-				} else {
-					latencyCell.textContent = pong.ms + ' ms';
-				};
+				var pongrsp = (pong.result == 'timeout') ? '> '+timeout+' ms' : pong.ms+' ms';
+				latencyCell.textContent = pongrsp;
 			})
 
 			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn);
@@ -53,6 +50,7 @@
 	XHR.poll(5, peersURI, null, updatePeers);
 
 //]]></script>
+
 <script type="text/javascript">
 <%# Author: [GitHub/75lb] -%>
 function lbbytes (bytes){
@@ -77,7 +75,6 @@ function lbbytes (bytes){
 	}
 };
 </script>
-
 
 <fieldset class="cbi-section">
 	<legend>Active cjdns peers</legend>
