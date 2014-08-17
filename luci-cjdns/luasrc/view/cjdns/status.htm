@@ -7,22 +7,16 @@
 			table.deleteRow(1);
 		}
 
-		if (peers == null) {
+		if ((peers == null) || (typeof peers.length === 'undefined')) {
+			var errpeer = (! peers) ? '<em><br> Socket Error: '
+						   + 'Unable to connect to cjdns admin '
+						   + 'interface</em>'
+						: '<em><br> No active peers</em>';
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row';
 			var cell = row.insertCell(-1);
 			cell.colSpan = 5;
-			cell.innerHTML = '<em><br> Socket Error: Unable to '
-				+ 'connect to cjdns admin interface</em>';
-			return;
-		};
-
-		if (typeof peers.length === 'undefined') {
-			var row = table.insertRow(-1);
-			row.className = 'cbi-section-table-row';
-			var cell = row.insertCell(-1);
-			cell.colSpan = 5;
-			cell.innerHTML = 'No active peers';
+			cell.innerHTML = errpeer;
 			return;
 		};
 
