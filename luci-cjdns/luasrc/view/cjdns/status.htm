@@ -7,56 +7,89 @@
 			table.deleteRow(1);
 		}
 
+		if ((peers == null) || (typeof peers.length === 'undefined')) {
+			var errpeer = (! peers) ? 'Socket Error: '
+						   + 'Unable to connect to cjdns admin '
+						   + 'interface'
+						: 'No active peers';
+			var row = table.insertRow(-1);
+			row.className = 'cbi-section-table-row';
+			var cell = row.insertCell(-1);
+			cell.colSpan = 7;
+			cell.textContent = errpeer;
+			return;
+		};
+
 		peers.forEach(function(peer, i) {
 			var name = peer.ipv6.split(':').pop();
 			var interface = (peer.isIncoming === 1) ? 'incoming' : 'outgoing';
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
-			row.insertCell(-1).innerHTML = name;
-			row.insertCell(-1).innerHTML = interface;
-			row.insertCell(-1).innerHTML = peer.ipv6;
+			row.insertCell(-1).textContent = name;
+			row.insertCell(-1).textContent = interface;
+			row.insertCell(-1).textContent = peer.ipv6;
 			var latencyCell = row.insertCell(-1);
-			latencyCell.innerHTML = 'Pinging'
-			row.insertCell(-1).innerHTML = peer.state.toLowerCase();
+			latencyCell.textContent = 'Pinging';
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
-				if (pong.result == 'timeout') {
-					latencyCell.innerHTML = '> ' + timeout + ' ms';
-				} else {
-					latencyCell.innerHTML = pong.ms + ' ms';
-				};
+				var pongrsp = (pong.result == 'timeout') ? '> '+timeout+' ms' : pong.ms+' ms';
+				latencyCell.textContent = pongrsp;
 			})
+
+			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn);
+			row.insertCell(-1).textContent  = lbbytes(peer.bytesOut);
+			row.insertCell(-1).textContent  = peer.state.toLowerCase();
 		});
 
-		if (peers.length == 0) {
-			var row = table.insertRow(-1);
-			row.className = 'cbi-section-table-row';
-			var cell = row.insertCell(-1);
-			cell.colSpan = 5;
-			cell.innerHTML = 'No active peers';
-		}
 	};
 
 	XHR.get(peersURI, null, updatePeers);
 	XHR.poll(5, peersURI, null, updatePeers);
+
 //]]></script>
 
+<script type="text/javascript">
+<%# Author: [GitHub/75lb] -%>
+function lbbytes (bytes){
+
+	var kilobyte = 1024,
+	    megabyte = kilobyte * 1024,
+	    gigabyte = megabyte * 1024,
+	    terabyte = gigabyte * 1024;
+
+	if ((bytes >= 0) && (bytes < kilobyte)) {
+		return bytes + " B";
+	} else if ((bytes >= kilobyte) && (bytes < megabyte)) {
+		return (bytes / kilobyte).toFixed(2) + " KB";
+	} else if ((bytes >= megabyte) && (bytes < gigabyte)) {
+		return (bytes / megabyte).toFixed(2) + " MB";
+	} else if ((bytes >= gigabyte) && (bytes < terabyte)) {
+		return (bytes / gigabyte).toFixed(2) + " GB";
+	} else if (bytes >= terabyte) {
+		return (bytes / terabyte).toFixed(2) + " TB";
+	} else {
+		return bytes + " B";
+	}
+};
+</script>
 
 <fieldset class="cbi-section">
-	<legend><%:Active cjdns peers%></legend>
+	<legend>Active cjdns peers</legend>
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
-			<th class="cbi-section-table-cell"><%:Name%></th>
-			<th class="cbi-section-table-cell"><%:Interface%></th>
-			<th class="cbi-section-table-cell"><%:IPv6%></th>
-			<th class="cbi-section-table-cell"><%:Latency%></th>
-			<th class="cbi-section-table-cell"><%:Status%></th>
+			<th class="cbi-section-table-cell">Name</th>
+			<th class="cbi-section-table-cell">Interface</th>
+			<th class="cbi-section-table-cell">IPv6</th>
+			<th class="cbi-section-table-cell">Latency</th>
+			<th class="cbi-section-table-cell">Bytes In</th>
+			<th class="cbi-section-table-cell">Bytes Out</th>
+			<th class="cbi-section-table-cell">Status</th>
 		</tr>
 		<tr class="cbi-section-table-row">
-			<td colspan="5"><em><br /><%:Querying cjdns admin interface%></em></td>
+			<td colspan="7">Querying cjdns admin interface</td>
 		</tr>
 	</table>
 </fieldset>

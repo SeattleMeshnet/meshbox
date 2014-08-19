@@ -9,19 +9,19 @@ function index()
 	end
 
 	entry({"admin", "services", "cjdns"},
-    cbi("cjdns/overview"), _("cjdns")).dependent = true
+		cbi("cjdns/overview"), _("cjdns")).dependent = true
 
 	entry({"admin", "services", "cjdns", "overview"},
-    cbi("cjdns/overview"), _("Overview"), 1).leaf = false
+		cbi("cjdns/overview"), _("Overview"), 1).leaf = false
 
 	entry({"admin", "services", "cjdns", "peering"},
-    cbi("cjdns/peering"), _("Peers"), 2).leaf = false
+		cbi("cjdns/peering"), _("Peers"), 2).leaf = false
 
 	entry({"admin", "services", "cjdns", "iptunnel"},
-    cbi("cjdns/iptunnel"), _("IP Tunnel"), 3).leaf = false
+		cbi("cjdns/iptunnel"), _("IP Tunnel"), 3).leaf = false
 
 	entry({"admin", "services", "cjdns", "settings"},
-    cbi("cjdns/settings"), _("Settings"), 4).leaf = false
+		cbi("cjdns/settings"), _("Settings"), 4).leaf = false
 
 	entry({"admin", "services", "cjdns", "cjdrouteconf"},
 		cbi("cjdns/cjdrouteconf"), _("cjdroute.conf"), 5).leaf = false
@@ -72,10 +72,10 @@ function act_ping()
 	admin = cjdns.uci.makeInterface()
 
 	local response, err = admin:auth({
-    q = "SwitchPinger_ping",
-    path = luci.http.formvalue("label"),
-    timeout = tonumber(luci.http.formvalue("timeout"))
-  })
+		q = "SwitchPinger_ping",
+		path = luci.http.formvalue("label"),
+		timeout = tonumber(luci.http.formvalue("timeout"))
+	})
 
 	if err or response.error then
 		luci.http.status(502, "Bad Gateway")
