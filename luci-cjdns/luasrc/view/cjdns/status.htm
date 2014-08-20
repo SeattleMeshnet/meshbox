@@ -22,7 +22,12 @@
 
 		peers.forEach(function(peer, i) {
 			var name = peer.ipv6.split(':').pop();
-			var interface = (peer.isIncoming === 1) ? 'incoming' : 'outgoing';
+
+			if (peer.isIncoming === 0) {
+				var interface = 'outgoing';
+			} else {
+				var interface = (peer.user) ? 'beacon' : 'incoming';
+			};
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
