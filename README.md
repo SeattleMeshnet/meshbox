@@ -1,7 +1,7 @@
 meshbox
 =======
 
-This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides UCI and LuCI integration for [cjdns][cjdns]. Tested with OpenWRT Barrier Breaker (trunk).
+This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides UCI and LuCI integration for [cjdns][cjdns]. Tested with OpenWRT Barrier Breaker (14.07) and Chaos Calmer (trunk).
 
 [meshbox]: http://fund.meshwith.me
 [cjdns]: https://github.com/cjdelisle/cjdns
