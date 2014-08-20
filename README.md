@@ -8,7 +8,7 @@ This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides
 
 Integration into the OpenWRT buildroot is simple.
 
-    $ git clone git://git.openwrt.org/openwrt.git
+    $ git clone git://git.openwrt.org/14.07/openwrt.git
     $ cd openwrt
 
     $ cp feeds.conf.default feeds.conf
