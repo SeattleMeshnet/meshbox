@@ -50,9 +50,6 @@ define Package/cjdns/install
 	$(INSTALL_BIN) ./files/etc/init.d/cjdns 	$(1)/etc/init.d/cjdns
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/etc/uci-defaults/cjdns $(1)/etc/uci-defaults/cjdns
-	$(INSTALL_DIR) $(1)/usr/share
-	$(INSTALL_DIR) $(1)/usr/share/cjdns
-	$(INSTALL_BIN) ./files/usr/share/cjdns/* $(1)/usr/share/cjdns/
 	$(INSTALL_DIR)	$(1)/usr/lib/lua/cjdns
 	$(INSTALL_DATA)	$(PKG_BUILD_DIR)/contrib/lua/cjdns/*.lua $(1)/usr/lib/lua/cjdns/
 	$(INSTALL_DATA) ./lua/cjdns/*.lua $(1)/usr/lib/lua/cjdns/
