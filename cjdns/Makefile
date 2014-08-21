@@ -5,9 +5,9 @@ PKG_VERSION:=0.7.2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=git://github.com/lgierth/cjdns.git
+PKG_SOURCE_URL:=git://github.com/berlinmeshnet/cjdns.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=openwrt
+PKG_SOURCE_VERSION:=f7780d847102b54f5c51dbdaac76db15a91ae70b
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
