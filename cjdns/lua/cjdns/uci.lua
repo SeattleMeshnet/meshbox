@@ -12,7 +12,7 @@ common.uci = UCI
 function UCI.defaults()
   return {
     noBackground = 1,
-    security = { exemptAngel = 1, setuser = "nobody" },
+    security = { { exemptAngel = 1, setuser = "nobody" } },
     router = {
         ipTunnel = { outgoingConnections = {}, allowedConnections = {} },
         interface = { type = "TUNInterface" }
