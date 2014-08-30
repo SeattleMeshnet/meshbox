@@ -1,14 +1,8 @@
 #!/bin/bash
 
-# Usage:
-#
-# cd openwrt/
-# feeds/meshbox/build-scripts/docker-image.sh
-# make
-# image_id=$(docker import - < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz)
-# docker run -i -t $image_id /sbin/init
+set +ex
 
-# Or using the prebuilt image:
+# Used to produce the prebuilt image at lgierth/meshbox
 #
 # docker run -i -t lgierth/meshbox /sbin/init
 
@@ -29,3 +23,6 @@ echo CONFIG_PACKAGE_luci-cjdns=y >> .config
 #echo CONFIG_PACKAGE_iputils-tracepath6=y >> .config
 #echo CONFIG_PACKAGE_iputils-traceroute6=y >> .config
 make defconfig
+
+make -j 3
+docker import - meshbox < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz
