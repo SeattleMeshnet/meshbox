@@ -19,11 +19,12 @@ define Package/dkjson
   CATEGORY:=Languages
   TITLE:=DKJSON
   URL:=http://dkolf.de/src/dkjson-lua.fsl/home
+  MAINTAINER:=Lars Gierth <larsg@systemli.org>
   DEPENDS:=+lua
 endef
 
 define Package/dkjson/description
-  This is a JSON module written in Lua. It supports UTF-8.
+  Lua JSON parser/serializer with UTF-8 support
 endef
 
 define Build/Configure

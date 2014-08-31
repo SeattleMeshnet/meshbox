@@ -17,8 +17,9 @@ define Package/lua-bencode
   SUBMENU:=Lua
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Lua Bencode
+  TITLE:=lua-bencode
   URL:=https://bitbucket.org/wilhelmy/lua-bencode
+  MAINTAINER:=Lars Gierth <larsg@systemli.org>
   DEPENDS:=+lua
 endef
 

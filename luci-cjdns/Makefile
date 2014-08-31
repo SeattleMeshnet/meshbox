@@ -20,12 +20,9 @@ endef
 define Build/Compile
 endef
 
-LUA_LIBRARYDIR = /usr/lib/lua
-LUCI_LIBRARYDIR = $(LUA_LIBRARYDIR)/luci
-
 define Package/luci-cjdns/install
-  $(INSTALL_DIR) $(1)$(LUCI_LIBRARYDIR); \
-  cp -pR ./luasrc/* $(1)$(LUCI_LIBRARYDIR)
+  $(INSTALL_DIR) $(1)/usr/lib/lua/luci ; \
+  cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
 endef
 
 $(eval $(call BuildPackage,luci-cjdns))

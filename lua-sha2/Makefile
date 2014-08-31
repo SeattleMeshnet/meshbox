@@ -17,18 +17,18 @@ define Package/lua-sha2
   SUBMENU:=Lua
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Lua binding for the SHA-256/384/512
+  TITLE:=Lua binding for Aaron Gifford's SHA-2 implementation
   URL:=https://code.google.com/p/sha2/
+  MAINTAINER:=Lars Gierth <larsg@systemli.org>
   DEPENDS:=+lua
 endef
 
 define Package/lua-sha2/description
-  Lua binding for the SHA-256/384/512 BSD-licensed C implementation by Aaron Gifford
-  http://www.aarongifford.com/computers/sha.html
+  Lua Binding for the SHA-2 (SHA-256/384/512) BSD-licensed C implementation by Aaron Gifford.
+	Also contains a HMAC implementation in Lua.
 endef
 
 define Build/Configure
-
 endef
 
 define Build/Compile
