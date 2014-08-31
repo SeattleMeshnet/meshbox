@@ -1,15 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lua-bencode
-PKG_REV:=b0e183bb3f3d6970d0f2472cd65e5b8bb110e487
-PKG_VERSION:=0.3_r$(PKG_REV)
+PKG_VERSION:=2.1.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=https://bitbucket.org/wilhelmy/lua-bencode
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=$(PKG_REV)
+PKG_SOURCE_URL:=https://bitbucket.org/wilhelmy/lua-bencode
 PKG_SOURCE_PROTO:=hg
+PKG_SOURCE_VERSION:=500243383cb6acbddd3cf12aee6e4667aab53324
 
 include $(INCLUDE_DIR)/package.mk
 

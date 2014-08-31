@@ -1,15 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dkjson
-
-PKG_VERSION:=master
+PKG_VERSION:=2.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/LuaDist/dkjson.git
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)
-PKG_SOURCE_VERSION:=master
+PKG_SOURCE_URL:=http://dkolf.de/src/dkjson-lua.fsl/tarball/
+# TODO: md5sum doesn't seem be taken into account
+PKG_MD5SUM:=dbe706722dd64308172cf8e37395e762
 
 include $(INCLUDE_DIR)/package.mk
 

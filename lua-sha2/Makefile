@@ -1,16 +1,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lua-sha2
-PKG_REV:=02bd4bfdc806
-PKG_VERSION:=$(PKG_REV)
+PKG_VERSION:=0.2.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_REV).tar.gz
-PKG_SOURCE_URL:=https://code.google.com/p/sha2/
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=$(PKG_REV)
+PKG_SOURCE_URL:=https://code.google.com/p/sha2/
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=master
+PKG_SOURCE_VERSION:=02bd4bfdc806
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/lua-sha2
