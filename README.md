@@ -57,11 +57,13 @@ Then you can code away, and deploy the changed files as needed.
 $ build-scripts/deploy.sh root@ADDRESS 12345
 ```
 
-This will deploy `cjdns/files`, `cjdns/lua`, and `luci-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image. Add, update, and install the meshbox feed according to the instructions above, then build and run the image.
+This will deploy `cjdns/files`, `cjdns/lua`, and `luci-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image.
 
 ```
 $ cd openwrt/
-$ feeds/meshbox/build-scripts/docker-image.sh
+$ vim feeds.conf # src-git meshbox ... => src-link meshbox /path/to/meshbox
+$ ./scripts/feeds update -a
+$ ./feeds/meshbox/build-scripts/docker-image.sh
 $ docker run -i -t meshbox /sbin/init
 ```
 
