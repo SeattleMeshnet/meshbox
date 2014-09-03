@@ -60,20 +60,3 @@ You can then build a fresh package, that you can copy to the device, and then in
     ssh root@<ip> 'opkg install /tmp/cjdns.ipkg'
 
 Make sure to commit your changes to cjdns before building the package. The OpenWRT buildroot will clone the local cjdns into the build directory, omitting uncommitted changes.
-
-
-TODO
-----
-
-- [ ] Strip down the binary size and keep everything under 4MB
-- [ ] Figure out NAT6 configuration
-- [ ] Improve UI wording
-- [ ] Introduce proper package versions
-- [ ] Extend list of active peers
-  - [ ] should show the used interface, and the password name
-  - [ ] show data rx/tx since connected, other peerinfo data
-- [ ] Visualize traffic in graphs
-- [ ] Fill in useful default values for new UDP/ETHInterfaces
-- [ ] Autogenerate passwords in the Peers UI
-- [ ] Generate addpass.py-like password JSON
-- [ ] Make paste-friendly textbox containing "yourip:port":{pass,key,name,info}
