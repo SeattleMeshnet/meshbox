@@ -9,21 +9,22 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://code.google.com/p/sha2/
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=02bd4bfdc806
+PKG_LICENSE:=MIT
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/lua-sha2
-  SUBMENU:=Lua
-  SECTION:=lang
-  CATEGORY:=Languages
-  TITLE:=Lua binding for Aaron Gifford's SHA-2 implementation
-  URL:=https://code.google.com/p/sha2/
-  MAINTAINER:=Lars Gierth <larsg@systemli.org>
-  DEPENDS:=+lua
+	SUBMENU:=Lua
+	SECTION:=lang
+	CATEGORY:=Languages
+	TITLE:=Lua binding for Aaron Gifford's SHA-2 implementation
+	URL:=https://code.google.com/p/sha2/
+	MAINTAINER:=Lars Gierth <larsg@systemli.org>
+	DEPENDS:=+lua
 endef
 
 define Package/lua-sha2/description
-  Lua Binding for the SHA-2 (SHA-256/384/512) BSD-licensed C implementation by Aaron Gifford.
+	Lua Binding for the SHA-2 (SHA-256/384/512) BSD-licensed C implementation by Aaron Gifford.
 	Also contains a HMAC implementation in Lua.
 endef
 
