@@ -37,7 +37,8 @@ ipv4.template = "cjdns/value"
 ipv4.datatype = 'ipaddr'
 ipv4.size = 55
 
-ipv6 = allowed:option(Value, "ipv6", translate("IPv6"))
+ipv6 = allowed:option(Value, "ipv6", translate("IPv6"),
+  translate("IPv6 addresses should be entered like so: <code>[2001::1]</code>."))
 ipv6.template = "cjdns/value"
 ipv6.datatype = 'ip6addr'
 ipv6.size = 55

@@ -40,7 +40,9 @@
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
-				var pongrsp = (pong.result == 'timeout') ? '> '+timeout+' ms' : pong.ms+' ms';
+				var pongrsp = pong.ms + ' ms';
+				if (pong.result == 'timeout') { pongrsp = '> ' + timeout + ' ms' }
+				if (pong.ms < 1) { pongrsp = '< 1 ms' }
 				latencyCell.textContent = pongrsp;
 			})
 
@@ -85,12 +87,12 @@ function lbbytes (bytes){
 	<legend>Active cjdns peers</legend>
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
-			<th class="cbi-section-table-cell">Name</th>
+			<th class="cbi-section-table-cell">User/Name</th>
 			<th class="cbi-section-table-cell">Interface</th>
 			<th class="cbi-section-table-cell">IPv6</th>
 			<th class="cbi-section-table-cell">Latency</th>
-			<th class="cbi-section-table-cell">Bytes In</th>
-			<th class="cbi-section-table-cell">Bytes Out</th>
+			<th class="cbi-section-table-cell">Bytes in (rx)</th>
+			<th class="cbi-section-table-cell">Bytes out (tx)</th>
 			<th class="cbi-section-table-cell">Status</th>
 		</tr>
 		<tr class="cbi-section-table-row">

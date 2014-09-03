@@ -9,62 +9,63 @@ m.on_after_commit = function(self)
   os.execute("/etc/init.d/cjdns restart")
 end
 
-s = m:section(NamedSection, "cjdns")
+s = m:section(NamedSection, "cjdns", nil, translate("Settings"))
 s.addremove = false
 
-s:tab("identity", translate("Identity"))
-s:tab("peering",  translate("Peering"))
-s:tab("admin",    translate("Admin Interface"))
-
 -- Peering
-apw = s:taboption("peering", Value, "inactivity_seconds", translate("Reestablish link if inactivite"),
-      translate("Deadlink detection in seconds"))
+s:tab("peering", translate("Peering"))
+apw = s:taboption("peering", Value, "inactivity_seconds", translate("Inactivity Timeout"),
+      translate("After link inactivity of this number of seconds, cjdns will try to re-establish the link with the peer."))
 apw.datatype = "integer(range(0,2048))"
 
 -- Identity
-node6 = s:taboption("identity", Value, "ipv6", translate("IPv6 Address"),
-      translate("IPv6 tunnel address"))
+s:tab("identity", translate("Identity"))
+node6 = s:taboption("identity", Value, "ipv6", translate("IPv6 address"),
+      translate("This node's IPv6 address within the cjdns network."))
 node6.datatype = "ip6addr"
-pbkey = s:taboption("identity", Value, "public_key", translate("Public Key"),
-      translate("Your Multipass to Hyperboria"))
+pbkey = s:taboption("identity", Value, "public_key", translate("Public key"),
+      translate("Used for packet encryption and authentication."))
 pbkey.datatype = "string"
-prkey = s:taboption("identity", Value, "private_key", translate("Private Key"),
-      translate("Do not redistribute this key"))
+prkey = s:taboption("identity", Value, "private_key", translate("Private key"),
+      translate("Keep this private. When compromised, generate a new keypair and IPv6."))
 prkey.datatype = "string"
 
 -- Admin Interface
-apw = s:taboption("admin", Value, "admin_password", translate("Password for cjdns admin"),
-      translate("Password for backend access to cjdadmin"))
-apw.datatype = "string"
-aip = s:taboption("admin", Value, "admin_address", translate("IP Address bound to cjdns admin"),
-      translate("Default 127.0.0.1 or [::] for all interfaces"))
+s:tab("admin", translate("Admin API"), translate("The Admin API can be used by other applications or services to configure and inspect cjdns' routing and peering.<br><br>Documentation: <a href=\"https://github.com/cjdelisle/cjdns/tree/master/admin#cjdns-admin-api\">admin/README.md</a><div class=\"clearfix\"></span>"))
+aip = s:taboption("admin", Value, "admin_address", translate("IP Address"),
+      translate("IPv6 addresses should be entered like so: <code>[2001::1]</code>."))
 aip.datatype = "ipaddr"
-apt = s:taboption("admin", Value, "admin_port", translate("Port number bound to cjdns admin"),
-      translate("Choose a valid 0-65535 port number"))
+apt = s:taboption("admin", Value, "admin_port", translate("Port"))
 apt.datatype = "port"
+apw = s:taboption("admin", Value, "admin_password", translate("Password"))
+apw.datatype = "string"
 
 -- UDP Interfaces
 udp_interfaces = m:section(TypedSection, "udp_interface", translate("UDP Interfaces"),
-  translate("These interfaces allow peering via public IP networks, such as the Internet"))
+  translate("These interfaces allow peering via public IP networks, such as the Internet, or many community-operated wireless networks. IPv6 addresses should be entered with square brackets, like so: <code>[2001::1]</code>."))
 udp_interfaces.anonymous = true
 udp_interfaces.addremove = true
 udp_interfaces.template = "cbi/tblsection"
 
-udp_interfaces:option(Value, "address", translate("IP Address")).datatype = "ipaddr"
+udp_address = udp_interfaces:option(Value, "address", translate("IP Address"))
+udp_address.datatype = "ipaddr"
+udp_address.placeholder = "0.0.0.0"
 udp_interfaces:option(Value, "port", translate("Port")).datatype = "portrange"
 
 -- Ethernet Interfaces
 eth_interfaces = m:section(TypedSection, "eth_interface", translate("Ethernet Interfaces"),
-  translate("These interfaces allow peering via local networks (LAN)."))
+  translate("These interfaces allow peering via local Ethernet networks, such as home or office networks, or phone tethering."))
 eth_interfaces.anonymous = true
 eth_interfaces.addremove = true
 eth_interfaces.template = "cbi/tblsection"
 
-eth_interfaces:option(Value, "bind", translate("Network Interface"))
+eth_bind = eth_interfaces:option(Value, "bind", translate("Network Interface"))
+eth_bind.placeholder = "br-lan"
 eth_beacon = eth_interfaces:option(Value, "beacon", translate("Beacon Mode"))
 eth_beacon:value(0, translate("0 -- Disabled"))
 eth_beacon:value(1, translate("1 -- Accept beacons"))
 eth_beacon:value(2, translate("2 -- Accept and send beacons"))
+eth_beacon.default = 2
 eth_beacon.datatype = "integer(range(0,2))"
 
 return m
