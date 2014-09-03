@@ -8,21 +8,22 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://dkolf.de/src/dkjson-lua.fsl/tarball/
 # TODO: md5sum doesn't seem be taken into account
 PKG_MD5SUM:=dbe706722dd64308172cf8e37395e762
+PKG_LICENSE:=MIT
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/dkjson
-  SUBMENU:=Lua
-  SECTION:=lang
-  CATEGORY:=Languages
-  TITLE:=DKJSON
-  URL:=http://dkolf.de/src/dkjson-lua.fsl/home
-  MAINTAINER:=Lars Gierth <larsg@systemli.org>
-  DEPENDS:=+lua
+	SUBMENU:=Lua
+	SECTION:=lang
+	CATEGORY:=Languages
+	TITLE:=DKJSON
+	URL:=http://dkolf.de/src/dkjson-lua.fsl/home
+	MAINTAINER:=Lars Gierth <larsg@systemli.org>
+	DEPENDS:=+lua
 endef
 
 define Package/dkjson/description
-  Lua JSON parser/serializer with UTF-8 support
+	Lua JSON parser/serializer with UTF-8 support
 endef
 
 define Build/Configure
