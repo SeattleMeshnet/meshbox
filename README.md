@@ -42,21 +42,37 @@ To update:
 Development
 -----------
 
-You can point the OpenWRT buildroot to a local meshbox clone by editing `<openwrt>/feeds.conf`:
+Almost all of the development can be conducted using only a Docker container.
 
-    src-link meshbox /path/to/meshbox
+```
+$ docker run -i -t lgierth/meshbox /sbin/init
+> printf "12345\n12345\n" | passwd
+> ifconfig eth0 | grep 'inet addr'
+>
+```
 
-If you want to use a local clone of cjdns itself as well, edit `<meshbox>/cjdns/Makefile`:
+Then you can code away, and deploy the changed files as needed.
 
-    PKG_SOURCE_URL:=file:///path/to/cjdns
-    PKG_SOURCE_PROTO:=git
-    PKG_SOURCE_VERSION:=master
+```
+$ build-scripts/deploy.sh root@ADDRESS 12345
+```
 
-You can then build a fresh package, that you can copy to the device, and then install. You need to delete the last clone everytime.
+This will deploy `cjdns/files`, `cjdns/lua`, and `luci-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image. Add, update, and install the meshbox feed according to the instructions above, then build and run the image.
 
-    rm dl/cjdns-*
-    make package/cjdns/{clean,compile} V=s
-    scp bin/<target>/packages/cjdns-*.ipkg root@<ip>:/tmp/cjdns.ipkg
-    ssh root@<ip> 'opkg install /tmp/cjdns.ipkg'
+```
+$ cd openwrt/
+$ feeds/meshbox/build-scripts/docker-image.sh
+$ docker run -i -t meshbox /sbin/init
+```
+
+In case you want to make changes to cjdns itself, you can modify `<meshbox>/cjdns/Makefile` to use a local clone of cjdns.
+
+```
+PKG_SOURCE_URL:=file:///path/to/cjdns
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=master
+```
 
 Make sure to commit your changes to cjdns before building the package. The OpenWRT buildroot will clone the local cjdns into the build directory, omitting uncommitted changes.
+
+You can then build a fresh container including the changes to cjdns.
