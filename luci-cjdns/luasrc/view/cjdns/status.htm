@@ -21,17 +21,21 @@
 		};
 
 		peers.forEach(function(peer, i) {
-			var name = peer.ipv6.split(':').pop();
+			if (peer.user == 'Local Peers') {
+				var user = 'beacon';
+			} else {
+				var user = peer.user;
+			}
 
 			if (peer.isIncoming === 0) {
 				var interface = 'outgoing';
 			} else {
-				var interface = (peer.user) ? 'beacon' : 'incoming';
+				var interface = 'incoming';
 			};
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
-			row.insertCell(-1).textContent = name;
+			row.insertCell(-1).textContent = user;
 			row.insertCell(-1).textContent = interface;
 			row.insertCell(-1).textContent = peer.ipv6;
 			var latencyCell = row.insertCell(-1);
@@ -85,6 +89,7 @@ function lbbytes (bytes){
 
 <fieldset class="cbi-section">
 	<legend>Active cjdns peers</legend>
+	<p>Please note that user/name is only shown for incoming peers, due to Admin API limitations.</p>
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
 			<th class="cbi-section-table-cell">User/Name</th>
