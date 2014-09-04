@@ -8,9 +8,8 @@
 		}
 
 		if ((peers == null) || (typeof peers.length === 'undefined')) {
-			var errpeer = (! peers) ? 'Socket Error: '
-						   + 'Unable to connect to cjdns admin '
-						   + 'interface'
+			var errpeer = (! peers)
+						? 'Socket Error: unable to connect to Admin API'
 						: 'No active peers';
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row';
@@ -36,10 +35,11 @@
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
 			row.insertCell(-1).textContent = user;
-			row.insertCell(-1).textContent = interface;
 			row.insertCell(-1).textContent = peer.ipv6;
+			row.insertCell(-1).textContent = interface + ', ' + peer.state.toLowerCase();
+			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn) + ' / ' + lbbytes(peer.bytesOut);
 			var latencyCell = row.insertCell(-1);
-			latencyCell.textContent = 'Pinging';
+			latencyCell.textContent = 'waiting';
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
@@ -49,10 +49,6 @@
 				if (pong.ms < 1) { pongrsp = '< 1 ms' }
 				latencyCell.textContent = pongrsp;
 			})
-
-			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn);
-			row.insertCell(-1).textContent  = lbbytes(peer.bytesOut);
-			row.insertCell(-1).textContent  = peer.state.toLowerCase();
 		});
 
 	};
@@ -93,15 +89,13 @@ function lbbytes (bytes){
 	<table class="cbi-section-table" id="cjdns-peerings">
 		<tr class="cbi-section-table-titles">
 			<th class="cbi-section-table-cell">User/Name</th>
-			<th class="cbi-section-table-cell">Interface</th>
 			<th class="cbi-section-table-cell">IPv6</th>
-			<th class="cbi-section-table-cell">Latency</th>
-			<th class="cbi-section-table-cell">Bytes in (rx)</th>
-			<th class="cbi-section-table-cell">Bytes out (tx)</th>
 			<th class="cbi-section-table-cell">Status</th>
+			<th class="cbi-section-table-cell">Rx / Tx</th>
+			<th class="cbi-section-table-cell">Latency</th>
 		</tr>
 		<tr class="cbi-section-table-row">
-			<td colspan="7">Querying cjdns admin interface</td>
+			<td colspan="7">Querying Admin API</td>
 		</tr>
 	</table>
 </fieldset>
