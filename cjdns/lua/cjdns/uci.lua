@@ -123,7 +123,7 @@ function UCI.set(obj)
   end
 
   local admin_address, admin_port = string.match(obj.admin.bind, "^(.*):(.*)$")
-  cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
+  UCI.cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
     ipv6 = obj.ipv6,
     public_key = obj.publicKey,
     private_key = obj.privateKey,
@@ -134,14 +134,14 @@ function UCI.set(obj)
   })
 
   if obj.router.interface.tunDevice then
-    cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
+    UCI.cursor_section(cursor, "cjdns", "cjdns", "cjdns", {
       tun_device = tostring(obj.router.interface.tunDevice)
     })
   end
 
   if obj.router.ipTunnel.outgoingConnections then
     for i,public_key in pairs(obj.router.ipTunnel.outgoingConnections) do
-      cursor_section(cursor, "cjdns", "iptunnel_outgoing", nil, {
+      UCI.cursor_section(cursor, "cjdns", "iptunnel_outgoing", nil, {
         public_key = public_key
       })
     end
@@ -157,20 +157,20 @@ function UCI.set(obj)
         entry["ipv6"] = allowed.ip6Address
       end
 
-      cursor_section(cursor, "cjdns", "iptunnel_allowed", nil, entry)
+      UCI.cursor_section(cursor, "cjdns", "iptunnel_allowed", nil, entry)
     end
   end
 
   if obj.interfaces.ETHInterface then
     for i,interface in pairs(obj.interfaces.ETHInterface) do
-      cursor_section(cursor, "cjdns", "eth_interface", nil, {
+      UCI.cursor_section(cursor, "cjdns", "eth_interface", nil, {
         bind = interface.bind,
         beacon = tostring(interface.beacon)
       })
 
       if interface.connectTo then
         for peer_address,peer in pairs(interface.connectTo) do
-          cursor_section(cursor, "cjdns", "eth_peer", nil, {
+          UCI.cursor_section(cursor, "cjdns", "eth_peer", nil, {
             interface = i,
             address = peer_address,
             public_key = peer.publicKey,
@@ -184,7 +184,7 @@ function UCI.set(obj)
   if obj.interfaces.UDPInterface then
     for i,interface in pairs(obj.interfaces.UDPInterface) do
       local address, port = string.match(interface.bind, "^(.*):(.*)$")
-      cursor_section(cursor, "cjdns", "udp_interface", nil, {
+      UCI.cursor_section(cursor, "cjdns", "udp_interface", nil, {
         address = address,
         port = port
       })
@@ -192,7 +192,7 @@ function UCI.set(obj)
       if interface.connectTo then
         for peer_bind,peer in pairs(interface.connectTo) do
           local peer_address, peer_port = string.match(peer_bind, "^(.*):(.*)$")
-          cursor_section(cursor, "cjdns", "udp_peer", nil, {
+          UCI.cursor_section(cursor, "cjdns", "udp_peer", nil, {
             interface = i,
             address = peer_address,
             port = peer_port,
@@ -208,10 +208,10 @@ function UCI.set(obj)
     for i,password in pairs(obj.authorizedPasswords) do
       local user = password.user
       if not user or string.len(user) == 0 then
-        user = "user-" .. random_string(6)
+        user = "user-" .. UCI.random_string(6)
       end
 
-      cursor_section(cursor, "cjdns", "password", nil, {
+      UCI.cursor_section(cursor, "cjdns", "password", nil, {
         password = password.password,
         user = user,
         contact = password.contact
@@ -230,7 +230,7 @@ end
 -- @param string type of the section
 -- @param string name of the section (optional)
 -- @param table config values
-local function cursor_section(cursor, config, type, section, values)
+function UCI.cursor_section(cursor, config, type, section, values)
   if section then
     cursor:set(config, section, type)
   else
