@@ -206,9 +206,14 @@ function UCI.set(obj)
 
   if obj.authorizedPasswords then
     for i,password in pairs(obj.authorizedPasswords) do
+      local user = password.user
+      if not user or string.len(user) == 0 then
+        user = "user-" .. random_string(6)
+      end
+
       cursor_section(cursor, "cjdns", "password", nil, {
         password = password.password,
-        user = password.user,
+        user = user,
         contact = password.contact
       })
     end
@@ -225,7 +230,7 @@ end
 -- @param string type of the section
 -- @param string name of the section (optional)
 -- @param table config values
-function cursor_section(cursor, config, type, section, values)
+local function cursor_section(cursor, config, type, section, values)
   if section then
     cursor:set(config, section, type)
   else
@@ -250,4 +255,12 @@ function UCI.makeInterface()
     config = UCI.get(),
     timeout = 2
   })
+end
+
+function UCI.random_string(length)
+  -- tr -cd 'A-Za-z0-9' < /dev/urandom
+  local urandom = io.popen("tr -cd 'A-Za-z0-9' < /dev/urandom", "r")
+  local string = urandom:read(length)
+  urandom:close()
+  return string
 end
