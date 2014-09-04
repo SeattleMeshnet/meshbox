@@ -1,6 +1,9 @@
 uci = require "luci.model.uci"
 cursor = uci:cursor_state()
 
+cjdns = require("cjdns")
+require("cjdns/uci")
+
 m = Map("cjdns", translate("cjdns"),
   translate("Implements an encrypted IPv6 network using public-key \
     cryptography for address allocation and a distributed hash table for \
@@ -19,9 +22,13 @@ passwords.anonymous = true
 passwords.addremove = true
 passwords.template  = "cbi/tblsection"
 
-passwords:option(Value, "user", translate("User/Name"), translate("Must be unique."))
+passwords:option(Value, "user", translate("User/Name"),
+  translate("Must be unique.")
+).default = "user-" .. cjdns.uci.random_string(6)
 passwords:option(Value, "contact", translate("Contact"), translate("Optional, for out-of-band communication."))
-passwords:option(Value, "password", translate("Password"), translate("Hand out to your peer, in accordance with the peering best practices of the network."))
+passwords:option(Value, "password", translate("Password"),
+  translate("Hand out to your peer, in accordance with the peering best practices of the network.")
+).default = cjdns.uci.random_string(32)
 
 -- UDP Peers
 udp_peers = m:section(TypedSection, "udp_peer", translate("Outgoing UDP Peers"),
