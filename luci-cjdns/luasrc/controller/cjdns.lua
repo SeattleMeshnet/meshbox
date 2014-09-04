@@ -46,7 +46,7 @@ function act_peers()
 		if err or response.error then
 			luci.http.status(502, "Bad Gateway")
 			luci.http.prepare_content("application/json")
-			luci.http.write_json(response)
+			luci.http.write_json({ err = err, response = response })
 			return
 		end
 
@@ -80,7 +80,7 @@ function act_ping()
 	if err or response.error then
 		luci.http.status(502, "Bad Gateway")
 		luci.http.prepare_content("application/json")
-		luci.http.write_json(response)
+		luci.http.write_json({ err = err, response = response })
 		return
 	end
 
