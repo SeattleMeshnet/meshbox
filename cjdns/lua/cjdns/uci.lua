@@ -259,7 +259,7 @@ end
 
 function UCI.random_string(length)
   -- tr -cd 'A-Za-z0-9' < /dev/urandom
-  local urandom = io.popen("tr -cd 'A-Za-z0-9' < /dev/urandom", "r")
+  local urandom = io.popen("tr -cd 'A-Za-z0-9' 2> /dev/null < /dev/urandom", "r")
   local string = urandom:read(length)
   urandom:close()
   return string
