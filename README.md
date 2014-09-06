@@ -12,7 +12,7 @@ Integration into the OpenWRT buildroot is simple.
     $ cd openwrt
 
     $ cp feeds.conf.default feeds.conf
-    $ echo 'src-git meshbox git://github.com/seattlemeshnet/meshbox.git' >> feeds.conf
+    $ echo 'src-git meshbox git://github.com/seattlemeshnet/meshbox.git;for-14.07' >> feeds.conf
     $ ./scripts/feeds update
     $ ./scripts/feeds install luci-cjdns
 
