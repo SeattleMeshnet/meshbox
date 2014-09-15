@@ -1,20 +1,26 @@
 meshbox
 =======
 
-This is the OpenWRT package feed for the [meshbox][meshbox] project. It provides UCI and LuCI integration for [cjdns][cjdns]. Tested with OpenWRT Barrier Breaker (14.07) and Chaos Calmer (trunk).
+This is the OpenWRT package feed for the [cjdns][cjdns] routing protocol. It provides OpenWrt integration and a web-based UI. Tested with OpenWRT Barrier Breaker (14.07) and Chaos Calmer (trunk).
+
+![UI screenshot](https://github.com/SeattleMeshnet/meshbox/raw/ee9340a6421fe0342eda44b23028143923bb65ee/screenshot.png)
 
 [meshbox]: http://fund.meshwith.me
 [cjdns]: https://github.com/cjdelisle/cjdns
 
-Integration into the OpenWRT buildroot is simple.
+
+Installation
+------------
+
+We don't provide prebuilt packages yet (help welcome), so you'll have to build OpenWrt yourself. Integration into the OpenWRT buildroot is simple though.
 
     $ git clone git://git.openwrt.org/14.07/openwrt.git
     $ cd openwrt
 
     $ cp feeds.conf.default feeds.conf
     $ echo 'src-git meshbox git://github.com/seattlemeshnet/meshbox.git;for-14.07' >> feeds.conf
-    $ ./scripts/feeds update
-    $ ./scripts/feeds install luci-cjdns
+    $ ./scripts/feeds update -a
+    $ ./scripts/feeds install -a
 
 Then configure your firmware image: enable the luci-cjdns module, in addition to your usual settings, such as target system and profile. As usual, you'll need to hit space twice to make it `[*]` rather than `[M]`.
 
@@ -22,21 +28,18 @@ Then configure your firmware image: enable the luci-cjdns module, in addition to
     LuCI -> Collections -> [*] luci
     LuCI -> Project Meshnet -> [*] luci-cjdns
 
-Then save and close the configuration menu, and allow OpenWRT to resolve dependencies:
+Then build with `make`. You can append `-j $n`, where n is the number of CPU threads you want to use for compilation.
 
-    $ make defconfig
+*Note:* The master branch is for development against OpenWrt Chaos Calmer (trunk). Unless you know what you're doing, you should always use OpenWrt Barrier Breaker (14.07), and the for-14.07 branch of Meshbox.
 
-Then build:
 
-    $ make
+Contact
+-------
 
-If you have a multicore processor, you can build faster using `-j`, however the OpenWRT build process is not highly parallelized so your milage may vary.
-
-    $ make -j 4
-
-To update:
-
-    $ ./scripts/feeds update
+- Issue tracker: [github.com/seattlemeshnet/meshbox/issues](https://github.com/seattlemeshnet/meshbox/issues)
+- IRC: #cjdns on EFnet and [HypeIRC](https://wiki.projectmeshnet.org/HypeIRC)
+- Mailing list: [cjdns-openwrt@lists.projectmesh.net](https://lists.projectmesh.net/pipermail/cjdns-openwrt/)
+- Development updates: [www.lars.meshnet.berlin](http://www.lars.meshnet.berlin)
 
 
 Development
