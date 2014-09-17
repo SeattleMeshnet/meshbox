@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set +ex
+set -ex
 
 # Used to produce the prebuilt image at lgierth/meshbox
 #

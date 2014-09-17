@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 # Usage:
 # 1. docker run -i -t lgierth/meshbox /sbin/init
 # 2. printf "12345\n12345\n" | passwd
