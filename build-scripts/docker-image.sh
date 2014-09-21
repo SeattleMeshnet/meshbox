@@ -6,7 +6,7 @@ set -ex
 #
 # docker run -i -t lgierth/meshbox /sbin/init
 
-rm .config
+rm .config || true
 make defconfig
 echo CONFIG_TARGET_x86=y >> .config
 #echo CONFIG_TARGET_x86_Default=y >> .config
