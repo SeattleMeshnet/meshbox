@@ -90,7 +90,7 @@ function act_ping()
 end
 
 function publictoip6(publicKey)
-	local process = io.popen("/usr/sbin/publictoip6 " .. publicKey, "r")
+	local process = io.popen("/usr/bin/publictoip6 " .. publicKey, "r")
 	local ipv6    = process:read()
 	process:close()
 	return ipv6

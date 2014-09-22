@@ -4,26 +4,35 @@ PKG_NAME:=luci-cjdns
 PKG_VERSION:=1.2
 PKG_RELEASE:=1
 
+PKG_LICENSE:=GPL-3.0
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/luci-cjdns
-  SECTION:=luci
-  CATEGORY:=LuCI
-  SUBMENU:=Project Meshnet
-  TITLE:=cjdns configuration for luci
-  DEPENDS:=+cjdns +luci-base
+	SECTION:=luci
+	CATEGORY:=LuCI
+	SUBMENU:=3. Applications
+	TITLE:=Encrypted near-zero-conf mesh routing protocol
+	URL:=https://github.com/cjdelisle/cjdns
+	MAINTAINER:=Lars Gierth <larsg@systemli.org>
+	DEPENDS:=+cjdns +luci-base
 endef
 
 define Package/luci-cjdns/description
-  This package allows you to configure cjdns with luci
+	This package allows you to configure and inspect cjdns networking using LuCI.
+
+	Cjdns implements an encrypted IPv6 network using public-key cryptography
+	for address allocation and a distributed hash table for routing.
+	This provides near-zero-configuration networking, and prevents many
+	of the security and scalability issues that plague existing networks.
 endef
 
 define Build/Compile
 endef
 
 define Package/luci-cjdns/install
-  $(INSTALL_DIR) $(1)/usr/lib/lua/luci ; \
-  cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	$(CP) ./luasrc/* $(1)/usr/lib/lua/luci
 endef
 
 $(eval $(call BuildPackage,luci-cjdns))
