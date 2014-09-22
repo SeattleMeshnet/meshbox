@@ -27,7 +27,7 @@ sshpass -p $2 scp \
 # LuCI files
 sshpass -p $2 scp \
   -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-  -r luci-cjdns/luasrc/* $1:/usr/lib/lua/luci/
+  -r luci-app-cjdns/luasrc/* $1:/usr/lib/lua/luci/
 
 # Purge LuCI cache
 sshpass -p $2 ssh \

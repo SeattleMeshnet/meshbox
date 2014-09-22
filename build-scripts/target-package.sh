@@ -102,7 +102,7 @@ function luci_cjdns ()
 	echo "CONFIG_PACKAGE_kmod-ppp=n" 	>> .config
 	echo "CONFIG_PACKAGE_kmod-pppoe=n" 	>> .config
 	echo "CONFIG_PACKAGE_kmod-pppox=n" 	>> .config
-	echo "CONFIG_PACKAGE_luci-cjdns=y" 	>> .config
+	echo "CONFIG_PACKAGE_luci-app-cjdns=y" 	>> .config
 	echo "CONFIG_PACKAGE_luci-proto-ppp=n" 	>> .config
 	echo "CONFIG_PACKAGE_ppp-mod-pppoe=n" 	>> .config
 	echo "CONFIG_PACKAGE_ppp=n" 		>> .config
@@ -142,7 +142,7 @@ function enigmabox ()
 	echo "CONFIG_PACKAGE_kmod-ipt-nat6=y" 		>> .config # NAT66 Support
 	echo "CONFIG_PACKAGE_r8169-firmware=y" 		>> .config # APU Network Support
 	echo "CONFIG_PACKAGE_kmod-r8169=y" 		>> .config # APU Network Support
-	echo "CONFIG_PACKAGE_luci-cjdns=y" 		>> .config # Meshbox
+	echo "CONFIG_PACKAGE_luci-app-cjdns=y" 		>> .config # Meshbox
 }
 
 function cjdns ()
@@ -194,7 +194,7 @@ function feeds ()
     			dkjson \
     			lua-bencode \
     			lua-sha2 \
-    			luci-cjdns"
+    			luci-app-cjdns"
 
     		update_feeds
     		for opkg in $i

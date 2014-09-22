@@ -22,11 +22,11 @@ We don't provide prebuilt packages yet (help welcome), so you'll have to build O
     $ ./scripts/feeds update -a
     $ ./scripts/feeds install -a
 
-Then configure your firmware image: enable the luci-cjdns module, in addition to your usual settings, such as target system and profile. As usual, you'll need to hit space twice to make it `[*]` rather than `[M]`.
+Then configure your firmware image: enable the luci-app-cjdns module, in addition to your usual settings, such as target system and profile. As usual, you'll need to hit space twice to make it `[*]` rather than `[M]`.
 
     $ make menuconfig
     LuCI -> Collections -> [*] luci
-    LuCI -> Project Meshnet -> [*] luci-cjdns
+    LuCI -> Project Meshnet -> [*] luci-app-cjdns
 
 Then build with `make`. You can append `-j $n`, where n is the number of CPU threads you want to use for compilation.
 
@@ -60,7 +60,7 @@ Then you can code away, and deploy the changed files as needed.
 $ build-scripts/deploy.sh root@ADDRESS 12345
 ```
 
-This will deploy `cjdns/files`, `cjdns/lua`, and `luci-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image.
+This will deploy `cjdns/files`, `cjdns/lua`, and `luci-app-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image.
 
 ```
 $ cd openwrt/

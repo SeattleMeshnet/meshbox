@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-cjdns
+PKG_NAME:=luci-app-cjdns
 PKG_VERSION:=1.2
 PKG_RELEASE:=1
 
@@ -8,7 +8,7 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/luci-cjdns
+define Package/luci-app-cjdns
 	SECTION:=luci
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
@@ -18,7 +18,7 @@ define Package/luci-cjdns
 	DEPENDS:=+cjdns +luci-base
 endef
 
-define Package/luci-cjdns/description
+define Package/luci-app-cjdns/description
 	This package allows you to configure and inspect cjdns networking using LuCI.
 
 	Cjdns implements an encrypted IPv6 network using public-key cryptography
@@ -30,9 +30,9 @@ endef
 define Build/Compile
 endef
 
-define Package/luci-cjdns/install
+define Package/luci-app-cjdns/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	$(CP) ./luasrc/* $(1)/usr/lib/lua/luci
 endef
 
-$(eval $(call BuildPackage,luci-cjdns))
+$(eval $(call BuildPackage,luci-app-cjdns))
