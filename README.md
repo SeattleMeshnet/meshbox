@@ -26,7 +26,7 @@ Then configure your firmware image: enable the luci-app-cjdns module, in additio
 
     $ make menuconfig
     LuCI -> Collections -> [*] luci
-    LuCI -> Project Meshnet -> [*] luci-app-cjdns
+    LuCI -> Applications -> [*] luci-app-cjdns
 
 Then build with `make`. You can append `-j $n`, where n is the number of CPU threads you want to use for compilation.
 
