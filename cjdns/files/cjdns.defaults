@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# if there is an existing config, our work is already done
 uci show cjdns | grep ipv6 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 
@@ -14,6 +15,21 @@ EOF
   # generate configuration
   touch /etc/config/cjdns
   cjdroute --genconf | cjdroute --cleanconf | cjdrouteconf set
+
+  # enable auto-peering on ethernet
+  section=$(uci add cjdns eth_interface)
+  uci set cjdns.$section.beacon=2
+  uci show network.lan | grep type=bridge >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    # most routers will set up an ethernet bridge for the lan
+    uci set cjdns.$section.bind=br-lan
+  else
+    # docker containers don't have permission to create bridges by default,
+    # so we bind to the underlying interface instead (likely eth0)
+    ifname=$(uci get network.lan.ifname)
+    uci set cjdns.$section.bind=$ifname
+  fi
+
   uci commit cjdns
 
 fi
