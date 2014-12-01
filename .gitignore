@@ -1,2 +1,9 @@
-buildbot/master/
-buildbot/slave/
+/buildbot/buildbot.tac
+/buildbot/http.log
+/buildbot/public_html
+/buildbot/slave
+/buildbot/state.sqlite
+/buildbot/templates
+/buildbot/twistd.log
+/buildbot/twistd.pid
+/buildbot/x86
