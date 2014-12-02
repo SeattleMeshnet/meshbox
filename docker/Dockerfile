@@ -14,9 +14,6 @@ ADD network /etc/config/network
 ADD system /etc/config/system
 
 # These end up setting kernel things we can't really set in docker
-RUN ["busybox", "rm", "/etc/rc.d/S19firewall"]
-RUN ["busybox", "rm", "/etc/rc.d/S60dnsmasq"]
-RUN ["busybox", "rm", "/etc/rc.d/S11sysctl"]
-RUN ["busybox", "rm", "/etc/rc.d/S98sysntpd"]
+RUN ["busybox", "rm", "/etc/rc.d/S19firewall", "/etc/rc.d/S60dnsmasq", "/etc/rc.d/S11sysctl", "/etc/rc.d/S98sysntpd"]
 
 CMD ["/sbin/init"]
