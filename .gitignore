@@ -6,4 +6,4 @@
 /buildbot/templates
 /buildbot/twistd.log
 /buildbot/twistd.pid
-/buildbot/x86
+/buildbot/smoketest-*
