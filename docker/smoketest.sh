@@ -3,7 +3,7 @@
 set -ex
 
 # Expects to be run from the OpenWrt buildroot, after `make`.
-docker import - meshbox-base < bin/x86_64/openwrt-x86_64-rootfs.tar.gz
+docker import - meshbox-base < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz
 docker build -t meshbox feeds/meshbox/docker/
 
 # Start the container, and make sure it gets killed.
