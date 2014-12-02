@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # if there is an existing config, our work is already done
-uci show cjdns | grep ipv6 >/dev/null 2>&1
+uci get cjdns.cjdns.ipv6 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 
   # register commit handler
