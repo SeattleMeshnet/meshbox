@@ -19,6 +19,8 @@ ipv6=$(docker exec $container uci get cjdns.cjdns.ipv6)
 pid=$(docker inspect -f '{{.State.Pid}}' $container)
 
 # Create the TUN interface, so that the container can receive ICMP pings.
+# Requires sudo permissions for docker/make-tun.sh
+#   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
 docker exec $container /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
 ifname=$(sudo feeds/meshbox/docker/make-tun.sh $pid $ipv6)
 docker exec $container /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
