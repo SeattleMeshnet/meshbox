@@ -22,8 +22,7 @@ of the following steps.
 4. Peer cjdns in the container with cjdns on the host
 5. Wait for one successful ping from host to container, or fail after 30 seconds
 6. TODO: Check if the host is listed under "Active peers" in LuCI
-
-Build artifacts, e.g. packages or firmware images, are discarded.
+7. TODO: Upload the Docker container to hub.docker.com
 
 The GCC toolchain from previous smoketests of the same branch gets reused.
 This decreases build runtime from about an hour to under 10 minutes. Packages
@@ -42,7 +41,7 @@ TODO
 
 http://h.buildbot.meshwith.me/snapshots/x86/*sysupgrade*
 http://h.buildbot.meshwith.me/snapshots/x86/*factory*
-http://h.buildbot.meshwith.me/snapshots/x86/packages/
+http://h.buildbot.meshwith.me/snapshots/x86/packages/meshbox/
 
 ## Notifications
 
@@ -57,6 +56,8 @@ Install:
 for x86 and smoketest:
 
 - docker >= 1.3
+- the user that runs the buildslave needs to be in the docker group
+- host cjdns, with auto-peering on docker0
 - `sudo`
 - allow in /etc/sudoers: `/path/to/buildslave/smoketest-*/build/feeds/meshbox/docker/make-tun.sh`
 - `qemu-utils`
