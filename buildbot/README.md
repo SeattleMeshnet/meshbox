@@ -50,11 +50,13 @@ There's a bot in HypeIRC/#openwrt that reports the outcome of each build.
 
 ## Setting up a Build Slave
 
-git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip
+Install:
+
+`git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip`
 
 for x86 and smoketest:
 
 - docker >= 1.3
-- sudo
-- allow in /etc/sudoers: /path/to/buildslave/smoketest-*/build/feeds/meshbox/docker/make-tun.sh
-- qemu-utils
+- `sudo`
+- allow in /etc/sudoers: `/path/to/buildslave/smoketest-*/build/feeds/meshbox/docker/make-tun.sh`
+- `qemu-utils`
