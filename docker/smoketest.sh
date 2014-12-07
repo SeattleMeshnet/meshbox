@@ -3,12 +3,14 @@
 set -ex
 
 # Expects to be run from the OpenWrt buildroot, after `make`.
-docker import - meshbox-base < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz
-docker build -t meshbox feeds/meshbox/docker/
+baseimage=$(docker import - < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz)
+sed -i "s/FROM .*/FROM $baseimage/" feeds/meshbox/docker/Dockerfile
+image=meshbox-$baseimage
+docker build --no-cache --force-rm -t $image feeds/meshbox/docker/
 
 # Start the container, and make sure it gets killed.
-container=$(docker run -d meshbox)
-trap "docker kill $container" EXIT
+container=$(docker run --detach $image)
+trap "docker kill $container ; docker rm $container ; docker rmi $image" EXIT
 
 # Prevent /sbin/init from starting cjdroute, and generate a config.
 docker exec $container /etc/init.d/cjdns disable
