@@ -7,3 +7,4 @@
 /buildbot/twistd.log
 /buildbot/twistd.pid
 /buildbot/smoketest-*
+/buildbot/x86-*
