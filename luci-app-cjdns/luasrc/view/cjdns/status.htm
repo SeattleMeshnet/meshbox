@@ -7,8 +7,8 @@
 			table.deleteRow(1);
 		}
 
-		if ((peers == null) || (typeof peers.length === 'undefined')) {
-			var errpeer = (! peers)
+		if ((peers) && ((peers.err) || (typeof peers.length === 'undefined'))) {
+			var errpeer = (peers.err)
 						? 'Socket Error: unable to connect to Admin API'
 						: 'No active peers';
 			var row = table.insertRow(-1);
