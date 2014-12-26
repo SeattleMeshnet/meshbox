@@ -31,7 +31,7 @@ prkey = s:taboption("identity", Value, "private_key", translate("Private key"),
 prkey.datatype = "string"
 
 -- Admin Interface
-s:tab("admin", translate("Admin API"), translate("The Admin API can be used by other applications or services to configure and inspect cjdns' routing and peering.<br><br>Documentation: <a href=\"https://github.com/cjdelisle/cjdns/tree/master/admin#cjdns-admin-api\">admin/README.md</a><div class=\"clearfix\"></span>"))
+s:tab("admin", translate("Admin API"), translate("The Admin API can be used by other applications or services to configure and inspect cjdns' routing and peering.<br/><br/>Documentation: <a href=\"https://github.com/cjdelisle/cjdns/tree/master/admin#cjdns-admin-api\">admin/README.md</a>"))
 aip = s:taboption("admin", Value, "admin_address", translate("IP Address"),
       translate("IPv6 addresses should be entered like so: <code>[2001::1]</code>."))
 aip.datatype = "ipaddr"
