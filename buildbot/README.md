@@ -33,15 +33,16 @@ clone and GCC toolchain.
 
 TODO
 
-http://h.buildbot.meshwith.me/updates/
+http://h.buildbot.meshwith.me/images/
+http://h.buildbot.meshwith.me/packages/x86/
 
 ## Firmware Images and OPKG Repository
 
 TODO
 
-http://h.buildbot.meshwith.me/snapshots/x86/*sysupgrade*
-http://h.buildbot.meshwith.me/snapshots/x86/*factory*
-http://h.buildbot.meshwith.me/snapshots/x86/packages/meshbox/
+http://h.buildbot.meshwith.me/snapshots/x86/42/*sysupgrade*
+http://h.buildbot.meshwith.me/snapshots/x86/42/*factory*
+http://h.buildbot.meshwith.me/snapshots/x86/42/packages/meshbox/
 
 ## Notifications
 
@@ -49,15 +50,15 @@ There's a bot in HypeIRC/#openwrt that reports the outcome of each build.
 
 ## Setting up a Build Slave
 
-Install:
+for all builders:
 
-`git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip`
+- `apt-get install -y git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip`
+- buildslave with `--umask=022`, so that artifacts are visible to the webserver
 
-for x86 and smoketest:
+for smoketest:
 
 - docker >= 1.3
+- cjdns, with auto-peering on docker0
 - the user that runs the buildslave needs to be in the docker group
-- host cjdns, with auto-peering on docker0
-- `sudo`
-- allow in /etc/sudoers: `/path/to/buildslave/smoketest-*/build/feeds/meshbox/docker/make-tun.sh`
-- `qemu-utils`
+- `apt-get install -y sudo qemu-utils`
+- allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt/feeds/meshbox/docker/make-tun.sh`
