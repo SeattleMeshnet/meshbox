@@ -4,9 +4,10 @@ set -ex
 
 pid=$1
 ipv6=$2
+ifname="cjdns-smoketest"
 
-ip tuntap add mode tun
-ifname=$(ip link | tail -n2 | cut -d":" -f2 | head -n1 | cut -d" " -f2)
+ip tuntap del mode tun dev $ifname
+ip tuntap add mode tun dev $ifname
 
 mkdir /var/run/netns || true
 ln -s /proc/$pid/ns/net /var/run/netns/$pid
