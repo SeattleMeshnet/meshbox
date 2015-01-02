@@ -1,10 +1,13 @@
 # The Build Infrastructure
 
-Our Buildbot instance takes care of Continuous Integration, Automatic Updates,
-and the OPKG repository, for both the master and for-14.07 branches.
+Our Buildbot instance takes care of Continuous Integration, prebuilt images,
+automatic updates, and the OPKG repository, for the master branch (TODO: and
+for-14.07 branch).
 
-- on Clearnet: <https://buildbot.meshwith.me>
 - on Hyperboria: <http://h.buildbot.meshwith.me>
+- on Clearnet: <https://buildbot.meshwith.me>
+
+If you want to donate a buildslave, please come to #openwrt on HypeIRC.
 
 This document assumes that you are familiar with [Buildbot's concepts][concepts],
 specifically Build, Builder, BuildSlave, and Scheduler.
@@ -23,20 +26,25 @@ of the following steps.
 5. Wait for one successful ping from host to container, or fail after 30 seconds
 6. TODO: Check if the host is listed under "Active peers" in LuCI
 7. TODO: Upload the Docker container to hub.docker.com
+8. TODO: Peer between two containers instead of involving the host
 
 The GCC toolchain from previous smoketests of the same branch gets reused.
 This decreases build runtime from about an hour to under 10 minutes. Packages
 and firmware images, on the other hand, are always built with a fresh OpenWrt
 clone and GCC toolchain.
 
+## Firmware Images and OPKG Repository
+
+TODO
+
+http://h.buildbot.meshwith.me/images/x86/
+http://h.buildbot.meshwith.me/packages/x86/
+
 ## Automatic Updates
 
 TODO
 
-http://h.buildbot.meshwith.me/images/
-http://h.buildbot.meshwith.me/packages/x86/
-
-## Firmware Images and OPKG Repository
+## Development snapshots
 
 TODO
 
@@ -48,14 +56,19 @@ http://h.buildbot.meshwith.me/snapshots/x86/42/packages/meshbox/
 
 There's a bot in HypeIRC/#openwrt that reports the outcome of each build.
 
+TODO: on failure, it should blame the committer
+
 ## Setting up a Build Slave
 
-for all builders:
+There are builders for each of the targets, such as ar71xx, oxnas, x86. There is
+an additional builder for the smoketest.
+
+Requirements for all builders:
 
 - `apt-get install -y git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip`
 - buildslave with `--umask=022`, so that artifacts are visible to the webserver
 
-for smoketest:
+Additional requirements for smoketest:
 
 - docker >= 1.3
 - cjdns, with auto-peering on docker0
