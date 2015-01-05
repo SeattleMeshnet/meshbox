@@ -71,7 +71,6 @@ Requirements for all builders:
 Additional requirements for smoketest:
 
 - docker >= 1.3
-- cjdns, with auto-peering on docker0
 - the user that runs the buildslave needs to be in the docker group
 - `apt-get install -y sudo qemu-utils`
 - allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt/feeds/meshbox/docker/make-tun.sh`
