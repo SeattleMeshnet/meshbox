@@ -33,12 +33,13 @@ setup() {
   # Get the IPv6 address, and the container's PID.
   ipv6=$(ipv6addr $1)
   pid=$(docker inspect -f '{{.State.Pid}}' $1)
+  ifname=$2
 
   # Create the TUN interface, so that the container can receive ICMP pings.
   # Requires sudo permissions for docker/make-tun.sh
   #   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
   docker exec $1 /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
-  ifname=$(sudo feeds/meshbox/docker/make-tun.sh $pid $ipv6)
+  sudo feeds/meshbox/docker/make-tun.sh $pid $ipv6 $ifname
   docker exec $1 /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
   docker exec $1 /bin/sh -c "uci changes && uci commit"
 
@@ -57,8 +58,8 @@ containers[2]=$(start $image)
 
 trap "cleanup ${containers[1]} ${containers[2]} $image" EXIT
 
-setup ${containers[1]}
-setup ${containers[2]}
+setup ${containers[1]} smoketest0
+setup ${containers[2]} smoketest1
 
 # This is the actual test, which makes sure that cjdns started correctly,
 # and auto-peering is enabled. Fail if we don't receive a pong within 30 secs.

@@ -4,7 +4,7 @@ set -ex
 
 pid=$1
 ipv6=$2
-ifname="cjdns-smoketest"
+ifname=$3
 
 ip tuntap del mode tun dev $ifname
 ip tuntap add mode tun dev $ifname
