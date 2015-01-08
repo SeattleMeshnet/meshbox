@@ -32,8 +32,6 @@ Then build with `make`. You can append `-j $n`, where n is the number of CPU thr
 
 *Note:* The master branch is for development against OpenWrt Chaos Calmer (trunk). Unless you know what you're doing, you should always use OpenWrt Barrier Breaker (14.07), and the for-14.07 branch of Meshbox.
 
-**WARNING:** After installation, be aware that everybody on the cjdns network will be able to access your LuCI and SSH. Reconfigure the services to bind to specific interfaces only, or add tun0 to the WAN firewall zone. Furthermore, do make sure that all passwords, especially for root, are sufficiently secure. This is not a shortcoming of cjdns, but rather a problem with the services' default configurations, which instruct them to listen on all existing interfaces.
-
 
 Contact
 -------
