@@ -32,7 +32,87 @@ EOF
     set cjdns.@eth_interface[-1].bind=$ifname
 EOF
 
+  # set the tun interface name
+  uci set cjdns.cjdns.tun_device=tuncjdns
+
+  # create the network interface
+  uci -q batch <<-EOF >/dev/null
+    set network.cjdns=interface
+    set network.cjdns.ifname=tuncjdns
+    set network.cjdns.proto=none
+EOF
+
+  # firewall rules by @dangowrt -- thanks <3
+
+  # create the firewall zone
+  uci -q batch <<-EOF >/dev/null
+    add firewall zone
+    set firewall.@zone[-1].name=cjdns
+    add_list firewall.@zone[-1].network=cjdns
+    set firewall.@zone[-1].input=REJECT
+    set firewall.@zone[-1].output=ACCEPT
+    set firewall.@zone[-1].forward=REJECT
+    set firewall.@zone[-1].conntrack=1
+    set firewall.@zone[-1].family=ipv6
+EOF
+
+  # allow ICMP from cjdns zone, e.g. ping6
+  uci -q batch <<-EOF >/dev/null
+    add firewall rule
+    set firewall.@rule[-1].name='Allow-ICMPv6-cjdns'
+    set firewall.@rule[-1].src=cjdns
+    set firewall.@rule[-1].proto=icmp
+    add_list firewall.@rule[-1].icmp_type=echo-request
+    add_list firewall.@rule[-1].icmp_type=echo-reply
+    add_list firewall.@rule[-1].icmp_type=destination-unreachable
+    add_list firewall.@rule[-1].icmp_type=packet-too-big
+    add_list firewall.@rule[-1].icmp_type=time-exceeded
+    add_list firewall.@rule[-1].icmp_type=bad-header
+    add_list firewall.@rule[-1].icmp_type=unknown-header-type
+    set firewall.@rule[-1].limit='1000/sec'
+    set firewall.@rule[-1].family=ipv6
+    set firewall.@rule[-1].target=ACCEPT
+EOF
+
+  # allow SSH from cjdns zone, needs to be explicitly enabled
+  uci -q batch <<-EOF >/dev/null
+    add firewall rule
+    set firewall.@rule[-1].enabled=0
+    set firewall.@rule[-1].name='Allow-SSH-cjdns'
+    set firewall.@rule[-1].src=cjdns
+    set firewall.@rule[-1].proto=tcp
+    set firewall.@rule[-1].dest_port=22
+    set firewall.@rule[-1].target=ACCEPT
+EOF
+
+  # allow LuCI access from cjdns zone, needs to be explicitly enabled
+  uci -q batch <<-EOF >/dev/null
+    add firewall rule
+    set firewall.@rule[-1].enabled=0
+    set firewall.@rule[-1].name='Allow-HTTP-cjdns'
+    set firewall.@rule[-1].src=cjdns
+    set firewall.@rule[-1].proto=tcp
+    set firewall.@rule[-1].dest_port=80
+    set firewall.@rule[-1].target=ACCEPT
+EOF
+
+  # allow UDP peering from wan zone, if it exists
+  uci show network.wan >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    peeringPort=$(uci get cjdns.@udp_interface[0].port)
+    uci -q batch <<-EOF >/dev/null
+      add firewall rule
+      set firewall.@rule[-1].name='Allow-cjdns-wan'
+      set firewall.@rule[-1].src=wan
+      set firewall.@rule[-1].proto=udp
+      set firewall.@rule[-1].dest_port=$peeringPort
+      set firewall.@rule[-1].target=ACCEPT
+EOF
+  fi
+
   uci commit cjdns
+  uci commit firewall
+  uci commit network
 
 fi
 
