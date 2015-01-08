@@ -17,18 +17,20 @@ EOF
   cjdroute --genconf | cjdroute --cleanconf | cjdrouteconf set
 
   # enable auto-peering on ethernet
-  section=$(uci add cjdns eth_interface)
-  uci set cjdns.$section.beacon=2
   uci show network.lan | grep type=bridge >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     # most routers will set up an ethernet bridge for the lan
-    uci set cjdns.$section.bind=br-lan
+    ifname="br-lan"
   else
     # docker containers don't have permission to create bridges by default,
     # so we bind to the underlying interface instead (likely eth0)
     ifname=$(uci get network.lan.ifname)
-    uci set cjdns.$section.bind=$ifname
   fi
+  uci -q batch <<-EOF >/dev/null
+    add cjdns eth_interface
+    set cjdns.@eth_interface[-1].beacon=2
+    set cjdns.@eth_interface[-1].bind=$ifname
+EOF
 
   uci commit cjdns
 
