@@ -45,7 +45,7 @@
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
 				var pongrsp = pong.ms + ' ms';
-				if (pong.result == 'timeout') { pongrsp = '> ' + timeout + ' ms' }
+				if ((pong.result == 'timeout') || (typeof pong.ms === 'undefined')) { pongrsp = '> ' + timeout + ' ms' }
 				if (pong.ms < 1) { pongrsp = '< 1 ms' }
 				latencyCell.textContent = pongrsp;
 			})

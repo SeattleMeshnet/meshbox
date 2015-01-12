@@ -78,15 +78,23 @@ function act_ping()
 	})
 
 	if err or response.error then
-		luci.http.status(502, "Bad Gateway")
-		luci.http.prepare_content("application/json")
-		luci.http.write_json({ err = err, response = response })
-		return
-	end
+		if err == "ai:recv > timeout" then
+			luci.http.status(200, "OK")
+			luci.http.prepare_content("application/json")
+			luci.http.write_json('undefined')
+			return
+		else
+			luci.http.status(502, "Bad Gateway")
+			luci.http.prepare_content("application/json")
+			luci.http.write_json({ err = err, response = response })
+			return
+		end
+	else
 
-	luci.http.status(200, "OK")
-	luci.http.prepare_content("application/json")
-	luci.http.write_json(response)
+		luci.http.status(200, "OK")
+		luci.http.prepare_content("application/json")
+		luci.http.write_json(response)
+	end
 end
 
 function publictoip6(publicKey)
