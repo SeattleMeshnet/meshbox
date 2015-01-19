@@ -31,8 +31,8 @@ setup() {
   docker exec $1 /etc/uci-defaults/cjdns
 
   # Get the IPv6 address, and the container's PID.
-  ipv6=$(ipv6addr $1)
-  pid=$(docker inspect -f '{{.State.Pid}}' $1)
+  ipv6=`ipv6addr $1`
+  pid=`docker inspect -f '{{.State.Pid}}' $1`
   ifname=$2
 
   # Create the TUN interface, so that the container can receive ICMP pings.
@@ -48,7 +48,7 @@ setup() {
   docker exec $1 /etc/init.d/cjdns enable
 }
 
-baseimage=$(docker import - < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz)
+baseimage=`docker import - < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz`
 sed -i "s/FROM .*/FROM $baseimage/" feeds/meshbox/docker/Dockerfile
 image=meshbox-$baseimage
 docker build --no-cache --force-rm -t $image feeds/meshbox/docker/
@@ -63,5 +63,5 @@ setup ${containers[2]} smoketest1
 
 # This is the actual test, which makes sure that cjdns started correctly,
 # and auto-peering is enabled. Fail if we don't receive a pong within 30 secs.
-docker exec -t ${containers[1]} /bin/ping6 -w 30 -c 1 $(ipv6addr ${containers[2]})
-docker exec -t ${containers[2]} /bin/ping6 -w 30 -c 1 $(ipv6addr ${containers[1]})
+docker exec -t ${containers[1]} /bin/ping6 -w 30 -c 1 `ipv6addr ${containers[2]}`
+docker exec -t ${containers[2]} /bin/ping6 -w 30 -c 1 `ipv6addr ${containers[1]}`

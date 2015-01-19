@@ -24,7 +24,7 @@ EOF
   else
     # docker containers don't have permission to create bridges by default,
     # so we bind to the underlying interface instead (likely eth0)
-    ifname=$(uci get network.lan.ifname)
+    ifname=`uci get network.lan.ifname`
   fi
   uci -q batch <<-EOF >/dev/null
     add cjdns eth_interface
@@ -99,7 +99,7 @@ EOF
   # allow UDP peering from wan zone, if it exists
   uci show network.wan >/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    peeringPort=$(uci get cjdns.@udp_interface[0].port)
+    peeringPort=`uci get cjdns.@udp_interface[0].port`
     uci -q batch <<-EOF >/dev/null
       add firewall rule
       set firewall.@rule[-1].name='Allow-cjdns-wan'
