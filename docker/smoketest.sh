@@ -16,6 +16,8 @@ ipv6addr() {
 }
 
 cleanup() {
+  docker exec $1 cat /tmp/cjdns.log ;
+  docker exec $2 cat /tmp/cjdns.log ;
   docker kill $1 ; docker rm $1 ;
   docker kill $2 ; docker rm $2 ;
   docker rmi $3
