@@ -22,7 +22,7 @@ define Package/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+kmod-tun +kmod-ipv6 \
 		+libnl-tiny +libpthread +librt +SSP_SUPPORT:libssp \
-		+lua-bencode +dkjson +luasocket +lua-sha2
+		+libuci-lua +lua-bencode +dkjson +luasocket +lua-sha2
 endef
 
 define Package/cjdns/description
