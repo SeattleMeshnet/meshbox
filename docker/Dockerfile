@@ -2,7 +2,7 @@
 #
 #     docker import - meshbox-base < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz
 #     docker build -t meshbox feeds/meshbox/docker/
-#     container=$(docker run -d meshbox)
+#     container=`docker run -d meshbox`
 #     docker exec -i -t $container /bin/sh -c "uci get cjdns.cjdns.ipv6"
 #     docker kill $container
 #
