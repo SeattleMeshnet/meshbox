@@ -60,8 +60,8 @@ containers[2]=$(start $image)
 
 trap "cleanup ${containers[1]} ${containers[2]} $image" EXIT
 
-setup ${containers[1]} smoketest0
-setup ${containers[2]} smoketest1
+setup ${containers[1]} smoketest123
+setup ${containers[2]} smoketest124
 
 # This is the actual test, which makes sure that cjdns started correctly,
 # and auto-peering is enabled. Fail if we don't receive a pong within 30 secs.
