@@ -18,7 +18,8 @@ function UCI.defaults()
         interface = { type = "TUNInterface" }
     },
     interfaces = { UDPInterface = {}, ETHInterface = {} },
-    authorizedPasswords = {}
+    authorizedPasswords = {},
+    logging = { logTo = "stdout" }
   }
 end
 
