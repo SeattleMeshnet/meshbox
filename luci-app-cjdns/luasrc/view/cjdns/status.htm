@@ -46,9 +46,9 @@
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
-				var pongrsp = pong.ms + ' ms';
-				if ((pong.result == 'timeout') || (typeof pong.ms === 'undefined')) { pongrsp = '> ' + timeout + ' ms' }
-				if (pong.ms < 1) { pongrsp = '< 1 ms' }
+				var pongrsp = ((pong == "undefined") || (pong.ms >= timeout))
+					? '> ' + timeout + ' ms'
+					: pong.ms + ' ms';
 				latencyCell.textContent = pongrsp;
 			})
 		});
