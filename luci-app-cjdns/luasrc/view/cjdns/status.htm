@@ -20,7 +20,9 @@
 		};
 
 		peers.forEach(function(peer, i) {
-			if (peer.user == 'Local Peers') {
+			if (peer.user == null) {
+				var user = '';
+			} else if (peer.user == 'Local Peers') {
 				var user = 'beacon';
 			} else {
 				var user = peer.user;
@@ -30,7 +32,7 @@
 				var interface = 'outgoing';
 			} else {
 				var interface = 'incoming';
-			};
+			}
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
