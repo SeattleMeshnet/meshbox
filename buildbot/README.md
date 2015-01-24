@@ -65,12 +65,12 @@ an additional builder for the smoketest.
 
 Requirements for all builders:
 
-- `apt-get install -y git mercurial subversion build-essential libncurses5-dev zlib1g-dev libssl-dev unzip`
+- `apt-get install -y git mercurial subversion build-essential autoconf libncurses5-dev zlib1g-dev libssl-dev unzip`
 - buildslave with `--umask=022`, so that artifacts are visible to the webserver
 
 Additional requirements for smoketest:
 
-- docker >= 1.3
+- docker >= 1.3 (kernel >= 3.8)
 - the user that runs the buildslave needs to be in the docker group
 - `apt-get install -y sudo qemu-utils`
 - allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt/feeds/meshbox/docker/make-tun.sh`
