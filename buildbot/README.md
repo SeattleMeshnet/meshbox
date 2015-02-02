@@ -1,8 +1,7 @@
 # The Build Infrastructure
 
 Our Buildbot instance takes care of Continuous Integration, prebuilt images,
-automatic updates, and the OPKG repository, for the master branch (TODO: and
-for-14.07 branch).
+automatic updates, and the OPKG repository, for the master and for-14.07 branches.
 
 - on Hyperboria: <http://h.buildbot.meshwith.me>
 - on Clearnet: <https://buildbot.meshwith.me>
@@ -26,7 +25,7 @@ of the following steps.
 5. Wait for one successful ping from host to container, or fail after 30 seconds
 6. TODO: Check if the host is listed under "Active peers" in LuCI
 7. TODO: Upload the Docker container to hub.docker.com
-8. TODO: Peer between two containers instead of involving the host
+8. Peer between two containers instead of involving the host
 
 The GCC toolchain from previous smoketests of the same branch gets reused.
 This decreases build runtime from about an hour to under 10 minutes. Packages
@@ -48,9 +47,9 @@ TODO
 
 TODO
 
-http://h.buildbot.meshwith.me/snapshots/x86/42/*sysupgrade*
-http://h.buildbot.meshwith.me/snapshots/x86/42/*factory*
-http://h.buildbot.meshwith.me/snapshots/x86/42/packages/meshbox/
+http://h.buildbot.meshwith.me/snapshots/x86-master/42/*sysupgrade*
+http://h.buildbot.meshwith.me/snapshots/x86-for-14.07/42/*factory*
+http://h.buildbot.meshwith.me/snapshots/x86-master/latest/packages/meshbox/
 
 ## Notifications
 
