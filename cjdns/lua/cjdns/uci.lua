@@ -193,7 +193,7 @@ function UCI.set(obj)
             interface = i,
             address = peer_address,
             port = peer_port,
-            contact = udp_peer.contact,
+            contact = peer.contact,
             public_key = peer.publicKey,
             password = peer.password
           })
