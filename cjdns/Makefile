@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
-PKG_VERSION:=0.12
-PKG_RELEASE:=2
+PKG_VERSION:=0.15
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/cjdelisle/cjdns.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=f176d2c0271d764412bd13c7adf7ea475fa25e0f
+PKG_SOURCE_VERSION:=c26d832d7b021a08c6e69524fe49d7d447b6c047
 PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
@@ -22,7 +22,7 @@ define Package/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+kmod-tun +kmod-ipv6 \
 		+libnl-tiny +libpthread +librt +SSP_SUPPORT:libssp \
-		+lua-bencode +dkjson +luasocket +lua-sha2
+		+libuci-lua +lua-bencode +dkjson +luasocket +lua-sha2
 endef
 
 define Package/cjdns/description

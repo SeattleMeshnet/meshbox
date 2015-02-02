@@ -6,19 +6,18 @@ common.uci = UCI
 
 --- Return the configuration defaults as a table suitable for JSON output
 --
--- Mostly taken from cjdroute --genconf, except for noBackground, which is
--- supposed to simplify the init.d script.
+-- Mostly taken from cjdroute --genconf
 -- @return table with configuration defaults
 function UCI.defaults()
   return {
-    noBackground = 1,
     security = { { exemptAngel = 1, setuser = "nobody" } },
     router = {
         ipTunnel = { outgoingConnections = {}, allowedConnections = {} },
         interface = { type = "TUNInterface" }
     },
     interfaces = { UDPInterface = {}, ETHInterface = {} },
-    authorizedPasswords = {}
+    authorizedPasswords = {},
+    logging = { logTo = "stdout" }
   }
 end
 

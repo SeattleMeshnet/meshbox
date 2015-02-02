@@ -7,8 +7,8 @@
 			table.deleteRow(1);
 		}
 
-		if ((peers == null) || (typeof peers.length === 'undefined')) {
-			var errpeer = (! peers)
+		if ((peers) && ((peers.err) || (typeof peers.length === 'undefined'))) {
+			var errpeer = (peers.err)
 						? 'Socket Error: unable to connect to Admin API'
 						: 'No active peers';
 			var row = table.insertRow(-1);
@@ -20,7 +20,9 @@
 		};
 
 		peers.forEach(function(peer, i) {
-			if (peer.user == 'Local Peers') {
+			if (peer.user == null) {
+				var user = '';
+			} else if (peer.user == 'Local Peers') {
 				var user = 'beacon';
 			} else {
 				var user = peer.user;
@@ -30,23 +32,34 @@
 				var interface = 'outgoing';
 			} else {
 				var interface = 'incoming';
-			};
+			}
+
+			var status = interface + ', ' + peer.state.toLowerCase();
+
+			if (peer.version === 0) {
+				var version = '-';
+			} else {
+				var version = 'v' + peer.version;
+			}
+
+			var rxtx = lbbytes(peer.bytesIn) + ' / ' + lbbytes(peer.bytesOut);
 
 			var row = table.insertRow(-1);
 			row.className = 'cbi-section-table-row cbi-rowstyle-' + ((i % 2) + 1);
 			row.insertCell(-1).textContent = user;
 			row.insertCell(-1).textContent = peer.ipv6;
-			row.insertCell(-1).textContent = interface + ', ' + peer.state.toLowerCase();
-			row.insertCell(-1).textContent  = lbbytes(peer.bytesIn) + ' / ' + lbbytes(peer.bytesOut);
+			row.insertCell(-1).textContent = status;
+			row.insertCell(-1).textContent = version;
+			row.insertCell(-1).textContent = rxtx;
 			var latencyCell = row.insertCell(-1);
 			latencyCell.textContent = 'waiting';
 
 			var pingURI = '<%=luci.dispatcher.build_url("admin", "services", "cjdns", "ping")%>';
 			var timeout = 2000;
 			XHR.get(pingURI, { label: peer.switchLabel, timeout: timeout }, function(x, pong) {
-				var pongrsp = pong.ms + ' ms';
-				if (pong.result == 'timeout') { pongrsp = '> ' + timeout + ' ms' }
-				if (pong.ms < 1) { pongrsp = '< 1 ms' }
+				var pongrsp = ((pong.err == "ai:recv > timeout") || (pong == "undefined") || (pong.ms >= timeout))
+					? '> ' + timeout + ' ms'
+					: pong.ms + ' ms';
 				latencyCell.textContent = pongrsp;
 			})
 		});
@@ -93,6 +106,7 @@ function lbbytes (bytes){
 			<th class="cbi-section-table-cell">User/Name</th>
 			<th class="cbi-section-table-cell">IPv6</th>
 			<th class="cbi-section-table-cell">Status</th>
+			<th class="cbi-section-table-cell">Version</th>
 			<th class="cbi-section-table-cell">Rx / Tx</th>
 			<th class="cbi-section-table-cell">Latency</th>
 		</tr>
