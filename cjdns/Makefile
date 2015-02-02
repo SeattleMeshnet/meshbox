@@ -69,11 +69,6 @@ define Package/cjdns/install
 		$(PKG_BUILD_DIR)/publictoip6 \
 		$(1)/usr/bin
 
-	# TODO: enable once cjdns cross-compiles the testsuite
-	# $(INSTALL_BIN) \
-	# 	$(PKG_BUILD_DIR)/testcjdroute \
-	# 	$(1)/usr/bin
-
 	$(INSTALL_BIN) \
 		./files/cjdns.init \
 		$(1)/etc/init.d/cjdns
@@ -81,10 +76,6 @@ define Package/cjdns/install
 	$(INSTALL_BIN) \
 		./files/cjdns.defaults \
 		$(1)/etc/uci-defaults/cjdns
-
-	$(CP) \
-		$(PKG_BUILD_DIR)/contrib/lua/cjdns/* \
-		$(1)/usr/lib/lua/cjdns
 
 	$(CP) \
 		./lua/cjdns/* \

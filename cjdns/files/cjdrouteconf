@@ -3,7 +3,6 @@
 dkjson = require("dkjson")
 cjdns = require("cjdns")
 require("cjdns/uci")
-require("cjdns/reload")
 
 function help()
   print("JSON interface to /etc/config/cjdns\n\nExamples: \
@@ -24,24 +23,6 @@ elseif arg[1] == "set" then
     cjdns.uci.set(obj)
   else
     print("dkjson: " .. err .. " (try cjdroute --cleanconf)")
-    os.exit(1)
-  end
-elseif arg[1] == "reload" then
-  local oldjson = io.stdin:read("*a")
-  local oldconfig, pos, err = dkjson.decode(oldjson, 1, nil)
-
-  if err then
-    io.stderr:write("dkjson: " .. err .. "\n")
-    os.exit(1)
-  end
-
-  local admin = cjdns.uci.makeInterface()
-
-  local res, err = cjdns.reload(admin, admin.config, oldconfig)
-  print(dkjson.encode(res, { indent = true }))
-
-  if err then
-    io.stderr:write("reload: " .. err .. "\n")
     os.exit(1)
   end
 else

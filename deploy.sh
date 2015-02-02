@@ -9,11 +9,6 @@ set -ex
 # 3. coding
 # 4. build-scripts/deploy.sh root@ADDRESS 12345
 
-# # contrib/lua
-# sshpass -p $2 scp \
-#   -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-#   -r ../cjdns/contrib/lua/cjdns/* $0:/usr/lib/lua/cjdns/
-
 # root files
 sshpass -p $2 scp \
   -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
