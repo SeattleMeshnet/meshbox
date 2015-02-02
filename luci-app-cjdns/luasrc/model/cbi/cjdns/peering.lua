@@ -36,6 +36,7 @@ udp_peers = m:section(TypedSection, "udp_peer", translate("Outgoing UDP Peers"),
 udp_peers.anonymous = true
 udp_peers.addremove = true
 udp_peers.template  = "cbi/tblsection"
+udp_peers:option(Value, "contact", translate("Contact info")).datatype = "string"
 
 udp_interface = udp_peers:option(Value, "interface", translate("UDP interface"))
 local index = 1
