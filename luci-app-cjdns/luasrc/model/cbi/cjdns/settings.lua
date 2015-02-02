@@ -12,12 +12,6 @@ end
 s = m:section(NamedSection, "cjdns", nil, translate("Settings"))
 s.addremove = false
 
--- Peering
-s:tab("peering", translate("Peering"))
-apw = s:taboption("peering", Value, "inactivity_seconds", translate("Inactivity Timeout"),
-      translate("After link inactivity of this number of seconds, cjdns will try to re-establish the link with the peer."))
-apw.datatype = "integer(range(0,2048))"
-
 -- Identity
 s:tab("identity", translate("Identity"))
 node6 = s:taboption("identity", Value, "ipv6", translate("IPv6 address"),
@@ -54,7 +48,7 @@ udp_interfaces:option(Value, "port", translate("Port")).datatype = "portrange"
 
 -- Ethernet Interfaces
 eth_interfaces = m:section(TypedSection, "eth_interface", translate("Ethernet Interfaces"),
-  translate("These interfaces allow peering via local Ethernet networks, such as home or office networks, or phone tethering."))
+  translate("These interfaces allow peering via local Ethernet networks, such as home or office networks, or phone tethering. If an interface name is set to \"all\" each available device will be used."))
 eth_interfaces.anonymous = true
 eth_interfaces.addremove = true
 eth_interfaces.template = "cbi/tblsection"
