@@ -45,7 +45,7 @@ for i,section in pairs(cursor:get_all("cjdns")) do
   end
 end
 udp_interface.default = 1
-udp_peers:option(Value, "address", translate("IP address")).datatype = "ipaddr"
+udp_peers:option(Value, "address", translate("IP address"))
 udp_peers:option(Value, "port", translate("Port")).datatype = "portrange"
 udp_peers:option(Value, "public_key", translate("Public key"))
 udp_peers:option(Value, "password", translate("Password"))
