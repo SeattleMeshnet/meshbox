@@ -89,7 +89,7 @@ function UCI.get()
     local bind = udp_peer.address .. ":" .. udp_peer.port
     local i = tonumber(udp_peer.interface)
     obj.interfaces.UDPInterface[i].connectTo[bind] = {
-      contact = udp_peer.contact,
+      user = udp_peer.user,
       publicKey = udp_peer.public_key,
       password = udp_peer.password
     }
@@ -193,7 +193,7 @@ function UCI.set(obj)
             interface = i,
             address = peer_address,
             port = peer_port,
-            contact = peer.contact,
+            user = peer.user,
             public_key = peer.publicKey,
             password = peer.password
           })

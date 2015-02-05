@@ -56,7 +56,7 @@ function act_peers()
 				peer.user = ''
 				uci.cursor():foreach("cjdns", "udp_peer", function(udp_peer)
 					if peer.publicKey == udp_peer.public_key then
-						peer.user = udp_peer.contact
+						peer.user = udp_peer.user
 					end
 				end)
 			end
