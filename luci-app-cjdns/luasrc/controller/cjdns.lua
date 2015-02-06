@@ -52,6 +52,14 @@ function act_peers()
 
 		for i,peer in pairs(response.peers) do
 			peer.ipv6 = publictoip6(peer.publicKey)
+			if peer.user == nil then
+				peer.user = ''
+				uci.cursor():foreach("cjdns", "udp_peer", function(udp_peer)
+					if peer.publicKey == udp_peer.public_key then
+						peer.user = udp_peer.user
+					end
+				end)
+			end
 			peers[#peers + 1] = peer
 		end
 
