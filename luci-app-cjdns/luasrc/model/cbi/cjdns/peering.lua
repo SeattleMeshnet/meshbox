@@ -36,6 +36,7 @@ udp_peers = m:section(TypedSection, "udp_peer", translate("Outgoing UDP Peers"),
 udp_peers.anonymous = true
 udp_peers.addremove = true
 udp_peers.template  = "cbi/tblsection"
+udp_peers:option(Value, "user", translate("User/Name")).datatype = "string"
 
 udp_interface = udp_peers:option(Value, "interface", translate("UDP interface"))
 local index = 1
@@ -45,7 +46,7 @@ for i,section in pairs(cursor:get_all("cjdns")) do
   end
 end
 udp_interface.default = 1
-udp_peers:option(Value, "address", translate("IP address")).datatype = "ipaddr"
+udp_peers:option(Value, "address", translate("IP address"))
 udp_peers:option(Value, "port", translate("Port")).datatype = "portrange"
 udp_peers:option(Value, "public_key", translate("Public key"))
 udp_peers:option(Value, "password", translate("Password"))

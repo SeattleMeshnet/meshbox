@@ -12,12 +12,6 @@ end
 s = m:section(NamedSection, "cjdns", nil, translate("Settings"))
 s.addremove = false
 
--- Peering
-s:tab("peering", translate("Peering"))
-apw = s:taboption("peering", Value, "inactivity_seconds", translate("Inactivity Timeout"),
-      translate("After link inactivity of this number of seconds, cjdns will try to re-establish the link with the peer."))
-apw.datatype = "integer(range(0,2048))"
-
 -- Identity
 s:tab("identity", translate("Identity"))
 node6 = s:taboption("identity", Value, "ipv6", translate("IPv6 address"),
@@ -34,7 +28,6 @@ prkey.datatype = "string"
 s:tab("admin", translate("Admin API"), translate("The Admin API can be used by other applications or services to configure and inspect cjdns' routing and peering.<br/><br/>Documentation: <a href=\"https://github.com/cjdelisle/cjdns/tree/master/admin#cjdns-admin-api\">admin/README.md</a>"))
 aip = s:taboption("admin", Value, "admin_address", translate("IP Address"),
       translate("IPv6 addresses should be entered like so: <code>[2001::1]</code>."))
-aip.datatype = "ipaddr"
 apt = s:taboption("admin", Value, "admin_port", translate("Port"))
 apt.datatype = "port"
 apw = s:taboption("admin", Value, "admin_password", translate("Password"))
@@ -48,13 +41,12 @@ udp_interfaces.addremove = true
 udp_interfaces.template = "cbi/tblsection"
 
 udp_address = udp_interfaces:option(Value, "address", translate("IP Address"))
-udp_address.datatype = "ipaddr"
 udp_address.placeholder = "0.0.0.0"
 udp_interfaces:option(Value, "port", translate("Port")).datatype = "portrange"
 
 -- Ethernet Interfaces
 eth_interfaces = m:section(TypedSection, "eth_interface", translate("Ethernet Interfaces"),
-  translate("These interfaces allow peering via local Ethernet networks, such as home or office networks, or phone tethering."))
+  translate("These interfaces allow peering via local Ethernet networks, such as home or office networks, or phone tethering. If an interface name is set to \"all\" each available device will be used."))
 eth_interfaces.anonymous = true
 eth_interfaces.addremove = true
 eth_interfaces.template = "cbi/tblsection"

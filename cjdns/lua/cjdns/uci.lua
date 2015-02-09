@@ -41,8 +41,6 @@ function UCI.get()
     bind = config.admin_address .. ":" .. config.admin_port,
     password = config.admin_password }
 
-  obj.resetAfterInactivitySeconds = config.inactivity_seconds
-
   if config.tun_device and string.len(config.tun_device) > 0 then
     obj.router.interface.tunDevice = config.tun_device
   end
@@ -91,6 +89,7 @@ function UCI.get()
     local bind = udp_peer.address .. ":" .. udp_peer.port
     local i = tonumber(udp_peer.interface)
     obj.interfaces.UDPInterface[i].connectTo[bind] = {
+      user = udp_peer.user,
       publicKey = udp_peer.public_key,
       password = udp_peer.password
     }
@@ -129,7 +128,6 @@ function UCI.set(obj)
     admin_password = obj.admin.password,
     admin_address = admin_address,
     admin_port = admin_port,
-    inactivity_seconds = obj.resetAfterInactivitySeconds,
   })
 
   if obj.router.interface.tunDevice then
@@ -195,6 +193,7 @@ function UCI.set(obj)
             interface = i,
             address = peer_address,
             port = peer_port,
+            user = peer.user,
             public_key = peer.publicKey,
             password = peer.password
           })

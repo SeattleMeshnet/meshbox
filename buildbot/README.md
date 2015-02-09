@@ -69,7 +69,11 @@ Requirements for all builders:
 
 Additional requirements for smoketest:
 
-- docker >= 1.3 (kernel >= 3.8)
-- the user that runs the buildslave needs to be in the docker group
+- docker >= 1.3 (requires kernel >= 3.8)
 - `apt-get install -y sudo qemu-utils`
-- allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt/feeds/meshbox/docker/make-tun.sh`
+- the user that runs the buildslave needs to be in the docker group
+  - `usermod -G docker buildbot`
+  - `groups buildbot # => buildbot : buildbot docker`
+  - make sure you re-login before starting the buildslave
+- allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt-$branch/feeds/meshbox/docker/make-tun.sh`
+  - possible values of $branch are `master` and `for-14.07`
