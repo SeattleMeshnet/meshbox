@@ -38,11 +38,10 @@ udp_peers.addremove = true
 udp_peers.template  = "cbi/tblsection"
 udp_peers:option(Value, "user", translate("User/Name")).datatype = "string"
 
-udp_interface = udp_peers:option(Value, "interface", translate("UDP interface"))
-local index = 1
+udp_interface = udp_peers:option(ListValue, "interface", translate("UDP interface"))
 for i,section in pairs(cursor:get_all("cjdns")) do
   if section[".type"] == "udp_interface" then
-    udp_interface:value(index, section.address .. ":" .. section.port)
+    udp_interface:value(section.address .. ":" .. section.port)
   end
 end
 udp_interface.default = 1

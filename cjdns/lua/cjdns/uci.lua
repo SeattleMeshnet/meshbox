@@ -69,10 +69,21 @@ function UCI.get()
   end)
 
   cursor:foreach("cjdns", "udp_interface", function(udp_interface)
+    if not i then i = 1 else i = i + 1 end
     table.insert(obj.interfaces.UDPInterface, {
       bind = udp_interface.address .. ":" .. udp_interface.port,
       connectTo = {}
     })
+    cursor:foreach("cjdns", "udp_peer", function(udp_peer)
+      if udp_peer.interface == udp_interface.address .. ":" .. udp_interface.port then
+        local dest = udp_peer.address .. ":" .. udp_peer.port
+        obj.interfaces.UDPInterface[i].connectTo[dest] = {
+          user = udp_peer.user,
+          publicKey = udp_peer.public_key,
+          password = udp_peer.password
+        }
+      end
+    end)
   end)
 
   cursor:foreach("cjdns", "eth_peer", function(eth_peer)
@@ -83,16 +94,6 @@ function UCI.get()
         password = eth_peer.password
       }
     end
-  end)
-
-  cursor:foreach("cjdns", "udp_peer", function(udp_peer)
-    local bind = udp_peer.address .. ":" .. udp_peer.port
-    local i = tonumber(udp_peer.interface)
-    obj.interfaces.UDPInterface[i].connectTo[bind] = {
-      user = udp_peer.user,
-      publicKey = udp_peer.public_key,
-      password = udp_peer.password
-    }
   end)
 
   cursor:foreach("cjdns", "password", function(password)
