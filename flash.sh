@@ -2,45 +2,55 @@
 
 set -ex
 
-IF="eno1"
+# Dependencies:
+# - Netgear WNR2000v3 with factory firmware, reachable via $INTERFACE
+# - telnetenable.py - https://raw.githubusercontent.com/semyazza/netgear-telenetenable/9789182fe02f5ea9ce706cb3a15463a6f23b6064/telnetenable.py
+# - TFTP server on $TFTP serving $IMAGE, e.g. atftpd
+
+# TODO: make sure max size of image is 3473408, e.g. using stat -c '%s' $IMAGE
+# TODO: set root password to unlock SSH
+# TODO: test peering
+# TODO: randomize MAC and serial using artmtd
+# TODO: test automatic update
+# TODO: test rollover of update signatures
+# TODO: test factory reset (wrt cjdns identity)
+
+INTERFACE="eth0"
+IP="192.168.1.1"
 USER="admin"
 PASSWORD="password"
+TFTP="192.168.1.2"
+IMAGE="openwrt-ar71xx-generic-wnr2000v3-squashfs-sysupgrade.bin"
+IMAGE_MD5="a4bd02a12b458cb6a7a8401995ae1c3dd"
 
-[ -e telnetenable.py ] || wget https://raw.githubusercontent.com/insanid/netgear-telenetenable/master/telnetenable.py
-sed -i 's/SOCK_DGRAM/SOCK_STREAM/' telnetenable.py
+# wait for the device to come up
+ping -w 30 -c 1 -I $INTERFACE $IP
 
-ip link set "$IF" up
-ip addr add 192.168.1.2/30 dev "$IF" 2>/dev/null || true
+# make sure it's a compatible device
+hw=$(curl -s -m 30 "http://$USER:$PASSWORD@$IP/RST_status.htm" |
+  grep -A 1 "Hardware Version" | tail -n1 | cut -d'>' -f2 | cut -d'<' -f1 )
+[ "$hw" = "wnr2000v3" ]
 
+# find out the device's mac address
+mac=$(arp -n -i "$INTERFACE" | grep $IP | while read _ip _type mac _rest; do
+  echo $mac | tr -d ':' | tr '[:lower:]' '[:upper:]'; break; done)
+[ "$mac" ]
 
-while true; do
-  ping -w 30 -c 1 192.168.1.1 >/dev/null
-  mac="$( arp -n -i "$IF" | grep 192.168.1.1 | while read _ip _type mac _resgt; do
-    echo $mac | tr -d ':' | tr '[:lower:]' '[:upper:]'
-    break; done; )"
-  [ "$mac" ]
-  hw="$( curl -s -m 30 "http://$USER:$PASSWORD@192.168.1.1/RST_status.htm" |
-    grep -A 1 "Hardware Version" | tail -n1 | cut -d'>' -f2 | cut -d'<' -f1 )"
-  [ "$hw" = "wnr2000v3" ]
-  # SOCK_STREAM used instead of SOCK_DGRAM
+# enable the telnet console
+ls -la telnetenable.py
+python2 telnetenable.py $IP $mac Gearguy Geardog || true
+sleep 1
 
-  python2 telnetenable.py 192.168.1.1 $mac Gearguy Geardog || true
-  sleep 2;
-  echo "socat time"
-  t=$(mktemp)
-  # make sure max size of image is 3473408, e.g. using stat -c '%s' $file
-  # Todo: randomize MAC and serial using artmtd
-  cat <<EOF >"$t"
-TIMEOUT 5
-"root@WNR2000v3:/#" "killall -KILL uhttpd inetd traffic_meter button_detecte detcable dnsmasq lld2d crond datalib syslogd hostapd miniupnpd ntpclient net-scan potval udhcpc ; echo \$TERM"
-"vt102" "tftp -g -l /tmp/openwrt.bin -r openwrt-ar71xx-generic-wnr2000v3-squashfs-sysupgrade.bin 192.168.1.2"
-"#" "md5sum /tmp/openwrt.bin"
-"745be46c2f00aa10d97a2582f92af55d" "mtd unlock /dev/mtd/2"
-"Unlock" "mtd -r -e mtd2 write /tmp/openwrt.bin mtd2"
-"#" \c
-EOF
-  socat exec:"/usr/sbin/chat -e -f $t",pty,echo=0,cr tcp:192.168.1.1:23,crlf
-  rm "$t"
-
-  break
-done
+# fetch openwrt image, and write it to the rootfs partition
+(
+  echo open 192.168.1.1
+  sleep 1
+  echo tftp -g -l /tmp/openwrt.bin -r $IMAGE $TFTP
+  sleep 10
+  echo "md5=\$(md5sum /tmp/openwrt.bin | cut -d' ' -f1)"
+  sleep 1
+  echo mtd unlock /dev/mtd/2
+  sleep 1
+  # echo "[[ \"\$md5\" = \"$IMAGE_MD5\" ]] && mtd -r -e mtd2 write /tmp/openwrt.bin mtd2"
+  sleep 30
+) | telnet
