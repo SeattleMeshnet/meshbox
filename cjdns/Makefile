@@ -6,7 +6,7 @@ PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/cjdelisle/cjdns.git
+PKG_SOURCE_URL:=https://github.com/hyperboria/cjdns.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=eace5714d88ce3a0080baa62dc40b4d0532f3123
 PKG_LICENSE:=GPL-3.0
@@ -18,7 +18,7 @@ define Package/cjdns
 	CATEGORY:=Network
 	SUBMENU:=Routing and Redirection
 	TITLE:=Encrypted near-zero-conf mesh routing protocol
-	URL:=https://github.com/cjdelisle/cjdns
+	URL:=https://github.com/hyperboria/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+kmod-tun +kmod-ipv6 \
 		+libnl-tiny +libpthread +librt +SSP_SUPPORT:libssp \
