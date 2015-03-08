@@ -13,7 +13,7 @@ define Package/luci-app-cjdns
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
 	TITLE:=Encrypted near-zero-conf mesh routing protocol
-	URL:=https://github.com/cjdelisle/cjdns
+	URL:=https://github.com/hyperboria/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+cjdns +luci-base
 endef
