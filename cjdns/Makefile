@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
 PKG_VERSION:=0.16
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
@@ -21,8 +21,9 @@ define Package/cjdns
 	URL:=https://github.com/hyperboria/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+kmod-tun +kmod-ipv6 \
-		+libnl-tiny +libpthread +librt +SSP_SUPPORT:libssp \
-		+libuci-lua +lua-bencode +dkjson +luasocket +lua-sha2
+		+libnl-tiny +libpthread +librt +KERNEL_SECCOMP:libseccomp \
+		+SSP_SUPPORT:libssp +libuci-lua +lua-bencode +dkjson \
+		+luasocket +lua-sha2
 endef
 
 define Package/cjdns/description
@@ -35,6 +36,10 @@ endef
 define Build/Configure
 endef
 
+ifneq ($(CONFIG_KERNEL_SECCOMP),y)
+PKG_DO_VARS:="Seccomp_NO=1"
+endif
+
 define Build/Compile
 	CROSS="true" \
 	CC="$(TARGET_CC)" \
@@ -44,7 +49,7 @@ define Build/Compile
 	TARGET_ARCH="$(CONFIG_ARCH)" \
 	UCLIBC=1 \
 	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
-	Seccomp_NO=1 \
+	$(PKG_DO_VARS) \
 	$(PKG_BUILD_DIR)/do
 endef
 
