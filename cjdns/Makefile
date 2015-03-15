@@ -37,7 +37,7 @@ define Build/Configure
 endef
 
 ifneq ($(CONFIG_KERNEL_SECCOMP),y)
-PKG_DO_VARS:="Seccomp_NO=1"
+PKG_DO_VARS:=Seccomp_NO=1
 endif
 
 define Build/Compile
