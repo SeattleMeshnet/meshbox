@@ -38,7 +38,7 @@ endef
 define Build/Configure
 endef
 
-ifneq ($(CONFIG_KERNEL_SECCOMP),y)
+ifneq ($(CONFIG_KERNEL_SECCOMP_FILTER),y)
 PKG_DO_VARS:=Seccomp_NO=1
 endif
 
