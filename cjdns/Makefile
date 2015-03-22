@@ -23,7 +23,7 @@ define Package/cjdns
 	URL:=https://github.com/hyperboria/cjdns
 	MAINTAINER:=Lars Gierth <larsg@systemli.org>
 	DEPENDS:=+kmod-tun +kmod-ipv6 \
-		+libnl-tiny +libpthread +librt +KERNEL_SECCOMP:libseccomp \
+		+libnl-tiny +libpthread +librt \
 		+SSP_SUPPORT:libssp +libuci-lua +lua-bencode +dkjson \
 		+luasocket +lua-sha2
 endef
