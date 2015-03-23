@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
 PKG_VERSION:=0.16
-PKG_RELEASE:=5
+PKG_RELEASE:=6
 
 PKG_SOURCE_URL:=https://github.com/cjdelisle/cjdns.git
 PKG_SOURCE_PROTO:=git
