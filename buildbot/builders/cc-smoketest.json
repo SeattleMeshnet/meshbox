@@ -1,0 +1,7 @@
+{
+  "branch": "master",
+  "trigger": ["wnr2000v3"],
+  "openwrt": "git://git.openwrt.org/openwrt.git",
+  "images": "this-wont-match-anything",
+  "packages": "this-wont-either"
+}
