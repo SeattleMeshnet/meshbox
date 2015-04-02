@@ -16,6 +16,12 @@ EOF
   touch /etc/config/cjdns
   cjdroute --genconf | cjdroute --cleanconf | cjdrouteconf set
 
+  # make sure config is present (might fail for any reason)
+  uci get cjdns.cjdns.ipv6 >/dev/null 2>&1
+  if [ $? -ne 0]; then
+    exit 1
+  fi
+
   # enable auto-peering on ethernet
   uci show network.lan | grep type=bridge >/dev/null 2>&1
   if [ $? -eq 0 ]; then

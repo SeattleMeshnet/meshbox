@@ -5,8 +5,7 @@ This is the OpenWRT package feed for the [cjdns][cjdns] routing protocol. It pro
 
 ![UI screenshot](https://github.com/SeattleMeshnet/meshbox/raw/ee9340a6421fe0342eda44b23028143923bb65ee/screenshot.png)
 
-[meshbox]: http://fund.meshwith.me
-[cjdns]: https://github.com/cjdelisle/cjdns
+[cjdns]: https://github.com/hyperboria/cjdns
 
 
 Installation
@@ -39,7 +38,7 @@ Contact
 - Issue tracker: [github.com/seattlemeshnet/meshbox/issues](https://github.com/seattlemeshnet/meshbox/issues)
 - IRC: #cjdns on EFnet and [HypeIRC](https://wiki.projectmeshnet.org/HypeIRC)
 - Mailing list: [cjdns-openwrt@lists.projectmesh.net](https://lists.projectmesh.net/pipermail/cjdns-openwrt/)
-- Development updates: [www.lars.meshnet.berlin](http://www.lars.meshnet.berlin)
+- Development updates: [lars.berlinmesh.net](http://lars.berlinmesh.net)
 
 
 Development
