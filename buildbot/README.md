@@ -75,5 +75,5 @@ Additional requirements for smoketest:
   - `usermod -G docker buildbot`
   - `groups buildbot # => buildbot : buildbot docker`
   - make sure you re-login before starting the buildslave
-- allow in /etc/sudoers: `/path/to/buildslave/smoketest/build/openwrt-$branch/feeds/meshbox/docker/make-tun.sh`
-  - possible values of $branch are `master` and `for-14.07`
+- allow in /etc/sudoers: `/path/to/buildslave/$builderName/build/openwrt/feeds/meshbox/docker/make-tun.sh`
+  - possible values of $builderName are `cc-smoketest` and `bb-smoketest`
