@@ -1,7 +1,8 @@
 {
   "branch": "for-14.07",
-  "trigger": [],
   "openwrt": "git://git.openwrt.org/14.07/openwrt.git",
-  "images": "this-wont-match-anything",
-  "packages": "this-wont-either"
+  "script": ["feeds/meshbox/docker/smoketest.sh"],
+  "trigger": [],
+  "images": "",
+  "packages": ""
 }
