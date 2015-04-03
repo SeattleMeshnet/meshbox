@@ -2,7 +2,5 @@
   "branch": "master",
   "openwrt": "git://git.openwrt.org/openwrt.git",
   "script": ["feeds/meshbox/docker/smoketest.sh"],
-  "trigger": ["wnr2000v3"],
-  "images": "",
-  "packages": ""
+  "trigger": ["wnr2000v3"]
 }

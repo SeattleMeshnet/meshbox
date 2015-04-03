@@ -1,8 +1,4 @@
 {
   "openwrt": "git://git.openwrt.org/openwrt.git",
-  "images": "bin/ar71xx/*wnr2000v3*",
-  "packages": "bin/ar71xx/packages/meshbox/*.ipk",
-  "branch": "",
-  "trigger": [],
-  "script": ""
+  "images": "bin/ar71xx/*wnr2000v3*"
 }
