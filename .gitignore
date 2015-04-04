@@ -6,7 +6,7 @@
 /buildbot/templates
 /buildbot/twistd.log
 /buildbot/twistd.pid
-/buildbot/cc-smoketest
-/buildbot/bb-smoketest
+/buildbot/cc-*
+/buildbot/bb-*
 /buildbot/wnr2000v3
 tftpboot/
