@@ -21,11 +21,6 @@ function AdminInterface.new(properties)
     return setmetatable(properties, AdminInterface)
 end
 
-
-function AdminInterface:getIP()
-    return socket.dns.toip(self.host)
-end
-
 function AdminInterface:send(object)
     local bencoded, err = bencode.encode(object)
     if err then
@@ -35,7 +30,7 @@ function AdminInterface:send(object)
     local sock_obj = assert(socket.udp())
     sock_obj:settimeout(self.timeout)
 
-    local _, err = sock_obj:sendto(bencoded, assert(self:getIP()), self.port)
+    local _, err = sock_obj:sendto(bencoded, self.host, self.port)
     if err then
         return nil, err
     end
