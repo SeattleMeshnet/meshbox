@@ -31,6 +31,9 @@ This will deploy `cjdns/files`, `cjdns/lua`, and `luci-app-cjdns/luasrc` to the 
 $ git clone git://git.openwrt.org/openwrt.git
 $ cd openwrt/
 $ ./scripts/feeds update -a
+$ ./scripts/feeds install luci-app-cjdns
+$ make menuconfig ; # select the x86_64 target to build stuff for Docker
+$ make
 $ docker run -i -t meshbox /sbin/init
 ```
 
