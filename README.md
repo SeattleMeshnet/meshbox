@@ -1,9 +1,11 @@
 meshbox
 =======
 
-This is a collection of scripts used to build and test the [cjdns][cjdns] routing protocol.
+This is a collection of scripts used to build and test the [cjdns][cjdns] routing protocol with [OpenWrt][OpenWrt] and/or inside [Docker.io][Docker.io].
 
 [cjdns]: https://github.com/hyperboria/cjdns
+[OpenWrt]: https://www.openwrt.org/
+[Docker.io]: https://www.docker.io/
 
 Development
 -----------
@@ -26,6 +28,7 @@ $ ./deploy.sh root@ADDRESS 12345
 This will deploy `cjdns/files`, `cjdns/lua`, and `luci-app-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image.
 
 ```
+$ git clone git://git.openwrt.org/openwrt.git
 $ cd openwrt/
 $ ./scripts/feeds update -a
 $ docker run -i -t meshbox /sbin/init
