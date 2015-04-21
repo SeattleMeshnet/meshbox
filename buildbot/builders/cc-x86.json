@@ -4,5 +4,5 @@
   "sdk": "https://buildbot.meshwith.me/dl/cc/OpenWrt-SDK-x86-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
   "sdk_md5sum": "b9a0dec51c618ee86b7aa97b4776b6da",
   "imagebuilder": "https://buildbot.meswith.me/dl/cc/OpenWrt-ImageBuilder-x86-generic.Linux-x86_64.tar.bz2",
-  "imagebuilder_md5": "fc290618b9874a01184e45a385be6ce3"
+  "imagebuilder_md5sum": "fc290618b9874a01184e45a385be6ce3"
 }

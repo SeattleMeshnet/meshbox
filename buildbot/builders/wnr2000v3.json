@@ -1,4 +1,12 @@
 {
-  "openwrt": "git://git.openwrt.org/openwrt.git",
-  "images": "bin/ar71xx/*wnr2000v3*"
+  "profile": "WNR2000V3",
+  "images": [
+    {
+      "src": "bin/ar71xx/openwrt-ar71xx-generic-wnr2000v3-squashfs-sysupgrade.bin",
+      "dest": "/snapshots/%(prop:meshboxVersion)s/wnr2000v3/meshbox-%(prop:meshboxVersion)s-wnr2000v3-squashfs-sysupgrade.bin"
+    }
+  ],
+  "opkg_repo": "http://localhost:8000/snapshots/cc/ar71xx-generic",
+  "imagebuilder": "https://buildbot.meshwith.me/dl/cc/OpenWrt-ImageBuilder-ar71xx-generic.Linux-x86_64.tar.bz2",
+  "imagebuilder_md5sum": "e970a399abe87e3cfd793bfae6486156"
 }
