@@ -2,6 +2,11 @@
 
 set -ex
 
+# Usage:
+#   ./smoketest.sh $rootfs
+#
+# TODO: remove dockerfile, we don't need the setup
+
 # Expects to be run from the OpenWrt buildroot, after `make`.
 #
 # 1. Creates an image based on bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz
@@ -10,6 +15,8 @@ set -ex
 # 4. Then tries to ping in both directions
 # 5. Succeeds, or times out after 30 seconds
 # 6. Finally cleans up the containers and image
+
+rootfs=$1
 
 ipv6addr() {
   docker exec $1 uci get cjdns.cjdns.ipv6
@@ -39,7 +46,7 @@ setup() {
   # Requires sudo permissions for docker/make-tun.sh
   #   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
   docker exec $1 /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
-  sudo feeds/meshbox/docker/make-tun.sh $pid $ipv6 $ifname
+  sudo docker/make-tun.sh $pid $ipv6 $ifname
   docker exec $1 /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
   docker exec $1 /bin/sh -c "uci changes && uci commit"
 
@@ -48,10 +55,10 @@ setup() {
   docker exec $1 /etc/init.d/cjdns enable
 }
 
-baseimage=`docker import - < bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz`
-sed -i "s/FROM .*/FROM $baseimage/" feeds/meshbox/docker/Dockerfile
+baseimage=`docker import - < $rootfs`
+sed -i "s/FROM .*/FROM $baseimage/" docker/Dockerfile
 image=meshbox-$baseimage
-docker build --no-cache --force-rm -t $image feeds/meshbox/docker/
+docker build --no-cache --force-rm -t $image docker/
 
 containers[1]=$(start $image)
 containers[2]=$(start $image)
