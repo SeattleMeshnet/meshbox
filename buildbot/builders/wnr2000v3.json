@@ -3,7 +3,7 @@
   "images": [
     {
       "src": "bin/ar71xx/openwrt-ar71xx-generic-wnr2000v3-squashfs-sysupgrade.bin",
-      "dest": "/snapshots/%(prop:meshboxVersion)s/wnr2000v3/meshbox-%(prop:meshboxVersion)s-wnr2000v3-squashfs-sysupgrade.bin"
+      "dest": "/snapshots/%(prop:meshboxVersion)s/meshbox-%(prop:meshboxVersion)s-wnr2000v3-squashfs-sysupgrade.bin"
     }
   ],
   "opkg_repo": "src/gz meshbox http://h.buildbot.meshwith.me/snapshots/cc/ar71xx-generic",

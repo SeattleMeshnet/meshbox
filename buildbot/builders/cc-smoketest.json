@@ -5,7 +5,7 @@
   "profile": "Generic",
   "images": [
     { "src": "bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz",
-      "dest": "/snapshots/%(prop:meshboxVersion)s/docker/meshbox-%(prop:meshboxVersion)s-docker-rootfs.tar.gz" }
+      "dest": "/snapshots/%(prop:meshboxVersion)s/meshbox-%(prop:meshboxVersion)s-docker-rootfs.tar.gz" }
   ],
   "opkg_repo": "src/gz meshbox file:../sdk/bin/x86/packages/base",
   "opkg": "bin/x86/packages",
