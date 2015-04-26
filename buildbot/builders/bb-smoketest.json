@@ -1,0 +1,5 @@
+{
+  "branch": "for-14.07",
+  "openwrt": "git://git.openwrt.org/14.07/openwrt.git",
+  "script": ["feeds/meshbox/docker/smoketest.sh"]
+}

@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cjdns
 PKG_VERSION:=0.16
-PKG_RELEASE:=8
+PKG_RELEASE:=10
 
-PKG_SOURCE_URL:=https://github.com/cjdelisle/cjdns.git
+PKG_SOURCE_URL:=https://github.com/hyperboria/cjdns.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=649e26c7d61ccc66c20e87e1e3d381f9ef0cfcb0
+PKG_SOURCE_VERSION:=0bf4e4b9cd364c4b806e1e382c111ec3cce3d640
 PKG_LICENSE:=GPL-3.0
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
@@ -36,8 +36,14 @@ endef
 define Build/Configure
 endef
 
+PKG_DO_VARS:=
+
 ifneq ($(CONFIG_KERNEL_SECCOMP_FILTER),y)
-PKG_DO_VARS:=Seccomp_NO=1
+PKG_DO_VARS+= Seccomp_NO=1
+endif
+
+ifneq ($(CONFIG_USE_UCLIBC),)
+PKG_DO_VARS+= UCLIBC=1
 endif
 
 define Build/Compile
@@ -47,7 +53,6 @@ define Build/Compile
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	SYSTEM="linux" \
 	TARGET_ARCH="$(CONFIG_ARCH)" \
-	UCLIBC=1 \
 	SSP_SUPPORT="$(CONFIG_SSP_SUPPORT)" \
 	$(PKG_DO_VARS) \
 	$(PKG_BUILD_DIR)/do

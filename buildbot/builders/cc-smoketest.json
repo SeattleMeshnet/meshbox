@@ -1,0 +1,17 @@
+{
+  "branch": "master",
+  "trigger": ["cc-ar71xx"],
+  "script": "docker/smoketest.sh ../imagebuilder/bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz",
+  "profile": "Generic",
+  "images": [
+    { "src": "bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz",
+      "dest": "/snapshots/%(prop:meshboxVersion)s/meshbox-%(prop:meshboxVersion)s-docker-rootfs.tar.gz" }
+  ],
+  "opkg_repo": "src/gz meshbox file:../sdk/bin/x86/packages/base",
+  "opkg": "bin/x86/packages",
+  "opkg_destination": "/snapshots/cc/x86-generic",
+  "sdk": "http://h.buildbot.meshwith.me/dl/cc/OpenWrt-SDK-x86-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
+  "sdk_md5sum": "28e15ff556ebe720b3c44e4a6dd4175d",
+  "imagebuilder": "http://h.buildbot.meshwith.me/dl/cc/OpenWrt-ImageBuilder-x86-generic.Linux-x86_64.tar.bz2",
+  "imagebuilder_md5sum": "b056935b328dbe48ec2a7d06300ba792"
+}
