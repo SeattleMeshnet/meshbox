@@ -1,7 +1,7 @@
 {
   "opkg": "bin/ar71xx/packages",
   "opkg_destination": "/snapshots/cc/ar71xx-generic/",
-  "sdk": "http://h.buildbot.meshwith.me/dl/cc/OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
+  "sdk": "https://buildbot.meshwith.me/dl/cc/OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
   "sdk_md5sum": "4b7960670c77e93ee11b93f223bec05e",
   "trigger": ["wnr2000v3"]
 }
