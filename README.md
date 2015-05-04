@@ -1,45 +1,11 @@
 meshbox
 =======
 
-This is the OpenWRT package feed for the [cjdns][cjdns] routing protocol. It provides OpenWrt integration and a web-based UI. Tested with OpenWRT Barrier Breaker (14.07) and Chaos Calmer (trunk).
-
-![UI screenshot](https://github.com/SeattleMeshnet/meshbox/raw/ee9340a6421fe0342eda44b23028143923bb65ee/screenshot.png)
+This is a collection of scripts used to build and test the [cjdns][cjdns] routing protocol with [OpenWrt][OpenWrt] and/or inside [Docker.io][Docker.io].
 
 [cjdns]: https://github.com/hyperboria/cjdns
-
-
-Installation
-------------
-
-We don't provide prebuilt packages yet (help welcome), so you'll have to build OpenWrt yourself. Integration into the OpenWRT buildroot is simple though.
-
-    $ git clone git://git.openwrt.org/14.07/openwrt.git
-    $ cd openwrt
-
-    $ cp feeds.conf.default feeds.conf
-    $ echo 'src-git meshbox git://github.com/seattlemeshnet/meshbox.git;for-14.07' >> feeds.conf
-    $ ./scripts/feeds update -a
-    $ ./scripts/feeds install -a
-
-Then configure your firmware image: enable the luci-app-cjdns module, in addition to your usual settings, such as target system and profile. As usual, you'll need to hit space twice to make it `[*]` rather than `[M]`.
-
-    $ make menuconfig
-    LuCI -> Collections -> [*] luci
-    LuCI -> Applications -> [*] luci-app-cjdns
-
-Then build with `make`. You can append `-j $n`, where n is the number of CPU threads you want to use for compilation.
-
-*Note:* The master branch is for development against OpenWrt Chaos Calmer (trunk). Unless you know what you're doing, you should always use OpenWrt Barrier Breaker (14.07), and the for-14.07 branch of Meshbox.
-
-
-Contact
--------
-
-- Issue tracker: [github.com/seattlemeshnet/meshbox/issues](https://github.com/seattlemeshnet/meshbox/issues)
-- IRC: #cjdns on EFnet and [HypeIRC](https://wiki.projectmeshnet.org/HypeIRC)
-- Mailing list: [cjdns-openwrt@lists.projectmesh.net](https://lists.projectmesh.net/pipermail/cjdns-openwrt/)
-- Development updates: [lars.berlinmesh.net](http://lars.berlinmesh.net)
-
+[OpenWrt]: https://www.openwrt.org/
+[Docker.io]: https://www.docker.io/
 
 Development
 -----------
@@ -62,21 +28,17 @@ $ ./deploy.sh root@ADDRESS 12345
 This will deploy `cjdns/files`, `cjdns/lua`, and `luci-app-cjdns/luasrc` to the appropriate directories in the container. If your changes require a restart, or the changed code is only run at boot time, you'll need to build your own image.
 
 ```
+$ git clone git://git.openwrt.org/openwrt.git
 $ cd openwrt/
-$ vim feeds.conf # src-git meshbox ... => src-link meshbox /path/to/meshbox
 $ ./scripts/feeds update -a
-$ ./feeds/meshbox/docker.sh
+$ ./scripts/feeds install luci-app-cjdns
+$ make menuconfig ; # select the x86_64 target to build stuff for Docker
+$ make
 $ docker run -i -t meshbox /sbin/init
 ```
 
-In case you want to make changes to cjdns itself, you can modify `<meshbox>/cjdns/Makefile` to use a local clone of cjdns.
+In case you want to make changes to cjdns itself, you can use CONFIG_SRC_TREE_OVERRIDE in OpenWrt menuconfig to build your local tree.
 
-```
-PKG_SOURCE_URL:=file:///path/to/cjdns
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=master
-```
-
-Make sure to commit your changes to cjdns before building the package. The OpenWRT buildroot will clone the local cjdns into the build directory, omitting uncommitted changes.
+Make sure to commit your changes before building the package. The OpenWRT buildroot will then clone the local cjdns into the build directory, omitting uncommitted changes.
 
 You can then build a fresh container including the changes to cjdns.
