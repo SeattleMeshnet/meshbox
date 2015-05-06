@@ -1,0 +1,16 @@
+{
+  "profile": "TLWDR4300",
+  "images": [
+    {
+      "src": "bin/ar71xx/openwrt-ar71xx-generic-tl-wdr4300-v1-squashfs-factory.bin",
+      "dest": "/snapshots/%(prop:meshboxVersion)s/meshbox-%(prop:meshboxVersion)s-wdr4300-squashfs-factory.bin"
+    },
+    {
+      "src": "bin/ar71xx/openwrt-ar71xx-generic-tl-wdr4300-v1-squashfs-sysupgrade.bin",
+      "dest": "/snapshots/%(prop:meshboxVersion)s/meshbox-%(prop:meshboxVersion)s-wdr4300-squashfs-sysupgrade.bin"
+    }
+  ],
+  "opkg_repo": "src/gz meshbox http://h.buildbot.meshwith.me/snapshots/cc/ar71xx-generic",
+  "imagebuilder": "https://buildbot.meshwith.me/dl/cc/OpenWrt-ImageBuilder-ar71xx-generic.Linux-x86_64.tar.bz2",
+  "imagebuilder_md5sum": "80c2f5b6e3c26336d31029a49a5a1a84"
+}
