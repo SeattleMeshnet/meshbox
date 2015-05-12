@@ -1,5 +1,5 @@
 {
-  "branch": "master",
+  "branch": "for-15.05",
   "filter": ["^cjdns/", "^luci-app-cjdns/"],
   "trigger": ["cc-ar71xx"],
   "script": "docker/smoketest.sh ../imagebuilder/bin/x86/openwrt-x86-generic-Generic-rootfs.tar.gz",
