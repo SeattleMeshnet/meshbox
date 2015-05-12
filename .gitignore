@@ -9,5 +9,6 @@
 /buildbot/cc-*
 /buildbot/bb-*
 /buildbot/wnr2000v3
+/buildbot/wdr4300
 tftpboot/
 www/
