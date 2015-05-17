@@ -6,6 +6,7 @@
 /buildbot/templates
 /buildbot/twistd.log
 /buildbot/twistd.pid
+/buildbot/gitpoller-work
 /buildbot/cc-*
 /buildbot/bb-*
 /buildbot/wnr2000v3
