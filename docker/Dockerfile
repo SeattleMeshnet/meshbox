@@ -7,7 +7,7 @@
 #     docker kill $container
 #
 
-FROM meshbox-base
+FROM meshbox-base-02fed7d460e3b49b
 MAINTAINER Lars Gierth <larsg@systemli.org>
 
 ADD network /etc/config/network

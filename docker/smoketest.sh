@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 # Usage:
 #   ./smoketest.sh $rootfs
@@ -19,7 +19,7 @@ set -ex
 rootfs=$1
 
 ipv6addr() {
-  docker exec $1 uci get cjdns.cjdns.ipv6
+  docker exec $1 uci get cjdns.cjdns.ipv6 || echo ""
 }
 
 cleanup() {
@@ -29,35 +29,38 @@ cleanup() {
 }
 
 start() {
-  docker run --detach $image
+  docker run -d --cap-add=NET_ADMIN --device=/dev/net/tun $1
 }
 
-setup() {
-  # Prevent /sbin/init from starting cjdroute, and generate a config.
-  docker exec $1 /etc/init.d/cjdns disable
-  docker exec $1 /etc/uci-defaults/cjdns
+# setup() {
+#   # Prevent /sbin/init from starting cjdroute, and generate a config.
+#   docker exec $1 /etc/init.d/cjdns disable
+#   docker exec $1 /etc/uci-defaults/cjdns
 
-  # Get the IPv6 address, and the container's PID.
-  ipv6=`ipv6addr $1`
-  pid=`docker inspect -f '{{.State.Pid}}' $1`
-  ifname=$2
+#   # Get the IPv6 address, and the container's PID.
+#   ipv6=`ipv6addr $1`
+#   pid=`docker inspect -f '{{.State.Pid}}' $1`
+#   ifname=$2
 
-  # Create the TUN interface, so that the container can receive ICMP pings.
-  # Requires sudo permissions for docker/make-tun.sh
-  #   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
-  docker exec $1 /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
-  sudo docker/make-tun.sh $pid $ipv6 $ifname
-  docker exec $1 /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
-  docker exec $1 /bin/sh -c "uci changes && uci commit"
+#   # Create the TUN interface, so that the container can receive ICMP pings.
+#   # Requires sudo permissions for docker/make-tun.sh
+#   #   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
+#   docker exec $1 /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
+#   sudo docker/make-tun.sh $pid $ipv6 $ifname
+#   docker exec $1 /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
+#   docker exec $1 /bin/sh -c "uci changes && uci commit"
 
-  # Re-enable cjdns, assuming that /sbin/init hasn't finished yet and will
-  # start cjdns.
-  docker exec $1 /etc/init.d/cjdns enable
-}
+#   # Re-enable cjdns, assuming that /sbin/init hasn't finished yet and will
+#   # start cjdns.
+#   docker exec $1 /etc/init.d/cjdns enable
+#   docker exec $1 /etc/init.d/cjdns start
+# }
 
-baseimage=`docker import - < $rootfs`
+id=`docker import - < $rootfs`
+baseimage=meshbox-base-`echo $id | head -c 16`
+docker tag $id $baseimage
 sed -i "s/FROM .*/FROM $baseimage/" docker/Dockerfile
-image=meshbox-$baseimage
+image=meshbox-`echo $id | head -c 16`
 docker build --no-cache --force-rm -t $image docker/
 
 containers[1]=$(start $image)
@@ -65,10 +68,18 @@ containers[2]=$(start $image)
 
 trap "cleanup ${containers[1]} ${containers[2]} $image" EXIT
 
-setup ${containers[1]} smoketest0
-setup ${containers[2]} smoketest1
+route() {
+  docker exec -t $1 route -A inet6 | grep 'fc00::/8'
+}
+
+rt="$(route ${containers[1]})"
+while [ -z "$rt" ] ; do sleep 1; rt="$(route ${containers[1]})"; done
+rt="$(route ${containers[2]})"
+while [ -z "$rt" ] ; do sleep 1; rt="$(route ${containers[2]})"; done
+# setup ${containers[1]} smoketest0
+# setup ${containers[2]} smoketest1
 
 # This is the actual test, which makes sure that cjdns started correctly,
 # and auto-peering is enabled. Fail if we don't receive a pong within 30 secs.
-docker exec -t ${containers[1]} /bin/ping6 -w 30 -c 1 `ipv6addr ${containers[2]}`
-docker exec -t ${containers[2]} /bin/ping6 -w 30 -c 1 `ipv6addr ${containers[1]}`
+docker exec -t ${containers[1]} ping6 -w 30 -c 1 "$(ipv6addr ${containers[2]})" || exit 1
+docker exec -t ${containers[2]} ping6 -w 30 -c 1 "$(ipv6addr ${containers[1]})" || exit 1
