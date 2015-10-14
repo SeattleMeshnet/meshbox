@@ -32,30 +32,6 @@ start() {
   docker run -d --cap-add=NET_ADMIN --device=/dev/net/tun $1
 }
 
-# setup() {
-#   # Prevent /sbin/init from starting cjdroute, and generate a config.
-#   docker exec $1 /etc/init.d/cjdns disable
-#   docker exec $1 /etc/uci-defaults/cjdns
-
-#   # Get the IPv6 address, and the container's PID.
-#   ipv6=`ipv6addr $1`
-#   pid=`docker inspect -f '{{.State.Pid}}' $1`
-#   ifname=$2
-
-#   # Create the TUN interface, so that the container can receive ICMP pings.
-#   # Requires sudo permissions for docker/make-tun.sh
-#   #   lars  ALL=NOPASSWD: /path/to/openwrt/feeds/meshbox/docker/make-tun.sh
-#   docker exec $1 /bin/sh -c "mkdir /dev/net && ln -s /dev/tun /dev/net/tun"
-#   sudo docker/make-tun.sh $pid $ipv6 $ifname
-#   docker exec $1 /bin/sh -c "uci set cjdns.cjdns.tun_device=$ifname"
-#   docker exec $1 /bin/sh -c "uci changes && uci commit"
-
-#   # Re-enable cjdns, assuming that /sbin/init hasn't finished yet and will
-#   # start cjdns.
-#   docker exec $1 /etc/init.d/cjdns enable
-#   docker exec $1 /etc/init.d/cjdns start
-# }
-
 id=`docker import - < $rootfs`
 baseimage=meshbox-base-`echo $id | head -c 16`
 docker tag $id $baseimage
