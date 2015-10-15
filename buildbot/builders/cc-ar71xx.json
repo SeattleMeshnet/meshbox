@@ -1,7 +1,0 @@
-{
-  "opkg": "bin/ar71xx/packages",
-  "opkg_destination": "/snapshots/%(prop:buildername)s/%(prop:buildnumber)s/packages",
-  "sdk": "https://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/OpenWrt-SDK-15.05-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
-  "sdk_md5sum": "aef77f3a49277187433e7ec877609093",
-  "trigger": ["wdr4300", "wnr2000v3"]
-}
