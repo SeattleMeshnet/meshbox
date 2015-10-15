@@ -1,0 +1,7 @@
+buildbot:
+  build: .
+  dockerfile: Dockerfile
+  volumes:
+    - ./buildbot:/buildbot
+  ports:
+    - 8010:8010
