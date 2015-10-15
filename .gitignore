@@ -7,9 +7,8 @@
 /buildbot/twistd.log
 /buildbot/twistd.pid
 /buildbot/gitpoller-work
-/buildbot/cc-*
-/buildbot/bb-*
-/buildbot/wnr2000v3
-/buildbot/wdr4300
+/buildbot/x86-generic
+/buildbot/ar71xx-generic
 tftpboot/
 www/
+venv/

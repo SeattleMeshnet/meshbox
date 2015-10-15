@@ -1,0 +1,26 @@
+{
+  "sdk": "https://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/OpenWrt-SDK-15.05-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2",
+  "sdk_md5sum": "aef77f3a49277187433e7ec877609093",
+  "opkg": "bin/ar71xx/packages",
+  "opkg_destination": "/snapshots/%(prop:buildername)s/%(prop:buildnumber)s/packages",
+
+  "imagebuilder": "https://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/OpenWrt-ImageBuilder-15.05-ar71xx-generic.Linux-x86_64.tar.bz2",
+  "imagebuilder_md5sum": "27be488feed6a6b7770eb33bed82197e",
+  "opkg_repo": "src/gz meshbox file:../sdk/bin/ar71xx/packages/base",
+
+  "profiles": ["WNR2000V3", "TLWDR4300"],
+  "images": [
+    {
+      "src": "bin/ar71xx/openwrt-15.05-ar71xx-generic-wnr2000v3-squashfs-sysupgrade.bin",
+      "dest": "/snapshots/%(prop:buildername)s/%(prop:buildnumber)s/meshbox-SNAPSHOT-wnr2000v3-squashfs-sysupgrade.bin"
+    },
+    {
+      "src": "bin/ar71xx/openwrt-15.05-ar71xx-generic-tl-wdr4300-v1-squashfs-factory.bin",
+      "dest": "/snapshots/%(prop:buildername)s/%(prop:buildnumber)s/meshbox-SNAPSHOT-wdr4300-squashfs-factory.bin"
+    },
+    {
+      "src": "bin/ar71xx/openwrt-15.05-ar71xx-generic-tl-wdr4300-v1-squashfs-sysupgrade.bin",
+      "dest": "/snapshots/%(prop:buildername)s/%(prop:buildnumber)s/meshbox-SNAPSHOT-wdr4300-squashfs-sysupgrade.bin"
+    }
+  ]
+}
