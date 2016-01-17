@@ -1,7 +1,35 @@
 buildbot:
-  build: .
-  dockerfile: Dockerfile
+  image: lgierth/buildbot:0.8.12-1
   volumes:
     - ./buildbot:/buildbot
   ports:
     - 8010:8010
+  restart: always
+
+buildslave:
+  image: lgierth/buildslave:0.8.12-1
+  volumes:
+    - ./buildslave:/buildslave
+  restart: always
+
+cjdns:
+  image: lgierth/cjdns:0.16-1
+  volumes:
+    - ./cjdns:/etc/cjdns
+  cap_add:
+    - NET_ADMIN
+  devices:
+    - /dev/net/tun
+  ports:
+    - 54321:54321
+  restart: always
+
+nginx:
+  image: nginx/1.9.3
+  volumes:
+    - ./nginx/config:/etc/nginx
+    - ./nginx/logs:/var/log/nginx
+  ports:
+    - 80:80
+    - 443:443
+  restart: always

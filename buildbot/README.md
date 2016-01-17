@@ -1,5 +1,12 @@
 # The Build Infrastructure
 
+TODO:
+- build cjdns changes
+- pick repository based on sourcestamp
+- build firewall and luci-app-firewall
+- rewrite the readme
+- deploy with docker
+
 Our Buildbot instance takes care of Continuous Integration, prebuilt images,
 automatic updates, and the OPKG repository, for the master and for-14.07 branches.
 
