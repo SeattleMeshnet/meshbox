@@ -1,5 +1,9 @@
-meshbox
-=======
+cjdns on OpenWrt
+================
+
+> \<@larsg> it's essentially: get an openwrt 15.05 image fitting your hardware, then `opkg update && opkg install luci-app-cjdns`
+
+If you want to give cjdns on OpenWrt a try, see the quote above. This repository contains tools for testing and development.
 
 This is a collection of scripts used to build and test the [cjdns][cjdns] routing protocol with [OpenWrt][OpenWrt] and/or inside [Docker.io][Docker.io].
 
